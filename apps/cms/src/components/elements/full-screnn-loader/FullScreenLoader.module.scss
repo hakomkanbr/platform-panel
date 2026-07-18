@@ -1,0 +1,76 @@
+.loaderWrapper {
+  position: fixed;
+  inset: 0;
+  background: rgba(248, 250, 252, 0.9); // #f8fafc مع شفافية
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+// حركة Fade In/Out
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Spinner بشكل 3 دوائر نابضة
+.spinner {
+  display: flex;
+  gap: 12px;
+
+  div {
+    width: 16px;
+    height: 16px;
+    background: #022349;
+    border-radius: 50%;
+    animation: bounce 0.6s infinite alternate;
+  }
+
+  div:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  div:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(-12px);
+    opacity: 1;
+  }
+}
+
+// نص جميل مع Gradient
+.loaderText {
+  margin-top: 20px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #022349, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: pulseText 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseText {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}

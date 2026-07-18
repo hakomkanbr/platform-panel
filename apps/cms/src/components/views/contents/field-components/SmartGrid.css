@@ -1,0 +1,208 @@
+/* Smart Grid Layout Styles */
+.smart-grid-container {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Field Groups */
+.field-group {
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.field-group:last-child {
+  margin-bottom: 0;
+}
+
+.field-group-row {
+  margin: 0 !important;
+}
+
+.field-group-item {
+  padding: 0 !important;
+  margin-bottom: 20px;
+}
+
+.primary-field-item {
+  /* Responsive grid for primary fields */
+}
+
+@media (min-width: 576px) {
+  .primary-field-item {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .primary-field-item {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .primary-field-item {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+/* Secondary Fields Section */
+.secondary-fields-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.secondary-field-item {
+  /* Responsive grid for secondary fields */
+}
+
+@media (min-width: 576px) {
+  .secondary-field-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .secondary-field-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .secondary-field-item {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* Media Fields Section */
+.media-fields-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.media-field-item {
+  /* Responsive grid for media fields */
+}
+
+@media (min-width: 576px) {
+  .media-field-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .media-field-item {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .media-field-item {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+/* Rich Content Fields Section */
+.rich-fields-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.rich-field-item {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+}
+
+/* Hover Effects */
+.field-group:hover {
+  transform: translateY(-1px);
+  transition: all 0.3s ease;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .field-group {
+    margin-bottom: 20px;
+  }
+  
+  .secondary-fields-section,
+  .media-fields-section,
+  .rich-fields-section {
+    padding: 16px;
+    border-radius: 10px;
+  }
+  
+  .primary-field-item,
+  .secondary-field-item,
+  .media-field-item {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .field-group:hover {
+    transform: none;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .secondary-fields-section,
+  .media-fields-section,
+  .rich-fields-section {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .field-group {
+    margin-bottom: 16px;
+  }
+}
+
+/* Animation for field groups */
+.field-group {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Print styles */
+@media print {
+  .field-group {
+    break-inside: avoid;
+    margin-bottom: 20px;
+  }
+  
+  .secondary-fields-section,
+  .media-fields-section,
+  .rich-fields-section {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}

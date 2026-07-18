@@ -1,0 +1,130 @@
+/* Enhanced Breadcrumb Styles */
+.enhanced-breadcrumb-container {
+  position: relative;
+  margin: 20px 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.enhanced-breadcrumb-container.with-background {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.enhanced-breadcrumb-container.size-small {
+  margin-bottom: 20px;
+}
+
+.enhanced-breadcrumb-container.size-small.with-background {
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+.enhanced-breadcrumb-container.size-large {
+  margin-bottom: 40px;
+}
+
+.enhanced-breadcrumb-container.size-large.with-background {
+  padding: 20px 24px;
+  border-radius: 14px;
+}
+
+.breadcrumb-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+.enhanced-breadcrumb {
+  margin: 0 !important;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.enhanced-breadcrumb .ant-breadcrumb-link,
+.enhanced-breadcrumb .ant-breadcrumb-separator {
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.breadcrumb-item-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  color: #64748b;
+  position: relative;
+}
+
+.breadcrumb-link .breadcrumb-item-content {
+  cursor: pointer;
+}
+
+.breadcrumb-link .breadcrumb-item-content:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.breadcrumb-current {
+  background: #f1f5f9;
+  color: #1e293b !important;
+  font-weight: 600;
+}
+
+.breadcrumb-separator {
+  color: #cbd5e1 !important;
+  font-size: 12px !important;
+  margin: 0 6px !important;
+  transition: all 0.3s ease;
+}
+
+.enhanced-breadcrumb-container:hover .breadcrumb-separator {
+  color: #94a3b8 !important;
+}
+
+/* Icons styling */
+.breadcrumb-item-content .anticon {
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .enhanced-breadcrumb-container.with-background {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+  }
+  
+  .breadcrumb-item-content {
+    padding: 3px 6px;
+    font-size: 13px;
+  }
+  
+  .breadcrumb-separator {
+    margin: 0 4px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .enhanced-breadcrumb-container.with-background {
+    padding: 10px 14px;
+    margin-bottom: 20px;
+  }
+  
+  .breadcrumb-item-content {
+    padding: 2px 4px;
+    font-size: 12px;
+    gap: 4px;
+  }
+  
+  .breadcrumb-item-content .anticon {
+    font-size: 12px;
+  }
+}

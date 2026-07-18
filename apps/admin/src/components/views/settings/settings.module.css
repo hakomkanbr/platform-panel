@@ -1,0 +1,231 @@
+/* Settings Page Styles */
+.settingsContainer {
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.settingsHeader {
+  margin-bottom: 24px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.settingsCard {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Tab Styles */
+.settingsCard .ant-tabs-tab {
+  padding: 12px 24px !important;
+  font-weight: 500 !important;
+  border-radius: 8px 8px 0 0 !important;
+  margin-right: 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+.settingsCard .ant-tabs-tab:hover {
+  background: #f8fafc !important;
+}
+
+.settingsCard .ant-tabs-tab-active {
+  background: #f8fafc !important;
+  border-bottom: 2px solid #6366f1 !important;
+  color: #6366f1 !important;
+}
+
+.settingsCard .ant-tabs-content-holder {
+  padding: 0 8px !important;
+}
+
+.settingsCard .ant-tabs-tab-btn {
+  color: #64748b !important;
+}
+
+.settingsCard .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #6366f1 !important;
+}
+
+/* Form Styles */
+.ant-form-item-label > label {
+  font-weight: 500 !important;
+  color: #374151 !important;
+}
+
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-select-selector {
+  border-radius: 6px !important;
+  border-color: #d1d5db !important;
+}
+
+.ant-input:focus,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused,
+.ant-select-focused .ant-select-selector {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Button Styles */
+.ant-btn-primary {
+  background: #6366f1 !important;
+  border-color: #6366f1 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2) !important;
+}
+
+.ant-btn-primary:hover {
+  background: #5b5bd6 !important;
+  border-color: #5b5bd6 !important;
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Card Styles */
+.ant-card {
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.ant-card-head {
+  border-bottom: 2px solid #f1f5f9 !important;
+  padding: 16px 24px !important;
+}
+
+.ant-card-head-title {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.ant-card-body {
+  padding: 24px !important;
+}
+
+/* Alert Styles */
+.ant-alert {
+  border-radius: 8px !important;
+  border: 1px solid !important;
+}
+
+.ant-alert-info {
+  background: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+
+.ant-alert-warning {
+  background: #fffbeb !important;
+  border-color: #fed7aa !important;
+}
+
+/* Table Styles */
+.ant-table-wrapper {
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+.ant-table-thead > tr > th {
+  background: #f8fafc !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f8fafc !important;
+}
+
+/* Modal Styles */
+.ant-modal-header {
+  border-bottom: 2px solid #f1f5f9 !important;
+  padding: 20px 24px !important;
+}
+
+.ant-modal-title {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+}
+
+.ant-modal-body {
+  padding: 24px !important;
+}
+
+/* Switch Styles */
+.ant-switch-checked {
+  background: #10b981 !important;
+}
+
+/* Tag Styles */
+.ant-tag {
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settingsContainer {
+    padding: 16px;
+  }
+  
+  .settingsHeader {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .settingsCard .ant-tabs-tab {
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+  }
+  
+  .ant-card-body {
+    padding: 16px !important;
+  }
+}
+
+/* Loading States */
+.ant-spin-container {
+  transition: opacity 0.3s ease !important;
+}
+
+.ant-spin-blur {
+  opacity: 0.5 !important;
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.settings-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Scrollbar Styles */
+.ant-tabs-content-holder::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ant-tabs-content-holder::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.ant-tabs-content-holder::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.ant-tabs-content-holder::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

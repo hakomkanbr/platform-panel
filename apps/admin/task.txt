@@ -1,0 +1,176 @@
++-----------------+
+|     Module      |  <-- يمثل النظام المستقل (Orders, Forms, Users…)
++-----------------+
+| Id (PK)         |
+| Name            |
+| Description     |
+| ModuleType      |  <-- يميز نوع النظام
++-----------------+
+        |
+        | 1
+        |
+        * 
++-----------------+
+|   DynamicField  |  <-- الحقول لكل Module
++-----------------+
+| Id (PK)         |
+| ModuleId (FK)   |
+| TemplateId (FK) |  <-- اختياري إذا Module يحتوي Templates
+| Name            |
+| FieldType       |
+| Required        |
+| DefaultValue    |
++-----------------+
+        |
+        | 1
+        |
+        *
++-----------------+
+|     Content     |  <-- الإدخالات / Records
++-----------------+
+| Id (PK)         |
+| ModuleId (FK)   |
+| TemplateId (FK) |  <-- اختياري
+| Slug            |
+| Source          |  <-- Admin أو API
+| Published       |
+| CreatedAt       |
+| UpdatedAt       |
++-----------------+
+        |
+        | 1
+        |
+        *
++---------------------+
+|   DynamicFieldValue |
++---------------------+
+| Id (PK)             |
+| ContentId (FK)      |
+| DynamicFieldId (FK) |
+| Value               |
++---------------------+
+
++-----------------+
+|   Template       |  <-- اختياري لتقسيم Module لنوع محتوى
++-----------------+
+| Id (PK)          |
+| ModuleId (FK)    |
+| Name             |
+| Description      |
++-----------------+
+
+
+_Pages
+__Home Page
+___Banner Template
+____title
+____desc
+____image
+___AboutUS Template
+____image
+____title
+____description
+___Hizmetlerimiz Template
+____image
+____title
+____description
+___OurProject Template
+____image
+____title
+____description
+___Footer Template
+__About Page
+___AboutUs2 Template
+__Contect Page
+
+اذا افترضنا ان تصميم قاعدة البيانات هكذا وكان لدي مشروع مثلا موقع ويب فيه صفحات وكل صفحة داخلها template وكل templates داخله feild وكل مقالة لها  template and feilds
+
+تمام، إذن يجب أن نصمم قاعدة البيانات بحيث تكون **مرنة جدًا** وتدعم سيناريوهات مختلفة، ليس فقط صفحات ومواقع، بل أي نوع محتوى يمكن أن يتعامل مع Templates وFields وContents. هذا يعني أننا بحاجة لتعميم المسميات وجعل الكيانات **قابلة لإعادة الاستخدام**.
+
+---
+
+### 🔹 توصياتي لتعديل المسميات والتصميم:
+
+1. **Page → Container / Section**
+
+   * بدل `Page`، يمكن تسميتها `Container` أو `Section`، لأنها قد تمثل صفحة ويب، مقال، أو حتى وحدة محتوى لأي نظام آخر.
+
+2. **Component → Item / Block**
+
+   * `Component` تصبح `Block` أو `Item`، أي عنصر داخل الـ Container يمكن أن يستخدم Template معين.
+
+3. **Template → Template**
+
+   * يبقى `Template`، لأنه يحدد هيكل البيانات (Fields) لأي Block أو Item.
+
+4. **Field → Field**
+
+   * يبقى `Field`، يمثل الحقل داخل Template.
+
+5. **Content → Content / Entry**
+
+   * `Content` أو `Entry`، أي سجل فعلي يحوي بيانات لBlock أو Template.
+
+6. **FieldValue → FieldValue**
+
+   * يبقى `FieldValue`، يربط Entry مع Field ويخزن القيمة.
+
+7. **العلاقات يجب أن تكون مرنة:**
+
+   * Block أو Item يمكن أن يرتبط بـ Container اختياريًا.
+   * Content / Entry مرتبط بـ Template وليس بالضرورة بالـ Page.
+   * يمكن دعم أكثر من نوع Container (صفحة، مقال، منتج، إلخ) باستخدام `ContainerType`.
+
+8. **DeleteBehavior:**
+
+   * **NoAction** أو **Restrict** في كل علاقة FK أساسية لتجنب multiple cascade paths.
+   * Cascade فقط على FieldValues و Child Collections الصغيرة التي تعتمد بالكامل على Parent.
+
+---
+
+### 🔹 مثال على التصميم الجديد:
+
+* **Container**
+
+  * Id, Slug, Title, ContainerType, Published
+  * ICollection<Block> Blocks
+
+* **Block**
+
+  * Id, ContainerId?, TemplateId, Name, Order
+  * ICollection<FieldValue> FieldValues
+
+* **Template**
+
+  * Id, Name, Slug
+  * ICollection<Field> Fields
+
+* **Field**
+
+  * Id, TemplateId, Name, FieldType, Required
+
+* **Entry** (المحتوى الفعلي)
+
+  * Id, TemplateId, ContainerId?, Published
+  * ICollection<FieldValue> FieldValues
+
+* **FieldValue**
+
+  * Id, EntryId, FieldId, Value, LanguageSlug
+
+---
+
+بهذا التصميم:
+
+* Pages ليست ضرورية، يمكن أن يكون Container مجرد مقال، منتج، أو حتى صفحة ويب.
+* Templates وFields قابلة لإعادة الاستخدام لأي نوع محتوى.
+* Block يمثل وحدة قابلة لإعادة الاستخدام ضمن أي Container.
+* Entry وFieldValue يمثلان البيانات الحقيقية، مستقلين عن نوع المنصة.
+
+---
+
+إذا أحببت، أستطيع أن أعطيك **كود C# كامل بالـ Fluent API مع DeleteBehavior مضبوط، باستخدام هذه المسميات المرنة** بحيث تكون منصتك جاهزة لأي نوع محتوى لاحقًا.
+
+هل تريد أن أفعل ذلك الآن؟
+
+CSMhakim.123

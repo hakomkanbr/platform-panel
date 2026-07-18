@@ -1,0 +1,142 @@
+.modern-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+}
+
+.sidebar-logo {
+  padding: 10px 0px;
+  text-align: center;
+}
+
+.logo-expanded {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text {
+  text-align: left;
+}
+
+.logo-collapsed {
+  display: flex;
+  justify-content: center;
+}
+
+.logo-icon-collapsed {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logo-icon-collapsed:hover {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.logo-icon-collapsed:hover :global(.anticon) {
+  color: white !important;
+}
+
+.user-info-section {
+  padding: 0 16px 16px;
+}
+
+.ant-menu{
+  overflow: auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-status {
+  text-align: center;
+}
+
+.navigation-menu {
+  padding: 0 8px;
+}
+
+.menu-item-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-button:hover {
+  background: #f8fafc;
+}
+
+.collapse-toggle {
+  padding: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.collapse-button {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.collapse-button:hover {
+  background: #f8fafc;
+  border-color: #6366f1;
+  color: #6366f1;
+}
