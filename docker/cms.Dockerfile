@@ -1,18 +1,18 @@
 FROM node:22-alpine AS base
 RUN corepack enable && corepack prepare pnpm@9.0.0 --activate && \
-    pnpm add -g turbo
+    npm install -g turbo
 WORKDIR /app
 
 FROM base AS pruner
 COPY . .
-RUN pnpm exec turbo prune app-cms --docker
+RUN turbo prune app-cms --docker
 
 FROM base AS builder
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=pruner /app/out/json/ .
 RUN pnpm install --frozen-lockfile
 COPY --from=pruner /app/out/full/ .
-RUN pnpm exec turbo build --filter=app-cms
+RUN turbo build --filter=app-cms
 
 FROM base AS prod-deps
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
