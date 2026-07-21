@@ -1,5 +1,6 @@
 FROM node:22-alpine AS base
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate && \
+    pnpm add -g turbo
 WORKDIR /app
 
 FROM base AS pruner
