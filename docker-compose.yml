@@ -6,8 +6,39 @@ services:
       dockerfile: docker/admin.Dockerfile
     container_name: panel-admin
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+
+      # Router
+      - traefik.http.routers.admin.rule=Host(`docs.share2sells.com`) || Host(`www.docs.share2sells.com`)
+      - traefik.http.routers.admin.entrypoints=websecure
+      - traefik.http.routers.admin.tls=true
+      - traefik.http.routers.admin.tls.certresolver=letsencrypt
+
+      # Service
+      - traefik.http.services.admin.loadbalancer.server.port=3000
+
+      # Redirect WWW -> Non WWW
+      - traefik.http.middlewares.admin-redirect.redirectregex.regex=^https://www\.(.*)
+      - traefik.http.middlewares.admin-redirect.redirectregex.replacement=https://$${1}
+      - traefik.http.middlewares.admin-redirect.redirectregex.permanent=true
+
+      # Security Headers
+      - traefik.http.middlewares.admin-security.headers.browserXssFilter=true
+      - traefik.http.middlewares.admin-security.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.admin-security.headers.forceSTSHeader=true
+      - traefik.http.middlewares.admin-security.headers.stsSeconds=31536000
+      - traefik.http.middlewares.admin-security.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.admin-security.headers.stsPreload=true
+      - traefik.http.middlewares.admin-security.headers.referrerPolicy=strict-origin-when-cross-origin
+
+      # Compress
+      - traefik.http.middlewares.admin-compress.compress=true
+
+      # Middlewares
+      - traefik.http.routers.admin.middlewares=admin-security,admin-compress,website-redirect
     ports:
-      - "3000:3000"
+      - "3000"
     env_file:
       - apps/admin/.env.production
     networks:
@@ -19,8 +50,39 @@ services:
       dockerfile: docker/cms.Dockerfile
     container_name: panel-cms
     restart: unless-stopped
+    labels:
+      - traefik.enable=true
+
+      # Router
+      - traefik.http.routers.cms.rule=Host(`docs.share2sells.com`) || Host(`www.docs.share2sells.com`)
+      - traefik.http.routers.cms.entrypoints=websecure
+      - traefik.http.routers.cms.tls=true
+      - traefik.http.routers.cms.tls.certresolver=letsencrypt
+
+      # Service
+      - traefik.http.services.cms.loadbalancer.server.port=3000
+
+      # Redirect WWW -> Non WWW
+      - traefik.http.middlewares.cms-redirect.redirectregex.regex=^https://www\.(.*)
+      - traefik.http.middlewares.cms-redirect.redirectregex.replacement=https://$${1}
+      - traefik.http.middlewares.cms-redirect.redirectregex.permanent=true
+
+      # Security Headers
+      - traefik.http.middlewares.cms-security.headers.browserXssFilter=true
+      - traefik.http.middlewares.cms-security.headers.contentTypeNosniff=true
+      - traefik.http.middlewares.cms-security.headers.forceSTSHeader=true
+      - traefik.http.middlewares.cms-security.headers.stsSeconds=31536000
+      - traefik.http.middlewares.cms-security.headers.stsIncludeSubdomains=true
+      - traefik.http.middlewares.cms-security.headers.stsPreload=true
+      - traefik.http.middlewares.cms-security.headers.referrerPolicy=strict-origin-when-cross-origin
+
+      # Compress
+      - traefik.http.middlewares.cms-compress.compress=true
+
+      # Middlewares
+      - traefik.http.routers.cms.middlewares=cms-security,cms-compress,website-redirect
     ports:
-      - "3001:3001"
+      - "3001"
     env_file:
       - apps/cms/.env.production
     networks:

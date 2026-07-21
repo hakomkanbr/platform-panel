@@ -25,7 +25,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=prod-deps /app/package.json ./
 COPY --from=builder /app/apps/admin ./apps/admin
-EXPOSE 3000
+EXPOSE 3001
 USER nextjs
 WORKDIR /app/apps/admin
 CMD ["pnpm", "start"]
