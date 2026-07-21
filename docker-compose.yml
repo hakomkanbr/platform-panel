@@ -1,11 +1,16 @@
 services:
-
   admin:
     build:
       context: .
       dockerfile: docker/admin.Dockerfile
     container_name: panel-admin
     restart: unless-stopped
+    env_file:
+      - apps/admin/.env.production
+    expose:
+      - "3000"
+    networks:
+      - backend
     labels:
       - traefik.enable=true
 
@@ -18,7 +23,7 @@ services:
       # Service
       - traefik.http.services.admin.loadbalancer.server.port=3000
 
-      # Redirect WWW -> Non WWW
+      # WWW -> Non-WWW
       - traefik.http.middlewares.admin-redirect.redirectregex.regex=^https://www\.(.*)
       - traefik.http.middlewares.admin-redirect.redirectregex.replacement=https://$${1}
       - traefik.http.middlewares.admin-redirect.redirectregex.permanent=true
@@ -32,17 +37,11 @@ services:
       - traefik.http.middlewares.admin-security.headers.stsPreload=true
       - traefik.http.middlewares.admin-security.headers.referrerPolicy=strict-origin-when-cross-origin
 
-      # Compress
+      # Compression
       - traefik.http.middlewares.admin-compress.compress=true
 
       # Middlewares
-      - traefik.http.routers.admin.middlewares=admin-security,admin-compress,website-redirect
-    ports:
-      - "3000"
-    env_file:
-      - apps/admin/.env.production
-    networks:
-      - backend
+      - traefik.http.routers.admin.middlewares=admin-redirect,admin-security,admin-compress
 
   cms:
     build:
@@ -50,6 +49,12 @@ services:
       dockerfile: docker/cms.Dockerfile
     container_name: panel-cms
     restart: unless-stopped
+    env_file:
+      - apps/cms/.env.production
+    expose:
+      - "3001"
+    networks:
+      - backend
     labels:
       - traefik.enable=true
 
@@ -62,7 +67,7 @@ services:
       # Service
       - traefik.http.services.cms.loadbalancer.server.port=3001
 
-      # Redirect WWW -> Non WWW
+      # WWW -> Non-WWW
       - traefik.http.middlewares.cms-redirect.redirectregex.regex=^https://www\.(.*)
       - traefik.http.middlewares.cms-redirect.redirectregex.replacement=https://$${1}
       - traefik.http.middlewares.cms-redirect.redirectregex.permanent=true
@@ -76,17 +81,11 @@ services:
       - traefik.http.middlewares.cms-security.headers.stsPreload=true
       - traefik.http.middlewares.cms-security.headers.referrerPolicy=strict-origin-when-cross-origin
 
-      # Compress
+      # Compression
       - traefik.http.middlewares.cms-compress.compress=true
 
       # Middlewares
-      - traefik.http.routers.cms.middlewares=cms-security,cms-compress,website-redirect
-    ports:
-      - "3001"
-    env_file:
-      - apps/cms/.env.production
-    networks:
-      - backend
+      - traefik.http.routers.cms.middlewares=cms-redirect,cms-security,cms-compress
 
 networks:
   backend:
