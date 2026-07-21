@@ -22,8 +22,7 @@ import {
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authApi } from "@/lib/api/auth";
-import { useAuth } from "@/hooks/useAuth";
+import { authApi, useAuth } from "@repo/auth";
 
 const { Text } = Typography;
 

@@ -26,7 +26,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authApi } from "@/lib/api/auth";
+import { authApi } from "@repo/auth";
 
 const { Text, Title } = Typography;
 
