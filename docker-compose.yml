@@ -10,7 +10,7 @@ services:
       - traefik.enable=true
 
       # Router
-      - traefik.http.routers.admin.rule=Host(`docs.share2sells.com`) || Host(`www.docs.share2sells.com`)
+      - traefik.http.routers.admin.rule=Host(`app.share2sells.com`) || Host(`www.app.share2sells.com`)
       - traefik.http.routers.admin.entrypoints=websecure
       - traefik.http.routers.admin.tls=true
       - traefik.http.routers.admin.tls.certresolver=letsencrypt
@@ -54,7 +54,7 @@ services:
       - traefik.enable=true
 
       # Router
-      - traefik.http.routers.cms.rule=Host(`docs.share2sells.com`) || Host(`www.docs.share2sells.com`)
+      - traefik.http.routers.cms.rule=Host(`cms.share2sells.com`) || Host(`www.cms.share2sells.com`)
       - traefik.http.routers.cms.entrypoints=websecure
       - traefik.http.routers.cms.tls=true
       - traefik.http.routers.cms.tls.certresolver=letsencrypt
