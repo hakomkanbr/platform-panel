@@ -3,7 +3,7 @@ import { GlobalOutlined } from "@ant-design/icons";
 import { Tag } from "antd";
 
 const DtLanguage: React.FC<{ value: string }> = ({ value }) => {
-    if (!value) return "";
+    if (!value) return null;
     return <Tag
         icon={<GlobalOutlined />}
         style={{

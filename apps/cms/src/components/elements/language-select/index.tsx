@@ -25,7 +25,7 @@ export default function LanguageSelect({
   onClick?: MenuProps['onClick']
   size?: "small" | "default" | "large"
   variant?: "default" | "compact" | "minimal"
-}) {
+}): React.ReactElement | null {
   const { languages } = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
 
@@ -46,7 +46,7 @@ export default function LanguageSelect({
         </div>
       );
     }
-    return singleItem;
+    return <>{singleItem}</>;
   }
 
   const handleLanguageChange = (e: any) => {

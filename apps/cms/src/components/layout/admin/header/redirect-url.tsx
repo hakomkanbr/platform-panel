@@ -21,7 +21,7 @@ const RedirectWebSite = () => {
     // }, []);
 
     if(!user?.siteUrl){
-        return "";
+        return null;
     }
     return (
         <Link target='_blank' href={user?.siteUrl ?? ""}>

@@ -4,7 +4,7 @@ import React, { CSSProperties } from "react";
 
 const WriteError: React.FC<{ errors: IError[] | IError, style?: CSSProperties }> = ({ errors, style }) => {
 
-    if (errors == null) return "";
+    if (errors == null) return null;
     return (
         <Flex gap={10} justify="center" style={{ flexDirection: "column", margin: "10px 0", ...style }} align="center">
             {Array.isArray(errors) ? errors?.map((item, i) => (

@@ -18,7 +18,7 @@ import {
 import { IRoleType, ISidebarItem } from "@repo/shared-types";
 import { IoNavigateOutline } from "react-icons/io5";
 
-export const getSidebarItems = (userRole: IRoleType): ISidebarItem[] => {
+export const getSidebarItems = (userRole: IRoleType, modules: any[] = []): ISidebarItem[] => {
   const baseItems: ISidebarItem[] = [
     {
       key: "home",

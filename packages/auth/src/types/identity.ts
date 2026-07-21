@@ -15,4 +15,5 @@ export interface AuthState {
   isAuthenticated: boolean
   isPlatformAdmin: boolean
   isTenantAdmin: boolean
+  isLoading: boolean
 }

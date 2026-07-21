@@ -5,7 +5,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import { StoreProvider, makeStore } from "@repo/store";
 import { ConfigProvider } from "antd";
 import HundleFullPage from "@/helper/get-page-url";
-import { AuthProvider, DefaultAuthClient, defaultAuthClient } from "@repo/auth";
+import { AuthProvider } from "@repo/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 

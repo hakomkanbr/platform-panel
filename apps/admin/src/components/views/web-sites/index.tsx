@@ -7,7 +7,7 @@ import Link from "next/link";
 import enumCreateUpdate from "@/abstracts/create-update";
 import columns from "./columns";
 
-export default async function WebSitesView({
+export default function WebSitesView({
   params
 }: {
   params: { slug: string }

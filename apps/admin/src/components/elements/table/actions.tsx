@@ -30,7 +30,7 @@ const DtActions: React.FC<{ data: any, column: IColumn }> = ({ data, column }) =
     });
   }
 
-  if(!items.length) return "";
+  if(!items.length) return null;
   return (
     <Space direction="vertical">
       <Dropdown menu={{

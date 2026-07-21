@@ -14,7 +14,8 @@ const { Sider } = Layout;
 export interface AdminShellProps {
   children: React.ReactNode;
   user: IUserProps;
-  sidebarItems: ISidebarItem[];
+  sidebarItems?: ISidebarItem[];
+  modules?: IModule[];
   siteSlug?: string;
   onLogout?: () => void;
   siteRequiredPaths?: string[];
@@ -32,6 +33,7 @@ const AdminShell: React.FC<AdminShellProps> = ({
   children,
   user,
   sidebarItems,
+  modules,
   siteSlug,
   onLogout,
   siteRequiredPaths = [],
@@ -39,6 +41,11 @@ const AdminShell: React.FC<AdminShellProps> = ({
   headerComponents,
   currentProject,
 }) => {
+  const resolvedSidebarItems: ISidebarItem[] = sidebarItems || (modules || []).map((mod) => ({
+    key: mod.slug,
+    label: mod.name,
+    path: `/${mod.slug}`,
+  }));
   const [collapsed, setCollapsed] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(280);
   const [isMobile, setIsMobile] = useState(false);
@@ -135,7 +142,7 @@ const AdminShell: React.FC<AdminShellProps> = ({
         >
           <ModernSidebar
             collapsed={collapsed}
-            sidebarItems={sidebarItems}
+            sidebarItems={resolvedSidebarItems}
             user={user}
             router={router}
             isMobile={isMobile}

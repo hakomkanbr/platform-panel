@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, Suspense } from "react";
 import {
   Button,
   Input,
@@ -9,6 +9,7 @@ import {
   Checkbox,
   Divider,
   message,
+  Spin,
 } from "antd";
 import {
   MailOutlined,
@@ -27,7 +28,7 @@ import { authApi, useAuth } from "@repo/auth";
 const { Text } = Typography;
 const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://localhost:52562";
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect");
@@ -265,5 +266,13 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: 48 }}><Spin size="large" /></div>}>
+      <LoginPageContent />
+    </Suspense>
   );
 }

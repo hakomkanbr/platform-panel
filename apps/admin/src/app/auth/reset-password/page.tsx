@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
-import { Button, Input, Typography } from "antd";
+import React, { useState, useCallback, useMemo, Suspense } from "react";
+import { Button, Input, Typography, Spin } from "antd";
 import {
   LockOutlined,
   EyeInvisibleOutlined,
@@ -36,7 +36,7 @@ const requirements = [
   { label: "Special character", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
 ];
 
-export default function ResetPasswordPage() {
+function ResetPasswordPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
@@ -385,5 +385,13 @@ export default function ResetPasswordPage() {
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: 48 }}><Spin size="large" /></div>}>
+      <ResetPasswordPageContent />
+    </Suspense>
   );
 }

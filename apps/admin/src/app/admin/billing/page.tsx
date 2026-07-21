@@ -249,8 +249,8 @@ export default function BillingPage() {
       }
 
       const result: PlanChangeResult = await (changeType === "upgrade"
-        ? upgradeMutation.mutateAsync(request as UpgradeSubscriptionRequest)
-        : downgradeMutation.mutateAsync(request as DowngradeSubscriptionRequest));
+        ? upgradeMutation.mutateAsync(request as unknown as UpgradeSubscriptionRequest)
+        : downgradeMutation.mutateAsync(request as unknown as DowngradeSubscriptionRequest));
 
       const net = proratedInfo?.netAmount ?? 0;
       if (net > 0) {

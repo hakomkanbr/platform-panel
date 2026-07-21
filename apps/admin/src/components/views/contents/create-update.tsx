@@ -464,7 +464,6 @@ export default function CreateUpdateContentView({
                                         <DatePicker
                                             style={{ width: "100%" }}
                                             size="large"
-                                            prefix={<CalendarOutlined />}
                                         />
                                     </Form.Item>
                                 )}

@@ -53,4 +53,6 @@ export type {
   UsageDto,
   UsageSummaryDto,
   UsageSummaryItem,
+  UsageHistoryRequest,
+  UsageHistoryResponse,
 } from './usage'

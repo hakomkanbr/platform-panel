@@ -4,9 +4,9 @@ export type {
   IRoleType,
 } from './user/user';
 
-export type { default as ISite } from './site';
+export type { ISite } from './site';
 
-export type { default as ILanguage } from './language';
+export type { ILanguage } from './language';
 
 export type {
   IError,
@@ -88,4 +88,4 @@ export type { IInputIdText } from './id-text';
 
 export { default as PlacesEnum } from './file.enum';
 
-export { default as socialMediaData } from './social-media';
+

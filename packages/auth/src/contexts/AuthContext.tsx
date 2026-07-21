@@ -10,10 +10,13 @@ import React, {
 } from "react";
 import type { UserProfile, AuthState } from "../types/identity";
 import type { AuthClient } from "../types/client";
-import { DefaultAuthClient, defaultAuthClient } from "../lib/api/client";
+import { DefaultAuthClient } from "../lib/api/client";
 
 export interface SessionManager extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
+  login: {
+    (email: string, password: string): Promise<void>;
+    (accessToken: string, refreshToken: string, user: Partial<UserProfile>): void;
+  };
   logout: () => Promise<void>;
   requireTenantAdmin: () => boolean;
 }
@@ -77,28 +80,32 @@ export function AuthProvider({
   }, [authClient]);
 
   const login = useCallback(
-    async (email: string, password: string) => {
-      const res = await authClient.login(email, password);
-      if (res.success && res.data?.user) {
-        const user = res.data.user;
-        const roles = user.roles || [];
-        setAuthState({
-          token: null,
-          refreshToken: null,
-          user,
-          isAuthenticated: true,
-          isPlatformAdmin: roles.includes("platform_admin"),
-          isTenantAdmin:
-            roles.includes("tenant_admin") ||
-            roles.includes("tenant_editor") ||
-            roles.includes("tenant_viewer") ||
-            roles.includes("sales_manager") ||
-            roles.includes("tenant_user"),
-          isLoading: false,
-        });
+    async (...args: [string, string] | [string, string, Partial<UserProfile>]) => {
+      let user: Partial<UserProfile>;
+      if (args.length === 3) {
+        user = args[2];
       } else {
-        throw new Error(res.error?.message || "Login failed");
+        const res = await authClient.login(args[0], args[1]);
+        if (!res.success || !res.data?.user) {
+          throw new Error(res.error?.message || "Login failed");
+        }
+        user = res.data.user;
       }
+      const roles = user.roles || [];
+      setAuthState({
+        token: null,
+        refreshToken: null,
+        user: user as UserProfile,
+        isAuthenticated: true,
+        isPlatformAdmin: roles.includes("platform_admin"),
+        isTenantAdmin:
+          roles.includes("tenant_admin") ||
+          roles.includes("tenant_editor") ||
+          roles.includes("tenant_viewer") ||
+          roles.includes("sales_manager") ||
+          roles.includes("tenant_user"),
+        isLoading: false,
+      });
     },
     [authClient],
   );

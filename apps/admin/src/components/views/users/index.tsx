@@ -8,7 +8,7 @@ import Link from "next/link";
 import enumCreateUpdate from "@/abstracts/create-update";
 import ConfirmUserEmail from "./confirm-email";
 
-export default async function UsersView({
+export default function UsersView({
   params
 }: {
   params: { slug: string }

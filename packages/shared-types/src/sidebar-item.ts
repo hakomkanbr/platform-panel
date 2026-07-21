@@ -1,12 +1,11 @@
 // types/sidebar.ts
-import { ReactNode } from 'react';
 
 export interface ISidebarItem {
     key: string;
     label: string;
-    icon?: ReactNode;
+    icon?: any;
     path?: string;
-    roles?: string[];       // قائمة الأدوار المسموح لهم
+    roles?: string[];
     children?: ISidebarItem[];
     badge?: number | null;
 }

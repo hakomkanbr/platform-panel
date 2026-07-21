@@ -2,7 +2,7 @@ import ILanguage from "@/abstracts/language";
 import DtLanguage from "./action_language";
 import { TableColumnProps, TableProps } from "antd";
 
-export const columnLanguage: TableColumnProps = {
+export const columnLanguage: TableColumnProps<any> = {
     title: "Language",
     dataIndex: "language",
     align: "right",
@@ -12,7 +12,7 @@ export const columnLanguage: TableColumnProps = {
     },
 };
 
-export const columnCreatedDate: TableColumnProps = {
+export const columnCreatedDate: TableColumnProps<any> = {
     title: "Created",
     dataIndex: "createdAt",
     align: "right",
@@ -33,7 +33,7 @@ export const columnCreatedDate: TableColumnProps = {
     },
 };
 
-export const columnUpdatedDate: TableColumnProps = {
+export const columnUpdatedDate: TableColumnProps<any> = {
     title: "Updated",
     dataIndex: "updatedAt",
     align: "right",

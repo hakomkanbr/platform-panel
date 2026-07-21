@@ -60,7 +60,7 @@ const SiteSelect = () => {
     };
 
     useEffect(() => {
-        startTransition(fetchSites);
+        startTransition(() => { fetchSites(); });
     }, [sites.changeSite]);
 
     return (

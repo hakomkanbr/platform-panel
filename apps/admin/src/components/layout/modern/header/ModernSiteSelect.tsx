@@ -91,7 +91,7 @@ const ModernSiteSelect: React.FC = () => {
 
   // Initialize on mount
   useEffect(() => {
-    startTransition(fetchSites);
+    startTransition(() => { fetchSites(); });
   }, [site.changeSite]);
 
   useEffect(() => {

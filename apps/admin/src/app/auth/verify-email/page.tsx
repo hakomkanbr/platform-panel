@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Button, Typography } from "antd";
+import React, { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { Button, Typography, Spin } from "antd";
 import {
   MailOutlined,
   ReloadOutlined,
@@ -14,7 +14,7 @@ import { authApi } from "@repo/auth";
 
 const { Text } = Typography;
 
-export default function VerifyEmailPage() {
+function VerifyEmailPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "your email";
@@ -203,5 +203,13 @@ export default function VerifyEmailPage() {
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: 48 }}><Spin size="large" /></div>}>
+      <VerifyEmailPageContent />
+    </Suspense>
   );
 }
