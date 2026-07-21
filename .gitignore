@@ -338,3 +338,4 @@ ASALocalRun/
 
 **/.env*
 /apps/cms/.env.production
+/apps/admin/.env.production
