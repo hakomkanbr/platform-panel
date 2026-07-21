@@ -60,7 +60,7 @@ services:
       - traefik.http.routers.cms.tls.certresolver=letsencrypt
 
       # Service
-      - traefik.http.services.cms.loadbalancer.server.port=3000
+      - traefik.http.services.cms.loadbalancer.server.port=3001
 
       # Redirect WWW -> Non WWW
       - traefik.http.middlewares.cms-redirect.redirectregex.regex=^https://www\.(.*)
