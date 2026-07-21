@@ -11,7 +11,7 @@ services:
     env_file:
       - apps/admin/.env.production
     networks:
-      - panel-network
+      - backend
 
   cms:
     build:
@@ -24,8 +24,9 @@ services:
     env_file:
       - apps/cms/.env.production
     networks:
-      - panel-network
+      - backend
 
 networks:
-  panel-network:
-    driver: bridge
+  backend:
+    external: true
+    name: platform_backend
