@@ -17,7 +17,7 @@ export default function SsoPage() {
     const ticket = params.get("ticket");
 
     if (!ticket) {
-      window.location.href = "http://localhost:3000/auth/login";
+      window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/auth/login`;
       return;
     }
 
@@ -35,10 +35,10 @@ export default function SsoPage() {
           document.cookie = `refresh_token=${json.data.refreshToken}; path=/; max-age=2592000; SameSite=Lax;`;
           window.location.href = "/admin";
         } else {
-          window.location.href = "http://localhost:3000/auth/login";
+          window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/auth/login`;
         }
       } catch {
-        window.location.href = "http://localhost:3000/auth/login";
+        window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/auth/login`;
       }
     })();
   }, []);

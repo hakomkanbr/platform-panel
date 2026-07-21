@@ -15,8 +15,8 @@ export function AuthInitGate({ children }: { children: React.ReactNode }) {
 
     if (!isLoading && !isAuthenticated) {
       // Redirect to Platform Dashboard login with SSO redirect back
-      const callbackUrl = encodeURIComponent("http://localhost:3001/auth/sso");
-      window.location.href = `http://localhost:3000/auth/login?redirect=${callbackUrl}`;
+      const callbackUrl = encodeURIComponent(`${process.env.NEXT_PUBLIC_MAIN_APP_URL}/auth/sso`);
+      window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/auth/login?redirect=${callbackUrl}`;
     }
   }, [isLoading, isAuthenticated]);
 
