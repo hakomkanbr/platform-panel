@@ -334,3 +334,7 @@ ASALocalRun/
 /API/logs.txt
 /API/_requestlogs.txt
 /API/appsettings*.json
+
+
+**/.env*
+/apps/cms/.env.production
