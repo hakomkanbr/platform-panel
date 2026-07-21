@@ -10,14 +10,14 @@ RUN turbo prune admin --docker
 FROM base AS builder
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=pruner /app/out/json/ .
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 COPY --from=pruner /app/out/full/ .
 RUN turbo build --filter=admin
 
 FROM base AS prod-deps
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=pruner /app/out/json/ .
-RUN pnpm install --frozen-lockfile --prod
+RUN pnpm install --no-frozen-lockfile --prod
 
 FROM base AS runner
 RUN addgroup --system --gid 1001 nodejs && \
