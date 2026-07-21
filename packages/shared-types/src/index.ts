@@ -82,9 +82,9 @@ export {
   requiresOptions,
 } from './module-input';
 
-export { default as SelectDataType } from './label-value';
+export type { SelectDataType } from './label-value';
 
-export { default as IInputIdText } from './id-text';
+export type { IInputIdText } from './id-text';
 
 export { default as PlacesEnum } from './file.enum';
 

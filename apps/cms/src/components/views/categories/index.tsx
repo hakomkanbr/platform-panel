@@ -5,7 +5,7 @@ import CategoryCreateUpdateView from "./create-update";
 import columns from "./columns";
 import { IModule } from "@/types/page";
 
-export default async function CategoriesView({
+export default function CategoriesView({
   params,
   model
 }: {
