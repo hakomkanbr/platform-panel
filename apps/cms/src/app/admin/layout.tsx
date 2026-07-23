@@ -4,10 +4,9 @@ import { getTokenPayload } from "@/helper/session";
 import { cookies } from "next/headers";
 import FullScreenLoader from "@/components/elements/full-screnn-loader/full-screnn-loader";
 import HundleLanguage from "@/components/elements/hundle-language";
-import { AdminShell } from "@repo/shell";
 import { getSidebarItems } from "@/utils/sidebarItems";
-import QueryProvider from "@/components/common/QueryProvider";
 import { AuthInitGate } from "@/components/auth/AuthInitGate";
+import CmsLayoutClient from "./CmsLayoutClient";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,14 +26,12 @@ export default async function RootLayout({
   const user: any = token ? await getTokenPayload(token) : null;
 
   return (
-    <AdminShell sidebarItems={getSidebarItems(user.role)} user={user || {}}>
-      <QueryProvider>
-        <AuthInitGate>
-          <FullScreenLoader />
-          <HundleLanguage data={[]} />
-          {children}
-        </AuthInitGate>
-      </QueryProvider>
-    </AdminShell>
+    <CmsLayoutClient sidebarItems={getSidebarItems(user.role)} user={user || {}}>
+      <AuthInitGate>
+        <FullScreenLoader />
+        <HundleLanguage data={[]} />
+        {children}
+      </AuthInitGate>
+    </CmsLayoutClient>
   );
 }

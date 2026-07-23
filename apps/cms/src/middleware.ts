@@ -14,5 +14,5 @@ export function middleware(request: NextRequest) {
 
 // حدد المسارات التي تريد حماية middleware لها
 export const config = {
-  matcher: ["/admin/:path*", "/auth/login", "/admin/select-site"],
+  matcher: ["/admin/:path*", "/auth/login", "/admin/select-project"],
 };

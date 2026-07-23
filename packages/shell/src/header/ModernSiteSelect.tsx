@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition, useCallback } from 'react';
 import { Select, Divider, Button, Typography, Tag, Avatar, Space, Tooltip } from 'antd';
 import {
   GlobalOutlined,
@@ -7,6 +7,7 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SettingOutlined,
+  FolderOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -26,13 +27,193 @@ import ISite from '@/abstracts/site';
 const { Text } = Typography;
 const { Option } = Select;
 
+const PROJECT_ID_COOKIE = 'ProjectId';
+const PROJECT_NAME_COOKIE = 'ProjectName';
 
-const ModernSiteSelect: React.FC = () => {
+interface QuickProject {
+  id: string;
+  name: string;
+  slug?: string;
+  description?: string;
+}
+
+interface ModernSiteSelectProps {
+  variant?: 'sites' | 'projects';
+  projects?: QuickProject[];
+  basePath?: string;
+  onProjectChange?: (project: { id: string; name: string; slug?: string }) => void;
+}
+
+const ModernSiteSelect: React.FC<ModernSiteSelectProps> = ({
+  variant = 'sites',
+  projects = [],
+  basePath = '/admin',
+  onProjectChange,
+}) => {
   const dispatch = useDispatch();
   const site = useSelector((state: RootState) => state.site);
   const router = useRouter();
   const [selectedSite, setSelectedSite] = useState<ISite | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // ===================== PROJECTS VARIANT =====================
+
+  const handleProjectChange = useCallback((value: string | null) => {
+    if (value) {
+      const project = projects.find(p => p.id === value);
+      if (project) {
+        setCookie(PROJECT_ID_COOKIE, project.id);
+        setCookie(PROJECT_NAME_COOKIE, project.name);
+        setSelectedProjectId(project.id);
+        if (onProjectChange) {
+          onProjectChange(project);
+        } else {
+          router.push(`${basePath}/projects/${project.id}`);
+        }
+      }
+    } else {
+      setCookie(PROJECT_ID_COOKIE, '');
+      setCookie(PROJECT_NAME_COOKIE, '');
+      setSelectedProjectId(null);
+    }
+  }, [projects, basePath, router, onProjectChange]);
+
+  useEffect(() => {
+    if (variant === 'projects') {
+      const initProject = async () => {
+        const storedId = await getCookie(PROJECT_ID_COOKIE);
+        if (storedId && projects.some(p => p.id === storedId)) {
+          setSelectedProjectId(storedId);
+        }
+      };
+      initProject();
+    }
+  }, [variant, projects]);
+
+  if (variant === 'projects') {
+    return (
+      <div className="modern-site-select">
+        <Select
+          value={selectedProjectId || undefined}
+          placeholder="Select a project..."
+          onChange={handleProjectChange}
+          allowClear
+          style={{ minWidth: 240, maxWidth: 360 }}
+          size="large"
+          optionLabelProp="label"
+          dropdownClassName="modern-site-select-dropdown"
+        >
+          {projects.map((project) => (
+            <Option
+              key={project.id}
+              value={project.id}
+              label={
+                <Space>
+                  <Avatar
+                    size={20}
+                    icon={<FolderOutlined />}
+                    style={{ background: '#F7931E' }}
+                  />
+                  <Text>{project.name}</Text>
+                </Space>
+              }
+            >
+              <div className="site-option">
+                <div className="site-info">
+                  <div className="site-header">
+                    <Avatar
+                      size={24}
+                      icon={<FolderOutlined />}
+                      style={{ background: '#F7931E', marginRight: 8 }}
+                    />
+                    <Text strong style={{ fontSize: 14 }}>
+                      {project.name}
+                    </Text>
+                  </div>
+                  {project.description && (
+                    <Text type="secondary" style={{ fontSize: 12, marginTop: 4, display: 'block' }}>
+                      {project.description}
+                    </Text>
+                  )}
+                </div>
+              </div>
+            </Option>
+          ))}
+        </Select>
+
+        {selectedProjectId && (() => {
+          const current = projects.find(p => p.id === selectedProjectId);
+          return current ? (
+            <div className="selected-site-info">
+              <Tooltip title={<div><strong>{current.name}</strong></div>}>
+                <div className="site-indicator">
+                  <div className="site-dot" style={{ background: '#F7931E' }} />
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    {current.name}
+                  </Text>
+                </div>
+              </Tooltip>
+            </div>
+          ) : null;
+        })()}
+
+        <style jsx>{`
+          .modern-site-select {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+          }
+          :global(.modern-site-select .ant-select) { border-radius: 12px; }
+          :global(.modern-site-select .ant-select-selector) {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: all 0.2s ease;
+          }
+          :global(.modern-site-select .ant-select-selector:hover) {
+            border-color: #F7931E;
+            background: white;
+          }
+          :global(.modern-site-select .ant-select-focused .ant-select-selector) {
+            border-color: #F7931E;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+          }
+          :global(.modern-site-select-dropdown) {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 4px 6px -5px rgb(0 0 0 / 0.05);
+            border: 1px solid #e2e8f0;
+          }
+          .site-option { padding: 8px 0; }
+          .site-info { display: flex; flex-direction: column; }
+          .site-header { display: flex; align-items: center; width: 100%; }
+          .selected-site-info { display: flex; align-items: center; justify-content: center; }
+          .site-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+          }
+          .site-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // ===================== SITES VARIANT (existing) =====================
 
   // Fetch websites
   const fetchSites = async () => {
@@ -91,21 +272,24 @@ const ModernSiteSelect: React.FC = () => {
 
   // Initialize on mount
   useEffect(() => {
-    startTransition(() => { fetchSites(); });
-  }, [site.changeSite]);
+    if (variant === 'sites') {
+      startTransition(() => { fetchSites(); });
+    }
+  }, [site.changeSite, variant]);
 
   useEffect(() => {
-    setSelectedSite({
-      name: site.name,
-      slug: site.slug,
-      description: site.description,
-      id: site.id,
-      link: site.link,
-      published: site.published,
-      role: site.role
-    })
-    console.info("sites.slug => ", site.slug);
-  }, [site.id]);
+    if (variant === 'sites') {
+      setSelectedSite({
+        name: site.name,
+        slug: site.slug,
+        description: site.description,
+        id: site.id,
+        link: site.link,
+        published: site.published,
+        role: site.role
+      });
+    }
+  }, [site.id, variant]);
 
   // Custom option renderer
   const renderOption = (site: ISite) => (

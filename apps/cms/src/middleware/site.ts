@@ -1,18 +1,18 @@
-import { SiteSlug } from "@/abstracts/siteSlug";
 import siteRequiredPaths from "@/utils/site-required-paths";
 import { NextRequest, NextResponse } from "next/server";
 
+const PROJECT_ID_COOKIE = "ProjectId";
+
 export function siteMiddleware(request: NextRequest) {
-  const currentSite = request.cookies.get(SiteSlug)?.value;
+  const currentProjectId = request.cookies.get(PROJECT_ID_COOKIE)?.value;
   const pathname = request.nextUrl.pathname;
 
-
-  const needsSite = siteRequiredPaths.some((path) =>
+  const needsProject = siteRequiredPaths.some((path) =>
     pathname.startsWith(path)
   );
 
-  if (!currentSite && needsSite) {
-    return NextResponse.redirect(new URL(`/admin/select-site?next=${pathname}`, request.url));
+  if (!currentProjectId && needsProject) {
+    return NextResponse.redirect(new URL(`/admin/select-project?next=${pathname}`, request.url));
   }
 
   return null;

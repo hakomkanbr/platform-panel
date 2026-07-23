@@ -6,6 +6,7 @@ import { modernTheme } from "@repo/theme";
 
 import ModernSidebar from "../sidebar/ModernSidebar";
 import ModernHeader from "../header/ModernHeader";
+import ModernSiteSelect from "../header/ModernSiteSelect";
 import ModernContent from "./ModernContent";
 import type { IModule, ISidebarItem } from "@repo/shared-types";
 import type { IUserProps } from "@repo/shared-types";
@@ -28,6 +29,7 @@ export interface AdminShellProps {
   onLogout?: () => void;
   siteRequiredPaths?: string[];
   basePath?: string;
+  appMode?: 'main' | 'sub';
   headerComponents?: {
     siteSelect?: React.ReactNode;
     redirectWebsite?: React.ReactNode;
@@ -47,6 +49,7 @@ const AdminShell: React.FC<AdminShellProps> = ({
   onLogout,
   siteRequiredPaths = [],
   basePath = "/admin",
+  appMode = 'main',
   headerComponents,
   currentProject,
   projects,
@@ -143,7 +146,21 @@ const AdminShell: React.FC<AdminShellProps> = ({
             onCollapse={handleCollapse}
             isMobile={isMobile}
             onLogout={onLogout}
-            headerComponents={headerComponents}
+            headerComponents={{
+              ...headerComponents,
+              siteSelect: headerComponents?.siteSelect ?? (
+                appMode === 'sub' && projects && projects.length > 0 ? (
+                  <ModernSiteSelect
+                    variant="projects"
+                    projects={projects}
+                    basePath={basePath}
+                    onProjectChange={(project) => {
+                      router.push(basePath);
+                    }}
+                  />
+                ) : undefined
+              ),
+            }}
             basePath={basePath}
             currentProject={currentProject}
           />
