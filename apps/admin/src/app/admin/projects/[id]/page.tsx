@@ -61,7 +61,7 @@ async function handleOpenCms() {
     const accessToken = getCookie("access_token") || getCookie("AuthToken");
     const refreshToken = getCookie("refresh_token");
     if (!accessToken) {
-      window.location.href = "http://localhost:3001";
+      window.location.href = "https://cms.share2sells.com";
       return;
     }
 
@@ -75,10 +75,10 @@ async function handleOpenCms() {
     });
     const json = await res.json();
     if (json.success && json.data?.ticket) {
-      window.location.href = `http://localhost:3001/auth/sso?ticket=${json.data.ticket}`;
+      window.location.href = `https://cms.share2sells.com/auth/sso?ticket=${json.data.ticket}`;
     }
   } catch {
-    window.location.href = "http://localhost:3001";
+    window.location.href = "https://cms.share2sells.com";
   }
 }
 
