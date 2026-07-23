@@ -20,6 +20,8 @@ services:
       - traefik.http.routers.admin.tls=true
       - traefik.http.routers.admin.tls.certresolver=letsencrypt
 
+      - traefik.docker.network=platform_backend
+      
       # Service
       - traefik.http.services.admin.loadbalancer.server.port=3000
 
@@ -57,6 +59,7 @@ services:
       - backend
     labels:
       - traefik.enable=true
+      - traefik.docker.network=platform_backend
 
       # Router
       - traefik.http.routers.cms.rule=Host(`cms.share2sells.com`) || Host(`www.cms.share2sells.com`)
