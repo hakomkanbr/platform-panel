@@ -97,7 +97,7 @@ export default function LanguageSettingSection({
                         <Card className="header-card">
                             <Space direction="vertical" size="small" style={{ width: '100%' }}>
                                 <Title level={4} style={{ margin: 0, color: '#1f2937' }}>
-                                    <TranslationOutlined style={{ marginRight: 8, color: '#6366f1' }} />
+                                    <TranslationOutlined style={{ marginRight: 8, color: '#F7931E' }} />
                                     Language Management
                                 </Title>
                                 <Text type="secondary">

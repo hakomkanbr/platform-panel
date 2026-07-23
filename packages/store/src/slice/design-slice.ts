@@ -1,4 +1,4 @@
-const DesignVaribles = { green: '#00b96b', green_opcity_9: '#1ee591' };
+const DesignVaribles = { green: '#F7931E', green_opcity_9: '#FFE0B2' };
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 // Define a type for the slice state

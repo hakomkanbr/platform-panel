@@ -46,7 +46,7 @@ function getPasswordStrength(password: string) {
   if (score < 30) return { score, label: "Weak", color: "#ef4444" };
   if (score < 50) return { score, label: "Fair", color: "#f59e0b" };
   if (score < 75) return { score, label: "Strong", color: "#22c55e" };
-  return { score, label: "Very Strong", color: "#6366f1" };
+  return { score, label: "Very Strong", color: "#F7931E" };
 }
 
 const stepConfigs = [
@@ -153,15 +153,15 @@ export default function RegisterPage() {
                   alignItems: "center",
                   justifyContent: "center",
                   background: i <= step
-                    ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                    ? "linear-gradient(135deg, #F7931E, #E67E00)"
                     : "#fff",
                   color: i <= step ? "#fff" : "#9ca3af",
                   fontSize: 16,
                   border: i > step ? "1.5px solid #d1d5db" : "none",
                   boxShadow: i === step
-                    ? "0 0 0 4px rgba(99,102,241,0.15)"
+                    ? "0 0 0 4px rgba(247,147,30,0.15)"
                     : i < step
-                      ? "0 2px 8px rgba(99,102,241,0.25)"
+                      ? "0 2px 8px rgba(247,147,30,0.25)"
                       : "none",
                 }}
                 transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
@@ -176,7 +176,7 @@ export default function RegisterPage() {
               </motion.div>
               <span style={{
                 fontSize: 11,
-                color: i === step ? "#6366f1" : i < step ? "#22c55e" : "#9ca3af",
+                color: i === step ? "#F7931E" : i < step ? "#22c55e" : "#9ca3af",
                 fontWeight: i === step ? 600 : 400,
                 transition: "color 0.3s",
               }}>
@@ -197,7 +197,7 @@ export default function RegisterPage() {
                     width: "100%",
                     borderRadius: 1,
                     background: i < step
-                      ? "linear-gradient(90deg, #6366f1, #8b5cf6)"
+                      ? "linear-gradient(90deg, #F7931E, #E67E00)"
                       : "#e5e7eb",
                   }}
                   transition={{ duration: 0.3 }}

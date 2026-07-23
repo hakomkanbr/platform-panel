@@ -79,7 +79,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             Powered by{" "}
             <a
               href="https://bremix.tech"
-              style={{ color: "#6366f1", textDecoration: "none" }}
+              style={{ color: "#F7931E", textDecoration: "none" }}
             >
               Bremix Tech
             </a>{" "}

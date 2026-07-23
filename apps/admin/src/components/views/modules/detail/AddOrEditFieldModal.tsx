@@ -75,7 +75,7 @@ export default function AddOrEditFieldModal({
                         width: 40,
                         height: 40,
                         borderRadius: 8,
-                        background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                        background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center"
@@ -142,7 +142,7 @@ export default function AddOrEditFieldModal({
                                 <Card 
                                     title={
                                         <Space>
-                                            <SettingOutlined style={{ color: "#6366f1" }} />
+                                            <SettingOutlined style={{ color: "#F7931E" }} />
                                             <Text strong>Basic Information</Text>
                                         </Space>
                                     }

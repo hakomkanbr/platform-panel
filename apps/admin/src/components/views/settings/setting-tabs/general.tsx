@@ -116,7 +116,7 @@ export default function GeneralSection({
                             <Card
                                 title={
                                     <Space>
-                                        <GlobalOutlined style={{ color: '#6366f1' }} />
+                                        <GlobalOutlined style={{ color: '#F7931E' }} />
                                         <span>Site Status</span>
                                     </Space>
                                 }
@@ -160,7 +160,7 @@ export default function GeneralSection({
                                         <Input
                                             placeholder="Enter your site name"
                                             size="large"
-                                            prefix={<GlobalOutlined style={{ color: '#6366f1' }} />}
+                                            prefix={<GlobalOutlined style={{ color: '#F7931E' }} />}
                                         />
                                     </Form.Item>
 
@@ -278,7 +278,7 @@ export default function GeneralSection({
 
                     :global(.ant-btn-primary) {
                         border-radius: 6px;
-                        box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+                        box-shadow: 0 2px 4px rgba(247, 147, 30, 0.2);
                     }
                 `}</style>
             </div>

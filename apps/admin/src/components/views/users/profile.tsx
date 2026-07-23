@@ -72,7 +72,7 @@ export default function UserProfileView({
               style={{ 
                 display: "flex", 
                 alignItems: "center",
-                color: "#6366f1"
+                color: "#F7931E"
               }}
             >
               Back to Dashboard
@@ -93,9 +93,9 @@ export default function UserProfileView({
               size={80} 
               icon={<UserOutlined />}
               style={{ 
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
                 border: "4px solid white",
-                boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)"
+                boxShadow: "0 4px 12px rgba(247, 147, 30, 0.3)"
               }}
             />
             <div>
@@ -125,7 +125,7 @@ export default function UserProfileView({
             <Card
               title={
                 <Space>
-                  <UserOutlined style={{ color: "#6366f1" }} />
+                  <UserOutlined style={{ color: "#F7931E" }} />
                   <Text strong style={{ fontSize: 18, color: "#1f2937" }}>
                     Profile Information
                   </Text>
@@ -304,10 +304,10 @@ export default function UserProfileView({
                   style={{
                     height: 48,
                     borderRadius: 8,
-                    background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                    background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
                     border: "none",
                     fontWeight: 600,
-                    boxShadow: "0 4px 6px -1px rgba(99, 102, 241, 0.3)"
+                    boxShadow: "0 4px 6px -1px rgba(247, 147, 30, 0.3)"
                   }}
                 >
                   Save Changes

@@ -34,8 +34,8 @@
 
 .settingsCard .ant-tabs-tab-active {
   background: #f8fafc !important;
-  border-bottom: 2px solid #6366f1 !important;
-  color: #6366f1 !important;
+  border-bottom: 2px solid #F7931E !important;
+  color: #F7931E !important;
 }
 
 .settingsCard .ant-tabs-content-holder {
@@ -47,7 +47,7 @@
 }
 
 .settingsCard .ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #6366f1 !important;
+  color: #F7931E !important;
 }
 
 /* Form Styles */
@@ -67,14 +67,14 @@
 .ant-input-affix-wrapper:focus,
 .ant-input-affix-wrapper-focused,
 .ant-select-focused .ant-select-selector {
-  border-color: #6366f1 !important;
+  border-color: #F7931E !important;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1) !important;
 }
 
 /* Button Styles */
 .ant-btn-primary {
-  background: #6366f1 !important;
-  border-color: #6366f1 !important;
+  background: #F7931E !important;
+  border-color: #F7931E !important;
   border-radius: 6px !important;
   box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2) !important;
 }

@@ -577,7 +577,7 @@ export default function BillingPage() {
               <>
                 <div style={{ borderTop: "1px solid var(--border-light)", margin: "16px 0", height: 0 }} />
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                  style={{ padding: 16, background: "linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)", borderRadius: 12, display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
+                  style={{ padding: 16, background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)", borderRadius: 12, display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", overflow: "hidden" }}>
                   <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.08)" }} />
                   <Space>
                     <WalletOutlined style={{ fontSize: 22, color: "#fff" }} />

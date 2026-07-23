@@ -283,12 +283,12 @@ const ModernSiteSelect: React.FC = () => {
         }
 
         :global(.modern-site-select .ant-select-selector:hover) {
-          border-color: #6366f1;
+          border-color: #F7931E;
           background: white;
         }
 
         :global(.modern-site-select .ant-select-focused .ant-select-selector) {
-          border-color: #6366f1;
+          border-color: #F7931E;
           box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
         }
 

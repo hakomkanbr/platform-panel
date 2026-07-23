@@ -191,7 +191,7 @@ export default function LoginPage() {
               transition: "border-color 0.2s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#6366f1";
+              e.currentTarget.style.borderColor = "#F7931E";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = "#e5e7eb";
@@ -212,7 +212,7 @@ export default function LoginPage() {
               transition: "border-color 0.2s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#6366f1";
+              e.currentTarget.style.borderColor = "#F7931E";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = "#e5e7eb";

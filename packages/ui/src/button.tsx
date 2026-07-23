@@ -1,20 +1,13 @@
 "use client";
 
-import { ReactNode } from "react";
+import React from 'react';
+import { Button as AntButton } from 'antd';
+import type { ButtonProps as AntButtonProps } from 'antd';
 
-interface ButtonProps {
-  children: ReactNode;
-  className?: string;
-  appName: string;
+export interface ButtonProps extends AntButtonProps {
+  children?: React.ReactNode;
 }
 
-export const Button = ({ children, className, appName }: ButtonProps) => {
-  return (
-    <button
-      className={className}
-      onClick={() => alert(`Hello from your ${appName} app!`)}
-    >
-      {children}
-    </button>
-  );
+export const Button: React.FC<ButtonProps> = ({ children, ...props }) => {
+  return <AntButton {...props}>{children}</AntButton>;
 };

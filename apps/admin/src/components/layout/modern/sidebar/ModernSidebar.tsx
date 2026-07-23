@@ -80,7 +80,7 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({ collapsed, modules, user,
         ) : (
           <Tooltip title="HeadlessCMS Admin">
             <div className="logo-collapsed">
-              <CrownOutlined style={{ fontSize: 28, color: '#6366f1' }} />
+              <CrownOutlined style={{ fontSize: 28, color: '#F7931E' }} />
             </div>
           </Tooltip>
         )}

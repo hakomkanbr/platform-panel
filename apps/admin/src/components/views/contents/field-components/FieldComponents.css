@@ -136,12 +136,12 @@
 }
 
 .custom-list-field:hover .ant-select-selector {
-  border-color: #8b5cf6 !important;
+  border-color: #F7931E !important;
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1) !important;
 }
 
 .custom-list-field.ant-select-focused .ant-select-selector {
-  border-color: #8b5cf6 !important;
+  border-color: #F7931E !important;
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2) !important;
 }
 

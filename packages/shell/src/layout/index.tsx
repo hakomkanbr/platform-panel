@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, ConfigProvider } from "antd";
 import { useRouter } from "next/navigation";
+import { modernTheme } from "@repo/theme";
 
 import ModernSidebar from "../sidebar/ModernSidebar";
 import ModernHeader from "../header/ModernHeader";
@@ -10,6 +11,13 @@ import type { IModule, ISidebarItem } from "@repo/shared-types";
 import type { IUserProps } from "@repo/shared-types";
 
 const { Sider } = Layout;
+
+interface QuickProject {
+  id: string;
+  name: string;
+  slug?: string;
+  color?: string;
+}
 
 export interface AdminShellProps {
   children: React.ReactNode;
@@ -24,9 +32,10 @@ export interface AdminShellProps {
     siteSelect?: React.ReactNode;
     redirectWebsite?: React.ReactNode;
     migrateDatabase?: React.ReactNode;
-    notifications?: React.ReactNode;
   };
   currentProject?: { name: string; id: string | number } | null;
+  projects?: QuickProject[];
+  projectsLoading?: boolean;
 }
 
 const AdminShell: React.FC<AdminShellProps> = ({
@@ -40,6 +49,8 @@ const AdminShell: React.FC<AdminShellProps> = ({
   basePath = "/admin",
   headerComponents,
   currentProject,
+  projects,
+  projectsLoading,
 }) => {
   const resolvedSidebarItems: ISidebarItem[] = sidebarItems || (modules || []).map((mod) => ({
     key: mod.slug,
@@ -47,97 +58,64 @@ const AdminShell: React.FC<AdminShellProps> = ({
     path: `/${mod.slug}`,
   }));
   const [collapsed, setCollapsed] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(280);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
 
-  const customTheme = {
-    token: {
-      colorPrimary: "#6366f1",
-      colorBgContainer: "#ffffff",
-      colorBgLayout: "#f8fafc",
-      borderRadius: 12,
-      fontFamily:
-        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-    },
-    components: {
-      Layout: {
-        siderBg: "#ffffff",
-        headerBg: "#ffffff",
-        bodyBg: "#f8fafc",
-      },
-      Menu: {
-        itemBg: "transparent",
-        itemSelectedBg: "#f1f5f9",
-        itemHoverBg: "#f8fafc",
-        itemSelectedColor: "#6366f1",
-        itemColor: "#64748b",
-        iconSize: 18,
-        fontSize: 14,
-        itemHeight: 48,
-        itemMarginInline: 8,
-        itemBorderRadius: 8,
-      },
-    },
-  };
+  const sidebarWidth = 280;
+  const sidebarCollapsedWidth = 80;
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      if (mobile) {
-        setCollapsed(true);
-        setSidebarWidth(0);
-      } else {
-        setSidebarWidth(collapsed ? 80 : 280);
-      }
+      if (mobile) setCollapsed(true);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [collapsed]);
+  }, []);
 
   useEffect(() => {
-    if (!siteSlug && !location.pathname.startsWith(`${basePath}/select-site`)) {
+    if (!siteSlug && typeof window !== 'undefined' && !window.location.pathname.startsWith(`${basePath}/select-site`)) {
       const needsSite = siteRequiredPaths.some((path) =>
-        location.pathname.startsWith(path),
+        window.location.pathname.startsWith(path),
       );
       if (needsSite) {
-        location.href = `${basePath}/select-site?next=${location.pathname}`;
+        window.location.href = `${basePath}/select-site?next=${window.location.pathname}`;
       }
     }
   }, [siteSlug, basePath, siteRequiredPaths]);
 
   const handleCollapse = (collapsed: boolean) => {
     setCollapsed(collapsed);
-    setSidebarWidth(collapsed ? 80 : 280);
   };
 
   return (
-    <ConfigProvider theme={customTheme}>
+    <ConfigProvider theme={modernTheme}>
       <Layout
         className="modern-layout"
-        style={{ minHeight: "100vh", background: "#f8fafc" }}
+        style={{ minHeight: "100vh" }}
       >
         <Sider
           trigger={null}
           collapsible
           collapsed={collapsed}
           width={sidebarWidth}
-          collapsedWidth={isMobile ? 0 : 80}
-          className="modern-sidebar"
+          collapsedWidth={isMobile ? 0 : sidebarCollapsedWidth}
+          className="s2s-sidebar-floating"
           style={{
             position: "fixed",
-            left: 0,
-            top: 0,
-            bottom: 0,
-            height: "100vh",
+            left: 12,
+            top: 12,
+            bottom: 12,
+            height: "calc(100vh - 24px)",
             zIndex: 1000,
-            background: "#ffffff",
-            borderRight: "1px solid #e2e8f0",
-            boxShadow: "4px 0 6px -1px rgb(0 0 0 / 0.1)",
+            background: "#FFFFFF",
+            borderRadius: 16,
+            border: "1px solid #E5E7EB",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.04)",
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            overflow: "hidden",
           }}
         >
           <ModernSidebar
@@ -147,15 +125,16 @@ const AdminShell: React.FC<AdminShellProps> = ({
             router={router}
             isMobile={isMobile}
             onCollapse={handleCollapse}
+            projects={projects}
+            projectsLoading={projectsLoading}
           />
         </Sider>
 
         <Layout
           className="modern-main-layout"
           style={{
-            marginLeft: isMobile ? 0 : sidebarWidth,
+            marginLeft: isMobile ? 0 : (collapsed ? sidebarCollapsedWidth + 24 : sidebarWidth + 24),
             transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            background: "#f8fafc",
           }}
         >
           <ModernHeader
@@ -168,96 +147,18 @@ const AdminShell: React.FC<AdminShellProps> = ({
             basePath={basePath}
             currentProject={currentProject}
           />
-          <ModernContent>{children}</ModernContent>
+          <div style={{ padding: "24px 32px" }}>
+            <ModernContent>{children}</ModernContent>
+          </div>
         </Layout>
 
         {isMobile && !collapsed && (
           <div
-            className="mobile-overlay"
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "rgba(0, 0, 0, 0.5)",
-              zIndex: 999,
-            }}
+            className="s2s-mobile-overlay"
             onClick={() => handleCollapse(true)}
           />
         )}
       </Layout>
-
-      <style jsx global>{`
-        .modern-layout .ant-layout-sider-children {
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-        }
-
-        .modern-layout .ant-menu {
-          border: none !important;
-          background: transparent !important;
-        }
-
-        .modern-layout .ant-menu-item {
-          margin: 4px 8px !important;
-          border-radius: 8px !important;
-          height: 48px !important;
-          line-height: 48px !important;
-          display: flex !important;
-          align-items: center !important;
-        }
-
-        .modern-layout .ant-menu-item-selected {
-          background: linear-gradient(
-            135deg,
-            #6366f1 0%,
-            #8b5cf6 100%
-          ) !important;
-          color: white !important;
-        }
-
-        .modern-layout .ant-menu-item-selected .ant-menu-item-icon {
-          color: white !important;
-        }
-
-        .modern-layout .ant-menu-item:hover {
-          background: #f1f5f9 !important;
-          color: #6366f1 !important;
-        }
-
-        .modern-layout .ant-menu-submenu-title {
-          margin: 4px 8px !important;
-          border-radius: 8px !important;
-          height: 48px !important;
-          line-height: 48px !important;
-        }
-
-        .modern-layout .ant-menu-submenu-title:hover {
-          background: #f1f5f9 !important;
-          color: #6366f1 !important;
-        }
-
-        .modern-layout .ant-layout-header {
-          padding: 0 24px !important;
-          background: white !important;
-          border-bottom: 1px solid #e2e8f0 !important;
-          box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1) !important;
-        }
-
-        .modern-layout .ant-layout-content {
-          margin: 24px !important;
-          padding: 0 !important;
-          background: transparent !important;
-        }
-
-        @media (max-width: 768px) {
-          .modern-layout .ant-layout-content {
-            margin: 16px !important;
-          }
-        }
-      `}</style>
     </ConfigProvider>
   );
 };

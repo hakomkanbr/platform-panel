@@ -59,7 +59,7 @@ const ModernNotifications: React.FC = () => {
       timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
       read: false,
       action: { label: 'View User', url: '/admin/users' },
-      avatar: <UserAddOutlined style={{ color: '#6366f1' }} />,
+      avatar: <UserAddOutlined style={{ color: '#F7931E' }} />,
     },
     {
       id: '2',
@@ -97,7 +97,7 @@ const ModernNotifications: React.FC = () => {
       type: 'info',
       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
       read: true,
-      avatar: <InfoCircleOutlined style={{ color: '#6366f1' }} />,
+      avatar: <InfoCircleOutlined style={{ color: '#F7931E' }} />,
     },
   ];
 
@@ -117,7 +117,7 @@ const ModernNotifications: React.FC = () => {
       case 'error':
         return <ExclamationCircleOutlined style={{ color: '#ef4444' }} />;
       default:
-        return <InfoCircleOutlined style={{ color: '#6366f1' }} />;
+        return <InfoCircleOutlined style={{ color: '#F7931E' }} />;
     }
   };
 
@@ -127,7 +127,7 @@ const ModernNotifications: React.FC = () => {
       case 'success': return '#10b981';
       case 'warning': return '#f59e0b';
       case 'error': return '#ef4444';
-      default: return '#6366f1';
+      default: return '#F7931E';
     }
   };
 
@@ -175,7 +175,7 @@ const ModernNotifications: React.FC = () => {
             Notifications
           </Title>
           {unreadCount > 0 && (
-            <Badge count={unreadCount} style={{ backgroundColor: '#6366f1' }} />
+            <Badge count={unreadCount} style={{ backgroundColor: '#F7931E' }} />
           )}
         </div>
         <div className="header-actions">
@@ -337,7 +337,7 @@ const ModernNotifications: React.FC = () => {
 
         :global(.notifications-button:hover) {
           background: #f1f5f9;
-          color: #6366f1;
+          color: #F7931E;
         }
 
         :global(.modern-notifications-dropdown .ant-dropdown-menu) {
@@ -393,7 +393,7 @@ const ModernNotifications: React.FC = () => {
 
         :global(.notification-item.unread) {
           background: #f0f9ff;
-          border-left: 3px solid #6366f1;
+          border-left: 3px solid #F7931E;
         }
 
         :global(.notification-item:last-child) {

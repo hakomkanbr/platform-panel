@@ -97,7 +97,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({
             src={user?.image ? `${process.env.NEXT_PUBLIC_CDN}/user/${user.image}` : undefined}
             icon={<UserOutlined />}
             style={{
-              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              background: 'linear-gradient(135deg, #F7931E 0%, #E67E00 100%)',
             }}
           />
           <div className="user-info">
@@ -232,7 +232,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({
                   src={user?.image ? `${process.env.NEXT_PUBLIC_CDN}/user/${user.image}` : undefined}
                   icon={<UserOutlined />}
                   style={{
-                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                    background: 'linear-gradient(135deg, #F7931E 0%, #E67E00 100%)',
                     cursor: 'pointer',
                     border: '2px solid #e2e8f0',
                   }}
@@ -290,7 +290,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({
 
         .mobile-menu-toggle:hover {
           background: #f1f5f9;
-          color: #6366f1;
+          color: #F7931E;
         }
 
         .header-search {
@@ -316,7 +316,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({
 
         :global(.action-button:hover) {
           background: #f1f5f9;
-          color: #6366f1;
+          color: #F7931E;
         }
 
         .user-avatar-container {
