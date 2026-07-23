@@ -26,7 +26,7 @@ function getPasswordStrength(password: string) {
   if (score < 30) return { score, label: "Weak", color: "#ef4444" };
   if (score < 50) return { score, label: "Fair", color: "#f59e0b" };
   if (score < 75) return { score, label: "Strong", color: "#22c55e" };
-  return { score, label: "Very Strong", color: "#6366f1" };
+  return { score, label: "Very Strong", color: "#F7931E" };
 }
 
 const requirements = [

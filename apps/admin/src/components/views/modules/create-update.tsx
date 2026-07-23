@@ -81,7 +81,7 @@ export default function CreateUpdateModuleView({
             <Card
               title={
                 <Space>
-                  <InfoCircleOutlined style={{ color: "#6366f1" }} />
+                  <InfoCircleOutlined style={{ color: "#F7931E" }} />
                   <Text strong>Module Information</Text>
                 </Space>
               }

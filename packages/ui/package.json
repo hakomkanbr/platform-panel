@@ -2,7 +2,10 @@
   "name": "@repo/ui",
   "version": "0.0.0",
   "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
+    ".": "./src/index.ts",
     "./*": "./src/*.tsx"
   },
   "scripts": {
@@ -14,13 +17,16 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "eslint": "^9.39.1",
     "typescript": "5.9.2"
   },
   "dependencies": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "@ant-design/icons": "^5.3.6",
+    "antd": "^5.16.5",
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18"
   }
 }

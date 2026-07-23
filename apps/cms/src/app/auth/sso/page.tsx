@@ -4,7 +4,8 @@ import { useEffect, useRef } from "react";
 import { Spin, Typography, Card, Space } from "antd";
 
 const { Text, Title } = Typography;
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://localhost:52562";
+const GATEWAY_URL =
+  process.env.NEXT_PUBLIC_GATEWAY_URL || "https://platformapi.bremix.tech";
 
 export default function SsoPage() {
   const processedRef = useRef(false);
@@ -23,11 +24,14 @@ export default function SsoPage() {
 
     (async () => {
       try {
-        const res = await fetch(`${GATEWAY_URL}/api/v1/auth/sso/exchange-ticket`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ticket }),
-        });
+        const res = await fetch(
+          `${GATEWAY_URL}/api/v1/auth/sso/exchange-ticket`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ticket }),
+          },
+        );
         const json = await res.json();
 
         if (json.success && json.data) {
@@ -63,7 +67,9 @@ export default function SsoPage() {
         }}
       >
         <Space direction="vertical" size={16} style={{ width: "100%" }}>
-          <Title level={3} style={{ margin: 0 }}>CMS Admin</Title>
+          <Title level={3} style={{ margin: 0 }}>
+            CMS Admin
+          </Title>
           <Space direction="vertical" size={12}>
             <Spin size="large" />
             <Text type="secondary">Authenticating...</Text>

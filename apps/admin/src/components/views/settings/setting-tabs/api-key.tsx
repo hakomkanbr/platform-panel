@@ -127,7 +127,7 @@ export default function ApiKeySection({
                             className="api-key-card"
                             title={
                                 <Space>
-                                    <KeyOutlined style={{ color: '#6366f1' }} />
+                                    <KeyOutlined style={{ color: '#F7931E' }} />
                                     <span>API Key Management</span>
                                 </Space>
                             }

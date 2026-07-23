@@ -54,7 +54,7 @@
 }
 
 .logo-icon-collapsed:hover {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #F7931E 0%, #E67E00 100%);
 }
 
 .logo-icon-collapsed:hover :global(.anticon) {
@@ -137,6 +137,6 @@
 
 .collapse-button:hover {
   background: #f8fafc;
-  border-color: #6366f1;
-  color: #6366f1;
+  border-color: #F7931E;
+  color: #F7931E;
 }

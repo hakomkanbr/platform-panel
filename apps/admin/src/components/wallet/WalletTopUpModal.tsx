@@ -98,7 +98,7 @@ export default function WalletTopUpModal({
           <CreditCardOutlined />,
           "Card Payment",
           "Pay instantly with your credit or debit card. Funds are added immediately upon success.",
-          "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+          "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
           "Coming Soon",
           () => setMethod("card"),
         )}

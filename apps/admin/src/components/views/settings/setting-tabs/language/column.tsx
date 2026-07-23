@@ -17,7 +17,7 @@ const columns : TableProps["columns"] = [
           <span style={{ 
             display: 'inline-block',
             padding: '2px 8px',
-            backgroundColor: '#6366f1',
+            backgroundColor: '#F7931E',
             color: 'white',
             borderRadius: '4px',
             fontSize: '12px',

@@ -48,7 +48,8 @@ import dayjs from "dayjs";
 
 const { Title, Text } = Typography;
 
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://localhost:52562";
+const GATEWAY_URL =
+  process.env.NEXT_PUBLIC_GATEWAY_URL || "https://platformapi.bremix.tech";
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
@@ -226,8 +227,7 @@ export default function ProjectDetailPage() {
               onClick={handleOpenCms}
               style={{
                 borderRadius: 8,
-                background:
-                  "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
                 border: "none",
                 boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
               }}

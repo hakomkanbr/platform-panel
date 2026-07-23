@@ -67,7 +67,7 @@ const LoginView: React.FC<{ result: IUserState }> = ({ result }) => {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      background: "linear-gradient(135deg, #F7931E 0%, #E67E00 30%, #009FE3 70%, #007BB5 100%)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -171,11 +171,11 @@ const LoginView: React.FC<{ result: IUserState }> = ({ result }) => {
               style={{
                 height: 48,
                 borderRadius: 8,
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
                 border: "none",
                 fontSize: 16,
                 fontWeight: 600,
-                boxShadow: "0 4px 6px -1px rgba(99, 102, 241, 0.3)"
+                boxShadow: "0 4px 6px -1px rgba(247, 147, 30, 0.3)"
               }}
             >
               Sign In to Dashboard

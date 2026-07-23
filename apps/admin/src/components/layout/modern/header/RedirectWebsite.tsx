@@ -173,7 +173,7 @@ const RedirectWebsite: React.FC = () => {
 
         :global(.action-button:hover) {
           background: #f1f5f9;
-          color: #6366f1;
+          color: #F7931E;
         }
 
         :global(.action-button:disabled) {

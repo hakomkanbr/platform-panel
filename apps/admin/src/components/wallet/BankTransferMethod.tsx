@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Form, InputNumber, Typography, Button, Descriptions, Spin, Divider } from "antd";
+import { Form, InputNumber, Typography, Button, Descriptions, Spin, Divider, Empty } from "antd";
 import { BankOutlined, SendOutlined, ArrowLeftOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import type { BankDetailsDto } from "@/types";
 
@@ -26,12 +26,7 @@ export default function BankTransferMethod({
   const [submitted, setSubmitted] = useState(false);
   const [form] = Form.useForm();
 
-  const details = bankDetails ?? {
-    bankName: "Example National Bank",
-    accountName: "Platform Administration",
-    iban: "XX00 0000 0000 0000 0000 0000",
-    swift: "EXMPXX00",
-  };
+  const details = bankDetails!;
 
   const handleSubmit = async () => {
     if (!amount || amount <= 0) return;
@@ -56,6 +51,17 @@ export default function BankTransferMethod({
     return (
       <div style={{ textAlign: "center", padding: 40 }}>
         <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!bankDetails) {
+    return (
+      <div style={{ textAlign: "center", padding: 40 }}>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={<Text type="secondary">Bank details not configured</Text>}
+        />
       </div>
     );
   }

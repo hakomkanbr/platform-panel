@@ -148,7 +148,7 @@ export default function ModuleFields({ mId }: { mId: number }) {
               icon={<EditOutlined />}
               onClick={() => handleEdit(record)}
               style={{ 
-                color: "#6366f1",
+                color: "#F7931E",
                 border: "1px solid #e5e7eb",
                 borderRadius: 6
               }}
@@ -202,7 +202,7 @@ export default function ModuleFields({ mId }: { mId: number }) {
                 width: 48,
                 height: 48,
                 borderRadius: 12,
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
@@ -228,10 +228,10 @@ export default function ModuleFields({ mId }: { mId: number }) {
             style={{
               height: 48,
               borderRadius: 8,
-              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+              background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
               border: "none",
               fontWeight: 600,
-              boxShadow: "0 4px 6px -1px rgba(99, 102, 241, 0.3)",
+              boxShadow: "0 4px 6px -1px rgba(247, 147, 30, 0.3)",
               padding: "0 24px"
             }}
           >

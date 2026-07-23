@@ -116,12 +116,12 @@ export default function VerifyEmailPage() {
               width: 56,
               height: 56,
               borderRadius: 14,
-              background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+              background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               margin: "0 auto 14px",
-              boxShadow: "0 6px 20px rgba(99,102,241,0.25)",
+              boxShadow: "0 6px 20px rgba(247,147,30,0.25)",
             }}
           >
             <MailOutlined style={{ fontSize: 24, color: "#fff" }} />
@@ -180,7 +180,7 @@ export default function VerifyEmailPage() {
               background:
                 countdown > 0
                   ? "#9ca3af"
-                  : "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                  : "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
               border: "none",
               transition: "background 0.2s",
             }}

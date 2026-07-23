@@ -203,7 +203,7 @@ const MigrateDatabase: React.FC = () => {
                 percent={progress}
                 status={migrating ? 'active' : progress === 100 ? 'success' : 'normal'}
                 strokeColor={{
-                  '0%': '#6366f1',
+                  '0%': '#F7931E',
                   '100%': '#10b981',
                 }}
               />
@@ -318,8 +318,8 @@ const MigrateDatabase: React.FC = () => {
         }
 
         :global(.migration-steps .ant-steps-item-process .ant-steps-item-icon) {
-          background: #6366f1;
-          border-color: #6366f1;
+          background: #F7931E;
+          border-color: #F7931E;
         }
 
         :global(.migration-steps .ant-steps-item-finish .ant-steps-item-icon) {

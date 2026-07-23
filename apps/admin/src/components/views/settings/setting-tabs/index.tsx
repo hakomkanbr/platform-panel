@@ -65,7 +65,7 @@ const TabsCompanies: React.FC<{ siteSlug: string | null }> = ({ siteSlug }) => {
         <div className={`${styles.settingsContainer} settings-fade-in`}>
             <div className={styles.settingsHeader}>
                 <Title level={2} style={{ margin: 0, color: '#1f2937' }}>
-                    <DatabaseOutlined style={{ marginRight: 12, color: '#6366f1' }} />
+                    <DatabaseOutlined style={{ marginRight: 12, color: '#F7931E' }} />
                     Headless CMS Settings
                 </Title>
                 <Typography.Text type="secondary" style={{ fontSize: '16px' }}>
