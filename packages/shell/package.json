@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
+    "@repo/app-registry": "workspace:*",
     "@repo/navigation": "workspace:*",
     "@repo/store": "workspace:*",
     "@repo/theme": "workspace:*",

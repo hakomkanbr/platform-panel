@@ -1,24 +1,20 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Layout, ConfigProvider } from "antd";
-import { useRouter } from "next/navigation";
-import { modernTheme } from "@repo/theme";
 
-import ModernSidebar from "../sidebar/ModernSidebar";
-import ModernHeader from "../header/ModernHeader";
-import ModernSiteSelect from "../header/ModernSiteSelect";
+import React, { useEffect, useState, useCallback } from "react";
+import { Layout } from "antd";
+import { useRouter } from "next/navigation";
+import { NavigationProvider } from "@repo/navigation";
+import { AppRegistryProvider } from "@repo/app-registry";
+import { ShellProvider, useShell } from "../context/ShellContext";
+import type { QuickProject } from "../context/ShellContext";
+import { GlobalSidebar } from "../components/GlobalSidebar";
+import { GlobalHeader } from "../components/GlobalHeader";
+import type { GlobalHeaderProps } from "../components/GlobalHeader";
 import ModernContent from "./ModernContent";
 import type { IModule, ISidebarItem } from "@repo/shared-types";
 import type { IUserProps } from "@repo/shared-types";
 
 const { Sider } = Layout;
-
-interface QuickProject {
-  id: string;
-  name: string;
-  slug?: string;
-  color?: string;
-}
 
 export interface AdminShellProps {
   children: React.ReactNode;
@@ -40,43 +36,48 @@ export interface AdminShellProps {
   projectsLoading?: boolean;
 }
 
-const AdminShell: React.FC<AdminShellProps> = ({
+const AdminShellInner: React.FC<{
+  children: React.ReactNode;
+  sidebarItems?: ISidebarItem[];
+  siteSlug?: string;
+  onLogout?: () => void;
+  siteRequiredPaths?: string[];
+  headerComponents?: AdminShellProps["headerComponents"];
+  currentProject?: { name: string; id: string | number } | null;
+  projects?: QuickProject[];
+  projectsLoading?: boolean;
+}> = ({
   children,
-  user,
   sidebarItems,
-  modules,
   siteSlug,
   onLogout,
   siteRequiredPaths = [],
-  basePath = "/admin",
-  appMode = 'main',
   headerComponents,
   currentProject,
-  projects,
-  projectsLoading,
+  projects: propProjects,
+  projectsLoading: propProjectsLoading,
 }) => {
-  const resolvedSidebarItems: ISidebarItem[] = sidebarItems || (modules || []).map((mod) => ({
-    key: mod.slug,
-    label: mod.name,
-    path: `/${mod.slug}`,
-  }));
-  const [collapsed, setCollapsed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const { collapsed, isMobile, basePath, setCollapsed, setProjects, setProjectsLoading, setCurrentProject } = useShell();
   const router = useRouter();
-
   const sidebarWidth = 280;
   const sidebarCollapsedWidth = 80;
 
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (mobile) setCollapsed(true);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    if (propProjects) setProjects(propProjects);
+  }, [propProjects, setProjects]);
+
+  useEffect(() => {
+    if (propProjectsLoading !== undefined) setProjectsLoading(propProjectsLoading);
+  }, [propProjectsLoading, setProjectsLoading]);
+
+  useEffect(() => {
+    if (currentProject) {
+      setCurrentProject({
+        id: String(currentProject.id),
+        name: currentProject.name,
+      });
+    }
+  }, [currentProject, setCurrentProject]);
 
   useEffect(() => {
     if (!siteSlug && typeof window !== 'undefined' && !window.location.pathname.startsWith(`${basePath}/select-site`)) {
@@ -89,94 +90,84 @@ const AdminShell: React.FC<AdminShellProps> = ({
     }
   }, [siteSlug, basePath, siteRequiredPaths]);
 
-  const handleCollapse = (collapsed: boolean) => {
-    setCollapsed(collapsed);
-  };
+  return (
+    <Layout className="modern-layout" style={{ minHeight: "100vh" }}>
+      <Sider
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        width={sidebarWidth}
+        collapsedWidth={isMobile ? 0 : sidebarCollapsedWidth}
+        className="s2s-sidebar-floating"
+        style={{
+          position: "fixed",
+          left: 12,
+          top: 12,
+          bottom: 12,
+          height: "calc(100vh - 24px)",
+          zIndex: 1000,
+          background: "#FFFFFF",
+          borderRadius: 16,
+          border: "1px solid #E5E7EB",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.04)",
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          overflow: "hidden",
+        }}
+      >
+        <GlobalSidebar />
+      </Sider>
+
+      <Layout
+        className="modern-main-layout"
+        style={{
+          marginLeft: isMobile ? 0 : (collapsed ? sidebarCollapsedWidth + 24 : sidebarWidth + 24),
+          transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        }}
+      >
+        <GlobalHeader
+          onLogout={onLogout}
+          projects={propProjects}
+          projectsLoading={propProjectsLoading}
+          headerExtras={
+            <>
+              {headerComponents?.redirectWebsite}
+              {process.env.NODE_ENV === "development" && headerComponents?.migrateDatabase}
+            </>
+          }
+        />
+        <div style={{ padding: "24px 32px" }}>
+          <ModernContent>{children}</ModernContent>
+        </div>
+      </Layout>
+
+      {isMobile && !collapsed && (
+        <div
+          className="s2s-mobile-overlay"
+          onClick={() => setCollapsed(true)}
+        />
+      )}
+    </Layout>
+  );
+};
+
+const AdminShell: React.FC<AdminShellProps> = (props) => {
+  const {
+    children,
+    user,
+    basePath = "/admin",
+    appMode = "main",
+  } = props;
 
   return (
-    <ConfigProvider theme={modernTheme}>
-      <Layout
-        className="modern-layout"
-        style={{ minHeight: "100vh" }}
-      >
-        <Sider
-          trigger={null}
-          collapsible
-          collapsed={collapsed}
-          width={sidebarWidth}
-          collapsedWidth={isMobile ? 0 : sidebarCollapsedWidth}
-          className="s2s-sidebar-floating"
-          style={{
-            position: "fixed",
-            left: 12,
-            top: 12,
-            bottom: 12,
-            height: "calc(100vh - 24px)",
-            zIndex: 1000,
-            background: "#FFFFFF",
-            borderRadius: 16,
-            border: "1px solid #E5E7EB",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.04)",
-            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            overflow: "hidden",
-          }}
-        >
-          <ModernSidebar
-            collapsed={collapsed}
-            sidebarItems={resolvedSidebarItems}
-            user={user}
-            router={router}
-            isMobile={isMobile}
-            onCollapse={handleCollapse}
-            projects={projects}
-            projectsLoading={projectsLoading}
-          />
-        </Sider>
-
-        <Layout
-          className="modern-main-layout"
-          style={{
-            marginLeft: isMobile ? 0 : (collapsed ? sidebarCollapsedWidth + 24 : sidebarWidth + 24),
-            transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          }}
-        >
-          <ModernHeader
-            collapsed={collapsed}
-            user={user}
-            onCollapse={handleCollapse}
-            isMobile={isMobile}
-            onLogout={onLogout}
-            headerComponents={{
-              ...headerComponents,
-              siteSelect: headerComponents?.siteSelect ?? (
-                appMode === 'sub' && projects && projects.length > 0 ? (
-                  <ModernSiteSelect
-                    variant="projects"
-                    projects={projects}
-                    basePath={basePath}
-                    onProjectChange={(project) => {
-                      router.push(basePath);
-                    }}
-                  />
-                ) : undefined
-              ),
-            }}
-            basePath={basePath}
-            currentProject={currentProject}
-          />
-          <div style={{ padding: "24px 32px" }}>
-            <ModernContent>{children}</ModernContent>
-          </div>
-        </Layout>
-
-        {isMobile && !collapsed && (
-          <div
-            className="s2s-mobile-overlay"
-            onClick={() => handleCollapse(true)}
-          />
-        )}
-      </Layout>
-    </ConfigProvider>
+    <AppRegistryProvider>
+      <NavigationProvider>
+        <ShellProvider user={user} initialBasePath={basePath} appMode={appMode}>
+          <AdminShellInner {...props}>
+            {children}
+          </AdminShellInner>
+        </ShellProvider>
+      </NavigationProvider>
+    </AppRegistryProvider>
   );
 };
 

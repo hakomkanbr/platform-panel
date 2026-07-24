@@ -8,25 +8,28 @@ import {
 import { IRoleType, ISidebarItem } from "@repo/shared-types";
 import { IoNavigateOutline } from "react-icons/io5";
 
-export const getSidebarItems = (userRole: IRoleType, modules: any[] = []): ISidebarItem[] => {
+export const getSidebarItems = (
+  userRole: IRoleType,
+  modules: any[] = [],
+): ISidebarItem[] => {
   const baseItems: ISidebarItem[] = [
     {
       key: "home",
       label: "Home",
       icon: <HomeOutlined />,
-      path: "/admin",
+      path: "http://localhost:3000/admin",
     },
     {
       key: "projects",
       label: "Projects",
       icon: <FolderOutlined />,
-      path: "/admin/projects",
+      path: "http://localhost:3000/admin/projects",
     },
     {
       key: "app-library",
       label: "App Library",
       icon: <AppstoreOutlined />,
-      path: "/admin/app-library",
+      path: "http://localhost:3000/admin/app-library",
     },
   ];
 
@@ -41,7 +44,7 @@ export const getSidebarItems = (userRole: IRoleType, modules: any[] = []): ISide
       key: "billing",
       label: "Billing",
       icon: <CreditCardOutlined />,
-      path: "/admin/billing",
+      path: "http://localhost:3000/admin/billing",
     },
     // {
     //   key: "settings",

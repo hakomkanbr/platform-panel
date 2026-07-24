@@ -224,7 +224,7 @@ const ModernHeader: React.FC<ModernHeaderProps> = ({
         if (onLogout) {
           onLogout();
         } else {
-          location.href = `${basePath}/auth/login`;
+          location.href = "/auth/login";
         }
       },
     },

@@ -1,17 +1,24 @@
-import type { NavigationConfig, AppNavigationItem, NavigationRegistry } from './types';
+import type {
+  NavigationConfig,
+  AppNavigationItem,
+  NavigationRegistry,
+  ShellNavigation,
+} from "./types";
 import type { ISidebarItem } from "@repo/shared-types";
 import {
   HomeOutlined,
   FolderOutlined,
   CreditCardOutlined,
   AppstoreOutlined,
+  TeamOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 const config: NavigationConfig = {
   platform: [
     {
       key: "home",
-      label: "Home",
+      label: "Dashboard",
       icon: <HomeOutlined />,
       path: "/admin",
       description: "Platform overview and KPIs",
@@ -24,19 +31,26 @@ const config: NavigationConfig = {
       description: "Manage your projects",
     },
     {
-      key: "app-library",
-      label: "App Library",
-      icon: <AppstoreOutlined />,
-      path: "/admin/app-library",
-      description: "Browse available applications",
-    },
-    {
       key: "billing",
       label: "Billing",
       icon: <CreditCardOutlined />,
       path: "/admin/billing",
       description: "Manage subscriptions and invoices",
     },
+    {
+      key: "team",
+      label: "Team",
+      icon: <TeamOutlined />,
+      path: "/admin/users",
+      description: "Manage team members",
+    },
+    // {
+    //   key: "settings",
+    //   label: "Settings",
+    //   icon: <SettingOutlined />,
+    //   path: "/admin/setting",
+    //   description: "Platform settings",
+    // },
   ],
   workspace: [],
   project: [],
@@ -44,6 +58,8 @@ const config: NavigationConfig = {
   developer: [],
   settings: [],
 };
+
+let appNavigationItems: AppNavigationItem[] = [];
 
 function toSidebarItem(item: AppNavigationItem): ISidebarItem {
   return {
@@ -57,12 +73,28 @@ function toSidebarItem(item: AppNavigationItem): ISidebarItem {
 }
 
 export const navigationRegistry: NavigationRegistry = {
-  registerApp: (appName: string, items: AppNavigationItem[], section: keyof NavigationConfig) => {
+  registerApp: (
+    appName: string,
+    items: AppNavigationItem[],
+    section: keyof NavigationConfig,
+  ) => {
     config[section].push(...items);
   },
   getNavigationConfig: () => config,
   getSidebarItems: (section: keyof NavigationConfig): ISidebarItem[] => {
     return config[section].map(toSidebarItem);
+  },
+  getShellNavigation: (): ShellNavigation => {
+    return {
+      platform: [...config.platform],
+      application: [...appNavigationItems],
+    };
+  },
+  setAppNavigation: (items: AppNavigationItem[]) => {
+    appNavigationItems = items;
+  },
+  clearAppNavigation: () => {
+    appNavigationItems = [];
   },
 };
 

@@ -11,7 +11,6 @@ import EmailActivated from "./email-sucess";
 import { useTransition } from "react";
 import api_points from "@/api/points";
 import api from "@/api/api-context";
-import BtnMigrateDb from "@/components/layout/admin/header/migrate-db";
 import Image from "next/image";
 import Link from "next/link";
 import { getTokenPayload } from "@/helper/session";
@@ -188,7 +187,6 @@ const LoginView: React.FC<{ result: IUserState }> = ({ result }) => {
             <Divider>
               <Text style={{ color: "#9ca3af", fontSize: 12 }}>Development Tools</Text>
             </Divider>
-            <BtnMigrateDb />
           </div>
         )}
 

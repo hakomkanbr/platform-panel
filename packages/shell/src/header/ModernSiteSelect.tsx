@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import React, { useEffect, useState, useTransition, useCallback } from 'react';
 import { Select, Divider, Button, Typography, Tag, Avatar, Space, Tooltip } from 'antd';

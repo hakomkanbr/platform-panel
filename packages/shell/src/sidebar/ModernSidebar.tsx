@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  LayoutOutlined,
   FolderOutlined,
 } from "@ant-design/icons";
 import "./ModernSidebar.css";
@@ -89,35 +88,25 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
   return (
     <div className="modern-sidebar-content">
       {/* Brand Header */}
-      <div className="sidebar-logo" style={{ padding: collapsed ? "16px 0" : "18px 20px" }}>
+      <div
+        className="sidebar-logo"
+        style={{ padding: collapsed ? "16px 0" : "18px 20px" }}
+      >
         {!collapsed ? (
           <div
-            style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              cursor: "pointer",
+            }}
             onClick={() => router.push("/admin")}
           >
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-                boxShadow: "0 4px 12px rgba(247, 147, 30, 0.3)",
-              }}
-            >
-              <LayoutOutlined style={{ color: "#fff", fontSize: 20 }} />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Text strong style={{ fontSize: 16, color: "#1F2937", lineHeight: 1.2, letterSpacing: "-0.02em" }}>
-                Share2Sells
-              </Text>
-              <Text style={{ fontSize: 11, color: "#009FE3", fontWeight: 600, marginTop: 2 }}>
-                SaaS OS v2.0
-              </Text>
-            </div>
+            <img
+              src="/assets/images/logo-png.png"
+              alt="Logo"
+              style={{ height: 40, width: "auto", objectFit: "contain" }}
+            />
           </div>
         ) : (
           <Tooltip title="Share2Sells OS">
@@ -126,24 +115,28 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
               style={{
                 width: 40,
                 height: 40,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 margin: "0 auto",
                 cursor: "pointer",
-                boxShadow: "0 4px 12px rgba(247, 147, 30, 0.3)",
               }}
             >
-              <LayoutOutlined style={{ color: "#fff", fontSize: 20 }} />
+              <img
+                src="/assets/images/logo-icon.png"
+                alt="Logo"
+                style={{ height: 32, width: "auto", objectFit: "contain" }}
+              />
             </div>
           </Tooltip>
         )}
       </div>
 
       {/* User Info Pill */}
-      <div className="sidebar-user" style={{ padding: collapsed ? "8px 0" : "0 14px 14px" }}>
+      <div
+        className="sidebar-user"
+        style={{ padding: collapsed ? "8px 0" : "0 14px 14px" }}
+      >
         {!collapsed && (
           <div
             style={{
@@ -182,7 +175,14 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
               >
                 {user?.username || "Abdulhekim"}
               </Text>
-              <Text style={{ fontSize: 11, color: "#9CA3AF", display: "block", marginTop: 2 }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  color: "#9CA3AF",
+                  display: "block",
+                  marginTop: 2,
+                }}
+              >
                 {user?.email || "admin@share2sells.com"}
               </Text>
             </div>
@@ -201,7 +201,13 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
       </div>
 
       {/* Navigation Links */}
-      <div style={{ flex: 1, overflowY: "auto", padding: collapsed ? "4px 0" : "0 6px" }}>
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: collapsed ? "4px 0" : "0 6px",
+        }}
+      >
         <Menu
           mode="inline"
           selectedKeys={selectedKeys}
@@ -257,8 +263,16 @@ const ModernSidebar: React.FC<ModernSidebarProps> = ({
                     e.currentTarget.style.color = "#4B5563";
                   }}
                 >
-                  <FolderOutlined style={{ color: project.color || "#F7931E" }} />
-                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <FolderOutlined
+                    style={{ color: project.color || "#F7931E" }}
+                  />
+                  <span
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     {project.name}
                   </span>
                 </div>

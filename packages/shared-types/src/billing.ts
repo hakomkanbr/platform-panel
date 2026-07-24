@@ -177,6 +177,9 @@ export interface ManualOverrideRequest {
   overrideValue?: number;
   reason: string;
   expiresAt?: string;
+  newExpiryDate?: string;
+  discountPercent?: number;
+  discountAmount?: number;
 }
 
 export interface RenewSubscriptionRequest {

@@ -1,13 +1,11 @@
 import type { ISidebarItem } from "@repo/shared-types";
+import type { AppNavigationItem } from "@repo/app-registry";
 
-export interface AppNavigationItem {
-  key: string;
-  label: string;
-  icon?: React.ReactNode;
-  path: string;
-  description?: string;
-  roles?: string[];
-  children?: AppNavigationItem[];
+export type { AppNavigationItem };
+
+export interface ShellNavigation {
+  platform: AppNavigationItem[];
+  application: AppNavigationItem[];
 }
 
 export interface NavigationConfig {
@@ -23,4 +21,7 @@ export interface NavigationRegistry {
   registerApp: (appName: string, items: AppNavigationItem[], section: keyof NavigationConfig) => void;
   getNavigationConfig: () => NavigationConfig;
   getSidebarItems: (section: keyof NavigationConfig) => ISidebarItem[];
+  getShellNavigation: () => ShellNavigation;
+  setAppNavigation: (items: AppNavigationItem[]) => void;
+  clearAppNavigation: () => void;
 }

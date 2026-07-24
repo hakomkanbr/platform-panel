@@ -1,10 +1,7 @@
 'use server';
 
-import route_paths from "@/helper/route_paths";
-import { redirect } from "next/navigation";
-import { deleteCookie } from "./set-cookie";
-
+import { cookies } from "next/headers";
 
 export async function logout() {
-    redirect(route_paths.auth.login);
+    (await cookies()).delete("AuthToken");
 }

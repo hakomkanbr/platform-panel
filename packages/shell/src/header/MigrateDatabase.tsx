@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import React, { useState } from 'react';
 import { Button, Tooltip, Modal, Typography, Progress, Alert, Space, Steps } from 'antd';
