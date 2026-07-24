@@ -123,6 +123,7 @@ body {
 .modern-layout .ant-menu-item {
   margin: 4px 10px !important;
   border-radius: 10px !important;
+  padding: 0 20px !important;
   height: 44px !important;
   line-height: 44px !important;
   display: flex !important;

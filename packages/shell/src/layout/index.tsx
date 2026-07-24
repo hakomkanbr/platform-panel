@@ -25,13 +25,13 @@ export interface AdminShellProps {
   onLogout?: () => void;
   siteRequiredPaths?: string[];
   basePath?: string;
-  appMode?: 'main' | 'sub';
+  appMode?: "main" | "sub";
   headerComponents?: {
     siteSelect?: React.ReactNode;
     redirectWebsite?: React.ReactNode;
     migrateDatabase?: React.ReactNode;
   };
-  currentProject?: { name: string; id: string | number } | null;
+  currentProject?: QuickProject | null;
   projects?: QuickProject[];
   projectsLoading?: boolean;
 }
@@ -57,7 +57,15 @@ const AdminShellInner: React.FC<{
   projects: propProjects,
   projectsLoading: propProjectsLoading,
 }) => {
-  const { collapsed, isMobile, basePath, setCollapsed, setProjects, setProjectsLoading, setCurrentProject } = useShell();
+  const {
+    collapsed,
+    isMobile,
+    basePath,
+    setCollapsed,
+    setProjects,
+    setProjectsLoading,
+    setCurrentProject,
+  } = useShell();
   const router = useRouter();
   const sidebarWidth = 280;
   const sidebarCollapsedWidth = 80;
@@ -67,10 +75,12 @@ const AdminShellInner: React.FC<{
   }, [propProjects, setProjects]);
 
   useEffect(() => {
-    if (propProjectsLoading !== undefined) setProjectsLoading(propProjectsLoading);
+    if (propProjectsLoading !== undefined)
+      setProjectsLoading(propProjectsLoading);
   }, [propProjectsLoading, setProjectsLoading]);
 
   useEffect(() => {
+    console.info("current project from cookie : ", currentProject);
     if (currentProject) {
       setCurrentProject({
         id: String(currentProject.id),
@@ -80,7 +90,11 @@ const AdminShellInner: React.FC<{
   }, [currentProject, setCurrentProject]);
 
   useEffect(() => {
-    if (!siteSlug && typeof window !== 'undefined' && !window.location.pathname.startsWith(`${basePath}/select-site`)) {
+    if (
+      !siteSlug &&
+      typeof window !== "undefined" &&
+      !window.location.pathname.startsWith(`${basePath}/select-site`)
+    ) {
       const needsSite = siteRequiredPaths.some((path) =>
         window.location.pathname.startsWith(path),
       );
@@ -120,7 +134,11 @@ const AdminShellInner: React.FC<{
       <Layout
         className="modern-main-layout"
         style={{
-          marginLeft: isMobile ? 0 : (collapsed ? sidebarCollapsedWidth + 24 : sidebarWidth + 24),
+          marginLeft: isMobile
+            ? 0
+            : collapsed
+              ? sidebarCollapsedWidth + 24
+              : sidebarWidth + 24,
           transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
@@ -131,7 +149,8 @@ const AdminShellInner: React.FC<{
           headerExtras={
             <>
               {headerComponents?.redirectWebsite}
-              {process.env.NODE_ENV === "development" && headerComponents?.migrateDatabase}
+              {process.env.NODE_ENV === "development" &&
+                headerComponents?.migrateDatabase}
             </>
           }
         />
@@ -151,20 +170,13 @@ const AdminShellInner: React.FC<{
 };
 
 const AdminShell: React.FC<AdminShellProps> = (props) => {
-  const {
-    children,
-    user,
-    basePath = "/admin",
-    appMode = "main",
-  } = props;
+  const { children, user, basePath = "/admin", appMode = "main" } = props;
 
   return (
     <AppRegistryProvider>
       <NavigationProvider>
         <ShellProvider user={user} initialBasePath={basePath} appMode={appMode}>
-          <AdminShellInner {...props}>
-            {children}
-          </AdminShellInner>
+          <AdminShellInner {...props}>{children}</AdminShellInner>
         </ShellProvider>
       </NavigationProvider>
     </AppRegistryProvider>

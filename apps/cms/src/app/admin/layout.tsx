@@ -19,10 +19,16 @@ export default async function RootLayout({
 }>) {
   const cookieStore = cookies();
   const token = cookieStore.get("access_token")?.value;
+  const currentProjectId = cookieStore.get("ProjectId")?.value;
+  const currentProjectName = cookieStore.get("ProjectName")?.value;
   const user: any = token ? await getTokenPayload(token) : null;
 
   return (
-    <CmsLayoutClient sidebarItems={getSidebarItems(user?.role)} user={user || {}}>
+    <CmsLayoutClient
+      currentProject={currentProjectId && currentProjectName ? { id: currentProjectId, name: currentProjectName } : null}
+      sidebarItems={getSidebarItems(user?.role)}
+      user={user || {}}
+    >
       <AuthInitGate>
         <FullScreenLoader />
         <HundleLanguage data={[]} />

@@ -1,9 +1,20 @@
 "use client";
 
-import React, { createContext, useContext, useMemo, useCallback, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import { ConfigProvider } from "antd";
 import type { IUserProps } from "@repo/shared-types";
 import { modernTheme, darkTheme } from "@repo/theme";
+import Cookies from "js-cookie";
+
+const PROJECT_ID_COOKIE = "ProjectId";
+const PROJECT_NAME_COOKIE = "ProjectName";
 
 export interface QuickProject {
   id: string;
@@ -50,7 +61,9 @@ export function ShellProvider({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [currentProject, setCurrentProject] = useState<QuickProject | null>(null);
+  const [currentProject, setCurrentProject] = useState<QuickProject | null>(
+    null,
+  );
   const [projects, setProjects] = useState<QuickProject[]>([]);
   const [projectsLoading, setProjectsLoading] = useState(false);
   const [basePath, setBasePath] = useState(initialBasePath);
@@ -65,6 +78,13 @@ export function ShellProvider({
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setCurrentProject({
+      id: Cookies.get(PROJECT_ID_COOKIE) || "",
+      name: Cookies.get(PROJECT_NAME_COOKIE) || "",
+    });
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -88,7 +108,18 @@ export function ShellProvider({
       setProjectsLoading,
       setBasePath,
     }),
-    [initialUser, themeMode, toggleTheme, projects, projectsLoading, currentProject, basePath, appMode, collapsed, isMobile],
+    [
+      initialUser,
+      themeMode,
+      toggleTheme,
+      projects,
+      projectsLoading,
+      currentProject,
+      basePath,
+      appMode,
+      collapsed,
+      isMobile,
+    ],
   );
 
   return (

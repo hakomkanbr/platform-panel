@@ -15,6 +15,7 @@
   "devDependencies": {
     "@repo/shared-types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -29,6 +30,7 @@
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "antd": "^5.16.5",
+    "js-cookie": "^3.0.8",
     "moment": "^2.30.1",
     "next": "14.2.3",
     "react": "^18",

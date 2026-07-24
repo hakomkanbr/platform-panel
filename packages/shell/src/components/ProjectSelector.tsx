@@ -15,8 +15,18 @@ interface ProjectSelectorProps {
   onProjectChange?: (project: QuickProject) => void;
 }
 
-export function ProjectSelector({ projects: propProjects, loading, onProjectChange }: ProjectSelectorProps) {
-  const { currentProject, setCurrentProject, projects: ctxProjects, projectsLoading: ctxLoading, basePath } = useShell();
+export function ProjectSelector({
+  projects: propProjects,
+  loading,
+  onProjectChange,
+}: ProjectSelectorProps) {
+  const {
+    currentProject,
+    setCurrentProject,
+    projects: ctxProjects,
+    projectsLoading: ctxLoading,
+    basePath,
+  } = useShell();
   const projects = propProjects ?? ctxProjects;
   const isLoading = loading ?? ctxLoading;
 
@@ -28,6 +38,8 @@ export function ProjectSelector({ projects: propProjects, loading, onProjectChan
       onProjectChange?.(project);
     }
   };
+
+  console.info("current project : ", currentProject);
 
   if (isLoading || projects.length === 0) return null;
 
@@ -47,17 +59,30 @@ export function ProjectSelector({ projects: propProjects, loading, onProjectChan
           value={project.id}
           label={
             <Space>
-              <Avatar size={20} icon={<FolderOutlined />} style={{ background: "#F7931E" }} />
+              <Avatar
+                size={20}
+                icon={<FolderOutlined />}
+                style={{ background: "#F7931E" }}
+              />
               <Text>{project.name}</Text>
             </Space>
           }
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Avatar size={24} icon={<FolderOutlined />} style={{ background: project.color || "#F7931E" }} />
+            <Avatar
+              size={24}
+              icon={<FolderOutlined />}
+              style={{ background: project.color || "#F7931E" }}
+            />
             <div>
-              <Text strong style={{ fontSize: 14 }}>{project.name}</Text>
+              <Text strong style={{ fontSize: 14 }}>
+                {project.name}
+              </Text>
               {project.description && (
-                <Text type="secondary" style={{ fontSize: 12, display: "block" }}>
+                <Text
+                  type="secondary"
+                  style={{ fontSize: 12, display: "block" }}
+                >
                   {project.description}
                 </Text>
               )}

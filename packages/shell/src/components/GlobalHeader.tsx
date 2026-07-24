@@ -333,7 +333,7 @@ export function GlobalHeader({
           </Tooltip>
 
           {/* Notifications */}
-          <Tooltip title="Notifications">
+          {/* <Tooltip title="Notifications">
             <Badge count={0} size="small">
               <Button
                 type="text"
@@ -349,7 +349,7 @@ export function GlobalHeader({
                 }}
               />
             </Badge>
-          </Tooltip>
+          </Tooltip> */}
 
           {/* Fullscreen */}
           <Tooltip

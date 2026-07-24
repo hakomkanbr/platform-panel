@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { AdminShell } from "@repo/shell";
+import { AdminShell, QuickProject } from "@repo/shell";
 import { useProjects } from "@repo/hooks";
 import { useTenantId } from "@repo/hooks";
 import { useAppRegistry } from "@repo/app-registry";
@@ -13,6 +13,7 @@ interface CmsLayoutClientProps {
   children: React.ReactNode;
   sidebarItems: ISidebarItem[];
   user: IUserProps;
+  currentProject: { id: string; name: string } | null;
 }
 
 function CmsAppRegistration({ children }: { children: React.ReactNode }) {
@@ -28,9 +29,18 @@ function CmsAppRegistration({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function CmsShellWrapper({ children, user }: { children: React.ReactNode; user: IUserProps }) {
+function CmsShellWrapper({
+  children,
+  user,
+  currentProject,
+}: {
+  children: React.ReactNode;
+  user: IUserProps;
+  currentProject: QuickProject | null;
+}) {
   const tenantId = useTenantId();
-  const { data: projects = [], isLoading: projectsLoading } = useProjects(tenantId);
+  const { data: projects = [], isLoading: projectsLoading } =
+    useProjects(tenantId);
 
   const quickProjects = projects.map((p) => ({
     id: p.id,
@@ -42,19 +52,23 @@ function CmsShellWrapper({ children, user }: { children: React.ReactNode; user: 
     <AdminShell
       user={user}
       appMode="sub"
+      currentProject={currentProject}
       projects={quickProjects}
       projectsLoading={projectsLoading}
     >
-      <CmsAppRegistration>
-        {children}
-      </CmsAppRegistration>
+      <CmsAppRegistration>{children}</CmsAppRegistration>
     </AdminShell>
   );
 }
 
-export default function CmsLayoutClient({ children, sidebarItems, user }: CmsLayoutClientProps) {
+export default function CmsLayoutClient({
+  children,
+  sidebarItems,
+  user,
+  currentProject,
+}: CmsLayoutClientProps) {
   return (
-    <CmsShellWrapper user={user}>
+    <CmsShellWrapper currentProject={currentProject} user={user}>
       {children}
     </CmsShellWrapper>
   );
