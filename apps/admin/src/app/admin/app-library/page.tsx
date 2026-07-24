@@ -266,7 +266,7 @@ export default function AppLibraryPage() {
     });
   };
 
-  const isInstalledInProject = (appCatalogId: string) => {
+  const isopenInProject = (appCatalogId: string) => {
     if (!selectedProjectId || !enabledAppCatalogIds) return false;
     return enabledAppCatalogIds.has(appCatalogId);
   };
@@ -392,7 +392,7 @@ export default function AppLibraryPage() {
         <Row gutter={[20, 20]}>
           {filtered.map((app) => {
             const appColor = getAppColor(app.capabilityCode);
-            const installed = isInstalledInProject(app.id);
+            const open = isopenInProject(app.id);
             return (
               <Col xs={24} sm={12} lg={8} key={app.id}>
                 <Card
@@ -464,11 +464,11 @@ export default function AppLibraryPage() {
                           fontWeight: 500,
                           padding: "0 10px",
                           lineHeight: "22px",
-                          background: installed ? "#D1FAE5" : "#F3F4F6",
-                          color: installed ? "#065F46" : "#6B7280",
+                          background: open ? "#D1FAE5" : "#F3F4F6",
+                          color: open ? "#065F46" : "#6B7280",
                         }}
                       >
-                        {installed ? "Installed" : "Available"}
+                        {open ? "open" : "Available"}
                       </Tag>
                     </div>
                     <Text

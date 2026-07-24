@@ -10,23 +10,23 @@ import { RootState } from "@/lib/redux-toolkit/store";
 import { IRoleType } from "@/abstracts/user/user";
 import { useSelector } from "react-redux";
 import columns from "./columns";
-import { 
-  Card, 
-  Row, 
-  Col, 
-  Statistic, 
-  Button, 
-  Space, 
-  Typography, 
+import {
+  Card,
+  Row,
+  Col,
+  Statistic,
+  Button,
+  Space,
+  Typography,
   Input,
   Select,
   Divider,
   Badge,
   Tooltip
 } from "antd";
-import { 
-  PlusOutlined, 
-  DatabaseOutlined, 
+import {
+  PlusOutlined,
+  DatabaseOutlined,
   SearchOutlined,
   AppstoreOutlined,
   UnorderedListOutlined,
@@ -59,11 +59,11 @@ export default function CollectionsView({
         <Row justify="space-between" align="middle">
           <Col>
             <Space direction="vertical" size={0}>
-              <Title level={2} style={{ margin: 0, color: 'white' }}>
+              <Title level={2} style={{ margin: 0 }}>
                 <DatabaseOutlined style={{ marginRight: '12px' }} />
                 Collections Management
               </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: '16px' }}>
+              <Text style={{ fontSize: '16px' }}>
                 Manage your content collections and data structures
               </Text>
             </Space>
@@ -83,16 +83,10 @@ export default function CollectionsView({
                 </Button>
               </Tooltip> */}
               <Link href={`${route_paths.collections}/${enumCreateUpdate.create}`}>
-                <Button 
-                  type="primary" 
+                <Button
+                  type="primary"
                   icon={<PlusOutlined />}
                   size="large"
-                  style={{ 
-                    background: 'white', 
-                    color: '#667eea',
-                    border: 'none',
-                    fontWeight: 'bold'
-                  }}
                 >
                   Create Collection
                 </Button>
@@ -167,7 +161,7 @@ export default function CollectionsView({
       </Card>
 
       {/* Collections Table */}
-      <ECard 
+      <ECard
         title={
           <Space>
             <DatabaseOutlined />
@@ -176,7 +170,7 @@ export default function CollectionsView({
           </Space>
         }
       >
-        <ETable 
+        <ETable
           columns={columns}
           url={api_points.collection.getAll}
         />

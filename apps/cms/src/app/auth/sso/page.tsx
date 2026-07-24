@@ -16,6 +16,7 @@ export default function SsoPage() {
 
     const params = new URLSearchParams(window.location.search);
     const ticket = params.get("ticket");
+    const next = params.get("next") || "/admin";
 
     if (!ticket) {
       window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/auth/login`;
@@ -37,7 +38,7 @@ export default function SsoPage() {
         if (json.success && json.data) {
           document.cookie = `access_token=${json.data.accessToken}; path=/; max-age=86400; SameSite=Lax;`;
           document.cookie = `refresh_token=${json.data.refreshToken}; path=/; max-age=2592000; SameSite=Lax;`;
-          window.location.href = "/admin";
+          window.location.href = next;
         } else {
           window.location.href = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/auth/login`;
         }

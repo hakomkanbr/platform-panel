@@ -25,7 +25,7 @@ export default async function RootLayout({
 
   return (
     <CmsLayoutClient
-      currentProject={currentProjectId && currentProjectName ? { id: currentProjectId, name: currentProjectName } : null}
+      currentProject={currentProjectId ? { id: currentProjectId, name: currentProjectName ?? "" } : null}
       sidebarItems={getSidebarItems(user?.role)}
       user={user || {}}
     >

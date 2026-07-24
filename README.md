@@ -36,7 +36,7 @@ This Turborepo has some additional tools already setup for you:
 
 To build all apps and packages, run the following command:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) open (recommended):
 
 ```sh
 cd my-turborepo
@@ -54,7 +54,7 @@ pnpm exec turbo build
 
 You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) open:
 
 ```sh
 turbo build --filter=docs
@@ -72,7 +72,7 @@ pnpm exec turbo build --filter=docs
 
 To develop all apps and packages, run the following command:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) open (recommended):
 
 ```sh
 cd my-turborepo
@@ -90,7 +90,7 @@ pnpm exec turbo dev
 
 You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) open:
 
 ```sh
 turbo dev --filter=web
@@ -113,7 +113,7 @@ Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/do
 
 By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) open (recommended):
 
 ```sh
 cd my-turborepo
@@ -133,7 +133,7 @@ This will authenticate the Turborepo CLI with your [Vercel account](https://verc
 
 Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) open:
 
 ```sh
 turbo link

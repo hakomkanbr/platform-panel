@@ -67,6 +67,7 @@ export default function CmsLayoutClient({
   user,
   currentProject,
 }: CmsLayoutClientProps) {
+  console.info("CmsLayoutClient.currentProject => ", currentProject);
   return (
     <CmsShellWrapper currentProject={currentProject} user={user}>
       {children}

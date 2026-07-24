@@ -80,13 +80,6 @@ export function ShellProvider({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    setCurrentProject({
-      id: Cookies.get(PROJECT_ID_COOKIE) || "",
-      name: Cookies.get(PROJECT_NAME_COOKIE) || "",
-    });
-  }, []);
-
   const toggleTheme = useCallback(() => {
     setThemeMode((prev) => (prev === "light" ? "dark" : "light"));
   }, []);

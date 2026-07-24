@@ -6,7 +6,6 @@ export async function setCookie(name: string, value: string) {
         {
             domain: process.env.NODE_ENV == "production" ? ".bremix.tech" : "localhost",
             path: "/",
-            httpOnly: true,
             secure: true,
             sameSite: "none"
         }

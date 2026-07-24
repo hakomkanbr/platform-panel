@@ -145,7 +145,7 @@ export default function HomePage() {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
-  const installedApps = appCatalog.filter((a) => a.isActive);
+  const openApps = appCatalog.filter((a) => a.isActive);
 
   return (
     <div className="s2s-stagger" style={{ display: "flex", flexDirection: "column", gap: 28, paddingBottom: 32 }}>
@@ -278,7 +278,7 @@ export default function HomePage() {
       {/* Main Content */}
       <Row gutter={[24, 24]}>
         <Col xs={24} xl={16}>
-          {/* Installed Applications */}
+          {/* open Applications */}
           <div style={{ marginBottom: 28 }}>
             <motion.div
               initial={{ opacity: 0 }}
@@ -357,7 +357,7 @@ export default function HomePage() {
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 18, paddingTop: 14, borderTop: "1px solid #F3F4F6" }}>
                           <span style={{ fontSize: 11, color: "#9CA3AF" }}>{app.capabilityCode}</span>
                           <span style={{ fontSize: 12, fontWeight: 600, color: "#F7931E" }}>
-                            {app.isActive ? "Installed" : "Available"} &rarr;
+                            {app.isActive ? "open" : "Available"} &rarr;
                           </span>
                         </div>
                       </Card>

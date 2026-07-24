@@ -57,13 +57,6 @@ export const cmsAppMetadata: AppMetadata = {
       icon: <LinkOutlined />,
       path: "/admin/relations",
       description: "Manage relations",
-    },
-    {
-      key: "forms",
-      label: "Forms",
-      icon: <FormOutlined />,
-      path: "/admin/forms",
-      description: "Manage forms",
-    },
+    }
   ],
 };

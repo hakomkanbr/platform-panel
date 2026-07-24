@@ -25,7 +25,7 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <S2SProvider>
+        <S2SProvider includeAuth>
           {children}
           <HundleFullPage />
         </S2SProvider>

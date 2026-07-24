@@ -10,6 +10,7 @@ import { dtRefresh } from '@/lib/redux-toolkit/slice/datatable-slice';
 import Link from 'next/link';
 import route_paths from '@/helper/route_paths';
 import DtLanguage from '@/components/elements/table/action_language';
+import api_points from '@/api/points';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -39,8 +40,8 @@ export default function Pages() {
   };
 
   const columns: TableProps["columns"] = [
-    { 
-      title: 'Title', 
+    {
+      title: 'Title',
       dataIndex: 'title',
       key: 'title',
       render: (text: string) => (
@@ -50,13 +51,13 @@ export default function Pages() {
       ),
       sorter: true,
     },
-    { 
-      title: 'Slug', 
+    {
+      title: 'Slug',
       dataIndex: 'slug',
       key: 'slug',
       render: (text: string) => (
-        <Text code style={{ 
-          background: "#f3f4f6", 
+        <Text code style={{
+          background: "#f3f4f6",
           color: "#6b7280",
           padding: "2px 8px",
           borderRadius: 4,
@@ -73,7 +74,7 @@ export default function Pages() {
       width: 100,
       align: "center",
       render: (value: boolean) => (
-        <Tag 
+        <Tag
           color={value ? 'success' : 'default'}
           style={{
             borderRadius: 12,
@@ -109,10 +110,10 @@ export default function Pages() {
         <Space size={8}>
           <Tooltip title="Edit Page">
             <Link href={`${route_paths.pages}/edit?id=${record.id}`}>
-              <Button 
+              <Button
                 type="text"
-                icon={<EditOutlined />} 
-                style={{ 
+                icon={<EditOutlined />}
+                style={{
                   color: "#6366f1",
                   border: "1px solid #e5e7eb",
                   borderRadius: 6
@@ -121,14 +122,14 @@ export default function Pages() {
               />
             </Link>
           </Tooltip>
-          
+
           <Tooltip title="Delete Page">
-            <Button 
+            <Button
               type="text"
-              danger 
-              icon={<DeleteOutlined />} 
+              danger
+              icon={<DeleteOutlined />}
               onClick={() => handleDelete(record.id)}
-              style={{ 
+              style={{
                 border: "1px solid #fecaca",
                 borderRadius: 6
               }}
@@ -141,7 +142,7 @@ export default function Pages() {
   ];
 
   return (
-    <div style={{  background: "#f9fafb", minHeight: "100vh" }}>
+    <div style={{ background: "#f9fafb", minHeight: "100vh" }}>
       {/* Header Section */}
       <Card
         style={{
@@ -152,9 +153,9 @@ export default function Pages() {
         }}
         bodyStyle={{ padding: "32px" }}
       >
-        <div style={{ 
-          display: "flex", 
-          justifyContent: "space-between", 
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
           gap: 16
@@ -182,9 +183,9 @@ export default function Pages() {
               </div>
             </Space>
           </div>
-          
+
           <Link href={`${route_paths.pages}/create`}>
-            <Button 
+            <Button
               type="primary"
               icon={<PlusOutlined />}
               size="large"
@@ -214,14 +215,14 @@ export default function Pages() {
         bodyStyle={{ padding: 0 }}
       >
         {/* Search and Filters */}
-        <div style={{ 
-          padding: "24px 24px 0", 
+        <div style={{
+          padding: "24px 24px 0",
           borderBottom: "1px solid #f3f4f6",
           marginBottom: 0
         }}>
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
             flexWrap: "wrap",
             gap: 16
@@ -238,7 +239,7 @@ export default function Pages() {
                 console.log('Search:', value);
               }}
             />
-            
+
             <Space>
               <Text style={{ color: "#6b7280" }}>
                 Total Pages: <Text strong style={{ color: "#1f2937" }}>--</Text>
@@ -252,7 +253,7 @@ export default function Pages() {
           <ETable
             columns={columns}
             payload={{ search: searchText }}
-            url={"/admin/page"}
+            url={api_points.pages.getAll}
           />
         </div>
       </Card>

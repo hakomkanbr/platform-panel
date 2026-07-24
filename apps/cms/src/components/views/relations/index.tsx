@@ -10,14 +10,14 @@ import { RootState } from "@/lib/redux-toolkit/store";
 import { IRoleType } from "@/abstracts/user/user";
 import { useSelector } from "react-redux";
 import relationsColumns from "./columns";
-import { 
-  Card, 
-  Row, 
-  Col, 
-  Statistic, 
-  Button, 
-  Space, 
-  Typography, 
+import {
+  Card,
+  Row,
+  Col,
+  Statistic,
+  Button,
+  Space,
+  Typography,
   Input,
   Select,
   Divider,
@@ -25,9 +25,9 @@ import {
   Tooltip,
   Alert
 } from "antd";
-import { 
-  PlusOutlined, 
-  ShareAltOutlined, 
+import {
+  PlusOutlined,
+  ShareAltOutlined,
   SearchOutlined,
   NodeIndexOutlined,
   UnorderedListOutlined,
@@ -60,8 +60,8 @@ export default function RelationsView({
   return (
     <div style={{ padding: '0' }}>
       {/* Header Section */}
-      <Card style={{ 
-        marginBottom: '24px', 
+      <Card style={{
+        marginBottom: '24px',
         background: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
         border: 'none'
       }}>
@@ -71,43 +71,43 @@ export default function RelationsView({
               <div>
                 <Space align="center" size="middle">
                   <Badge.Ribbon text="Headless CMS" color="gold">
-                    <div style={{ 
-                      backgroundColor: 'rgba(255,255,255,0.2)', 
-                      padding: '12px', 
+                    <div style={{
+                      backgroundColor: 'rgba(255,255,255,0.2)',
+                      padding: '12px',
                       borderRadius: '12px',
                       backdropFilter: 'blur(10px)'
                     }}>
-                      <ShareAltOutlined style={{ fontSize: '32px', color: 'white' }} />
+                      <ShareAltOutlined style={{ fontSize: '32px' }} />
                     </div>
                   </Badge.Ribbon>
                 </Space>
                 <div style={{ marginTop: '16px' }}>
-                  <Title level={2} style={{ margin: 0, color: 'white' }}>
+                  <Title level={2} style={{ margin: 0 }}>
                     Relations Management
                   </Title>
-                  <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: '16px' }}>
+                  <Text style={{ fontSize: '16px' }}>
                     Define and manage relationships between collections in your headless CMS
                   </Text>
                 </div>
               </div>
-              
+
               <Space size="large">
                 <Space align="center">
                   <Badge color="#52c41a" />
-                  <Text style={{ color: 'white' }}>One-to-One</Text>
+                  <Text>One-to-One</Text>
                 </Space>
                 <Space align="center">
                   <Badge color="#1890ff" />
-                  <Text style={{ color: 'white' }}>One-to-Many</Text>
+                  <Text>One-to-Many</Text>
                 </Space>
                 <Space align="center">
                   <Badge color="#722ed1" />
-                  <Text style={{ color: 'white' }}>Many-to-Many</Text>
+                  <Text>Many-to-Many</Text>
                 </Space>
               </Space>
             </Space>
           </Col>
-          
+
           <Col xs={24} lg={8} style={{ textAlign: 'right' }}>
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               {/* <Tooltip title="View API Documentation">
@@ -124,12 +124,12 @@ export default function RelationsView({
                 </Button>
               </Tooltip> */}
               <Link href={`${route_paths.relations}/${enumCreateUpdate.create}`}>
-                <Button 
-                  type="primary" 
+                <Button
+                  type="primary"
                   icon={<PlusOutlined />}
                   size="large"
-                  style={{ 
-                    backgroundColor: 'white', 
+                  style={{
+                    backgroundColor: 'white',
                     borderColor: 'white',
                     color: '#ff6b6b',
                     fontWeight: 600
@@ -152,11 +152,11 @@ export default function RelationsView({
         icon={<RocketOutlined />}
         style={{ marginBottom: '24px' }}
         showIcon
-        // action={
-        //   <Button size="small" type="link">
-        //     Learn More
-        //   </Button>
-        // }
+      // action={
+      //   <Button size="small" type="link">
+      //     Learn More
+      //   </Button>
+      // }
       />
 
       {/* Stats Cards */}
@@ -247,7 +247,7 @@ export default function RelationsView({
       </Card>
 
       {/* Relations Table */}
-      <ECard 
+      <ECard
         title={
           <Space>
             <ShareAltOutlined />
@@ -256,18 +256,18 @@ export default function RelationsView({
             <Badge.Ribbon text="API Ready" color="blue" style={{ right: -10 }} /> */}
           </Space>
         }
-        // extra={
-        //   <Space>
-        //     <EButton 
-        //       type="primary" 
-        //       href={`${route_paths.relations}/${enumCreateUpdate.create}`}
-        //     >
-        //       <PlusOutlined /> Create Relation
-        //     </EButton>
-        //   </Space>
-        // }
+      // extra={
+      //   <Space>
+      //     <EButton 
+      //       type="primary" 
+      //       href={`${route_paths.relations}/${enumCreateUpdate.create}`}
+      //     >
+      //       <PlusOutlined /> Create Relation
+      //     </EButton>
+      //   </Space>
+      // }
       >
-        <ETable 
+        <ETable
           columns={relationsColumns}
           url={api_points.relation.getAll}
         />

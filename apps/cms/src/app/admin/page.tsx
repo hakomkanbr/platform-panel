@@ -109,7 +109,7 @@ const quickActions = [
 const recentActivity = [
   {
     id: 1,
-    action: "Installed Ecommerce app",
+    action: "open Ecommerce app",
     project: "Ecommerce Platform",
     time: "1 hour ago",
     icon: <ShoppingCartOutlined />,

@@ -5,6 +5,8 @@ import { Select, Typography, Space, Avatar } from "antd";
 import { FolderOutlined } from "@ant-design/icons";
 import { useShell } from "../context/ShellContext";
 import type { QuickProject } from "../context/ShellContext";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -27,11 +29,18 @@ export function ProjectSelector({
     projectsLoading: ctxLoading,
     basePath,
   } = useShell();
+  const router = useRouter();
   const projects = propProjects ?? ctxProjects;
   const isLoading = loading ?? ctxLoading;
 
   const handleChange = (value: string | undefined) => {
-    if (!value) return;
+    console.info("valuevaluevalue : ", value);
+    if (!value) {
+      setCurrentProject(null);
+      Cookies.remove("ProjectId");
+      Cookies.remove("ProjectName");
+      router.refresh();
+    };
     const project = projects.find((p) => p.id === value);
     if (project) {
       setCurrentProject(project);

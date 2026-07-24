@@ -54,11 +54,11 @@ export default function NavigationsView({
         <Row justify="space-between" align="middle">
           <Col>
             <Space direction="vertical" size={0}>
-              <Title level={2} style={{ margin: 0, color: 'white' }}>
-                <FiNavigation style={{ marginRight: '12px' , position : "relative" , top : 3}} />
+              <Title level={2} style={{ margin: 0 }}>
+                <FiNavigation style={{ marginRight: '12px', position: "relative", top: 3 }} />
                 Navigation Management
               </Title>
-              <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: '16px' }}>
+              <Text style={{ fontSize: '16px' }}>
                 Manage your page navigations and data structures
               </Text>
             </Space>
@@ -78,12 +78,12 @@ export default function NavigationsView({
                 </Button>
               </Tooltip> */}
               <Link href={`${route_paths.navigations}/${enumCreateUpdate.create}`}>
-                <Button 
-                  type="primary" 
+                <Button
+                  type="primary"
                   icon={<PlusOutlined />}
                   size="large"
-                  style={{ 
-                    background: 'white', 
+                  style={{
+                    background: 'white',
                     color: '#667eea',
                     border: 'none',
                     fontWeight: 'bold'
@@ -98,7 +98,7 @@ export default function NavigationsView({
       </Card>
 
       {/* Collections Table */}
-      <ECard 
+      <ECard
         title={
           <Space>
             <DatabaseOutlined />
@@ -107,7 +107,7 @@ export default function NavigationsView({
           </Space>
         }
       >
-        <ETable 
+        <ETable
           columns={columns}
           url={api_points.navigation.getAll}
           payload={{ SiteId: site.id, Search: searchTerm }}
