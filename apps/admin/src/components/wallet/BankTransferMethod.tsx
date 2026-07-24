@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Form, InputNumber, Typography, Button, Descriptions, Spin, Divider, Empty } from "antd";
 import { BankOutlined, SendOutlined, ArrowLeftOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import type { BankDetailsDto } from "@/types";
+import type { BankDetailsDto } from "@repo/shared-types";
 
 const { Text, Title } = Typography;
 

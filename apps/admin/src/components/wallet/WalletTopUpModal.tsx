@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Modal, Typography, Space, Button, Divider } from "antd";
 import { WalletOutlined, BankOutlined, CreditCardOutlined } from "@ant-design/icons";
-import type { BankDetailsDto } from "@/types";
+import type { BankDetailsDto } from "@repo/shared-types";
 import BankTransferMethod from "./BankTransferMethod";
 import CardPaymentMethod from "./CardPaymentMethod";
 

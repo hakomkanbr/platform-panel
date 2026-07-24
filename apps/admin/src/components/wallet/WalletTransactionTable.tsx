@@ -3,7 +3,7 @@
 import React from "react";
 import { Table, Tag, Typography, Empty, Tooltip, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { WalletTransactionDto } from "@/types";
+import type { WalletTransactionDto } from "@repo/shared-types";
 import { ArrowUpOutlined, ArrowDownOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;

@@ -31,8 +31,8 @@ import {
   ThunderboltOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import type { ProjectDetailDto, AppCatalogDto, PlanCapability } from "@/types/apps";
-import { useEnableApp, useDisableApp } from "@/hooks/useApps";
+import type { ProjectDetailDto, AppCatalogDto, PlanCapability } from "@repo/shared-types";
+import { useEnableApp, useDisableApp } from "@repo/hooks";
 
 const { Title, Text, Paragraph } = Typography;
 

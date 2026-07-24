@@ -32,18 +32,17 @@ import {
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useTenantId } from "@/hooks/useTenantId";
+import { useTenantId } from "@repo/hooks";
 import {
   useProject,
   useAppCatalog,
   useCurrentCapabilities,
   useUpdateProject,
   useDeleteProject,
-} from "@/hooks/useApps";
+} from "@repo/hooks";
 import AppLauncher from "@/components/apps/AppLauncher";
 import { motion } from "framer-motion";
-import AnimatedCard from "@/components/common/AnimatedCard";
-import PageTransition from "@/components/common/PageTransition";
+import { AnimatedCard, PageTransition } from "@repo/ui";
 import dayjs from "dayjs";
 
 const { Title, Text } = Typography;

@@ -15,7 +15,7 @@ export const languageSlice = createSlice({
       state.list = action.payload;
 
       if(action.payload.length == 1){
-        state.selectedLang = action.payload[0];
+        state.selectedLang = action.payload[0] ?? null;
       }
     },
     setSelectedLang: (state, action: PayloadAction<ILanguage | null>) => {

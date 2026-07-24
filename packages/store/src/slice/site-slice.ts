@@ -2,7 +2,7 @@ import type { ISite } from '@repo/shared-types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 // تعريف نوع الحالة
-interface SiteState extends ISite {
+export interface SiteState extends ISite {
   changeSite: boolean;
   changeCount: number;
   list: ISite[];

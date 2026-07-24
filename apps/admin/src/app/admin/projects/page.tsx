@@ -25,20 +25,19 @@ import {
   CodeOutlined,
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
-import { useTenantId } from "@/hooks/useTenantId";
+import { useTenantId } from "@repo/hooks";
 import {
   useProjects,
   useCreateProject,
   useDeleteProject,
   useCurrentCapabilities,
-} from "@/hooks/useApps";
-import { useCanConsume } from "@/hooks/useBilling";
+} from "@repo/hooks";
+import { useCanConsume } from "@repo/hooks";
 import Link from "next/link";
 import dayjs from "dayjs";
-import type { ProjectDto } from "@/types/apps";
-import AnimatedCard from "@/components/common/AnimatedCard";
-import PageTransition from "@/components/common/PageTransition";
-import { TableSkeleton } from "@/components/common/SkeletonLoader";
+import type { ProjectDto } from "@repo/shared-types";
+import { AnimatedCard, PageTransition } from "@repo/ui";
+import { TableSkeleton } from "@repo/ui";
 
 const { Title, Text } = Typography;
 

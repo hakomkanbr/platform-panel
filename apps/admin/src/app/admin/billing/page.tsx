@@ -63,16 +63,16 @@ import {
   useRenewSubscription,
   useCancelSubscription,
   useCreditNotes,
-} from "@/hooks/useBilling";
-import { billingApi } from "@/lib/api/billing";
+} from "@repo/hooks";
+import { billingApi } from "@repo/api-client";
 import {
   useWallet,
   useWalletTransactions,
   useCreateTopUpRequest,
   useMyTopUpRequests,
   useBankDetails,
-} from "@/hooks/useWallet";
-import { useTenantId } from "@/hooks/useTenantId";
+} from "@repo/hooks";
+import { useTenantId } from "@repo/hooks";
 import type {
   InvoiceDto,
   PlanDto,
@@ -81,12 +81,10 @@ import type {
   PlanChangeResult,
   UpgradeSubscriptionRequest,
   DowngradeSubscriptionRequest,
-} from "@/types";
+} from "@repo/shared-types";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import AnimatedCard from "@/components/common/AnimatedCard";
-import PageTransition from "@/components/common/PageTransition";
-import { StatSkeleton } from "@/components/common/SkeletonLoader";
+import { AnimatedCard, PageTransition, StatSkeleton } from "@repo/ui";
 import WalletCardView from "@/components/wallet/WalletCard";
 import WalletTransactionTable from "@/components/wallet/WalletTransactionTable";
 import WalletTopUpModal from "@/components/wallet/WalletTopUpModal";

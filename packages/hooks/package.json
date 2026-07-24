@@ -14,13 +14,17 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "typescript": "^5"
   },
   "dependencies": {
+    "@repo/api-client": "workspace:*",
+    "@repo/shared-types": "workspace:*",
+    "@tanstack/react-query": "^5",
+    "antd": "^5.16.5",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.3"
+    "react-dom": "^18"
   }
 }

@@ -9,7 +9,7 @@ import {
   ReloadOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
-import type { WalletDto } from "@/types";
+import type { WalletDto } from "@repo/shared-types";
 
 const { Text } = Typography;
 

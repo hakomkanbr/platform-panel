@@ -19,9 +19,15 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
+    "@ant-design/nextjs-registry": "^1",
+    "@ant-design/icons": "^5.3.6",
+    "@repo/auth": "workspace:*",
+    "@repo/store": "workspace:*",
+    "@repo/theme": "workspace:*",
+    "@repo/ui": "workspace:*",
+    "antd": "^5.16.5",
     "next": "14.2.3",
-    "antd": "^5.16.5"
+    "react": "^18",
+    "react-dom": "^18"
   }
 }

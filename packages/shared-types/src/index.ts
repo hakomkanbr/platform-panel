@@ -88,4 +88,63 @@ export type { IInputIdText } from './id-text';
 
 export { default as PlacesEnum } from './file.enum';
 
+// Gateway API types
+export type {
+  AppCatalogDto,
+  CreateAppCatalogRequest,
+  UpdateAppCatalogRequest,
+  ProjectDto,
+  ProjectDetailDto,
+  ProjectAppDto,
+  CreateProjectRequest,
+  UpdateProjectRequest,
+  EnableAppRequest,
+  PlanCapability,
+} from './apps';
+
+export type {
+  PlanDto,
+  PlanFeatureDto,
+  SubscriptionDto,
+  SubscriptionOverrideDto,
+  InvoiceDto,
+  CreditNoteDto,
+  PlanChangeResult,
+  RenewResult,
+  PlanOverrideDto,
+  CreatePlanOverrideRequest,
+  UpgradeSubscriptionRequest,
+  DowngradeSubscriptionRequest,
+  ProratedRefundCalculation,
+  CanConsumeRequest,
+  CanConsumeResponse,
+  PaymentSimulationRequest,
+  ManualOverrideRequest,
+  RenewSubscriptionRequest,
+  ProratedPriceRequest,
+  ProratedPriceResponse,
+  ProratedChargeCalculation,
+} from './billing';
+
+export type {
+  WalletDto,
+  WalletTransactionDto,
+  WalletAdjustmentRequest,
+  WalletAdjustmentResponse,
+  RefundToWalletRequest,
+  TopUpRequestDto,
+  CreateTopUpRequest,
+  BankDetailsDto,
+  CardPaymentRequest,
+  CardPaymentResponse,
+} from './wallet';
+
+export type {
+  UsageDto,
+  UsageSummaryDto,
+  UsageSummaryItem,
+  UsageHistoryRequest,
+  UsageHistoryResponse,
+} from './usage';
+
 

@@ -2,9 +2,8 @@
 
 import React from "react";
 import { AdminShell } from "@repo/shell";
-import QueryProvider from "@/components/common/QueryProvider";
-import { useProjects } from "@/hooks/useApps";
-import { useTenantId } from "@/hooks/useTenantId";
+import { useProjects } from "@repo/hooks";
+import { useTenantId } from "@repo/hooks";
 import type { ISidebarItem, IUserProps } from "@repo/shared-types";
 
 interface CmsLayoutClientProps {
@@ -38,10 +37,8 @@ function CmsShellWrapper({ children, sidebarItems, user }: CmsLayoutClientProps)
 
 export default function CmsLayoutClient({ children, sidebarItems, user }: CmsLayoutClientProps) {
   return (
-    <QueryProvider>
-      <CmsShellWrapper sidebarItems={sidebarItems} user={user}>
-        {children}
-      </CmsShellWrapper>
-    </QueryProvider>
+    <CmsShellWrapper sidebarItems={sidebarItems} user={user}>
+      {children}
+    </CmsShellWrapper>
   );
 }

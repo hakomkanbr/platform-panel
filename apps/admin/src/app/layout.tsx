@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.scss";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { StoreProvider } from "@repo/store";
-import { ConfigProvider } from "antd";
 import HundleFullPage from "@/helper/get-page-url";
-import { AuthProvider } from "@repo/auth";
-import { globalStyles, modernTheme } from "@repo/theme";
+import { S2SProvider } from "@repo/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,19 +23,12 @@ export default async function RootLayout({
           href="https://cdn.syncfusion.com/ej2/26.1.35/material.css"
           rel="stylesheet"
         />
-        <style dangerouslySetInnerHTML={{ __html: globalStyles }} />
       </head>
       <body className={inter.className}>
-        <StoreProvider>
-          <AuthProvider>
-            <ConfigProvider theme={modernTheme}>
-              <AntdRegistry>
-                {children}
-                <HundleFullPage />
-              </AntdRegistry>
-            </ConfigProvider>
-          </AuthProvider>
-        </StoreProvider>
+        <S2SProvider>
+          {children}
+          <HundleFullPage />
+        </S2SProvider>
       </body>
     </html>
   );

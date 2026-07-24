@@ -3,7 +3,7 @@
 import React from "react";
 import { Table, Tag, Typography, Empty, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import type { TopUpRequestDto } from "@/types";
+import type { TopUpRequestDto } from "@repo/shared-types";
 import { ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;

@@ -2,9 +2,8 @@
 
 import React from "react";
 import { AdminShell } from "@repo/shell";
-import QueryProvider from "@/components/common/QueryProvider";
-import { useProjects } from "@/hooks/useApps";
-import { useTenantId } from "@/hooks/useTenantId";
+import { useProjects } from "@repo/hooks";
+import { useTenantId } from "@repo/hooks";
 import type { ISidebarItem, IUserProps } from "@repo/shared-types";
 
 interface AdminLayoutClientProps {
@@ -37,10 +36,8 @@ function AdminShellWrapper({ children, sidebarItems, user }: AdminLayoutClientPr
 
 export default function AdminLayoutClient({ children, sidebarItems, user }: AdminLayoutClientProps) {
   return (
-    <QueryProvider>
-      <AdminShellWrapper sidebarItems={sidebarItems} user={user}>
-        {children}
-      </AdminShellWrapper>
-    </QueryProvider>
+    <AdminShellWrapper sidebarItems={sidebarItems} user={user}>
+      {children}
+    </AdminShellWrapper>
   );
 }

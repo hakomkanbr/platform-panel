@@ -126,10 +126,10 @@ export default function RegisterPage() {
     <>
       <div style={{ textAlign: "center", marginBottom: 24 }}>
         <Text style={{ color: "#374151", fontSize: 17, fontWeight: 600, display: "block" }}>
-          {stepConfigs[step].title}
+          {stepConfigs[step]!.title}
         </Text>
         <div style={{ color: "#6b7280", fontSize: 13, marginTop: 2 }}>
-          {stepConfigs[step].desc}
+          {stepConfigs[step]!.desc}
         </div>
       </div>
 

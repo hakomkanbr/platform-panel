@@ -22,6 +22,15 @@ export type { SectionProps } from './section';
 export { CommandPalette } from './command-palette';
 export type { CommandPaletteProps } from './command-palette';
 
-
 export { StatusPill } from './status-pill';
 export type { StatusPillProps } from './status-pill';
+
+// Shared generic wrappers
+export { EBreadcrumb } from './breadcrumb';
+export { SubmitBtn } from './submit-button';
+export { CheckRole } from './check-role';
+export { WriteError } from './error-message';
+export { AnimatedCard } from './animated-card';
+export { PageTransition } from './page-transition';
+export { QueryProvider } from './query-provider';
+export { SkeletonLoader, StatSkeleton, TableSkeleton, ChartSkeleton, PageSkeleton } from './skeleton-loader';

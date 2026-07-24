@@ -38,9 +38,9 @@ import {
   useEnableApp,
   useDisableApp,
   useProject,
-} from "@/hooks/useApps";
-import { useTenantId } from "@/hooks/useTenantId";
-import { StatSkeleton } from "@/components/common/SkeletonLoader";
+} from "@repo/hooks";
+import { useTenantId } from "@repo/hooks";
+import { StatSkeleton } from "@repo/ui";
 
 const { Title, Text } = Typography;
 
