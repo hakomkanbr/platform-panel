@@ -29,7 +29,11 @@ export const getSidebarItems = (
       key: "app-library",
       label: "App Library",
       icon: <AppstoreOutlined />,
+<<<<<<< HEAD
       path: "http://localhost:3000/admin/app-library",
+=======
+      path: "/admin/app-library",
+>>>>>>> f333b542ae586d1c9082c2e5125fedc036a2dd75
     },
   ];
 

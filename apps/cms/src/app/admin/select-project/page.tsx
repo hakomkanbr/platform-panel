@@ -4,8 +4,14 @@ import { useRouter } from "next/navigation";
 import { SelectProjectPage } from "@repo/shell";
 import { setCookie } from "@/app/actions/set-cookie";
 import { useDispatch } from "react-redux";
+<<<<<<< HEAD
 import { setSiteId, setSiteSlug } from "@repo/store";
 import { useProjects, useTenantId } from "@repo/hooks";
+=======
+import { setSiteId, setSiteSlug } from "@/lib/redux-toolkit/slice/site-slice";
+import { useProjects } from "@/hooks/useApps";
+import { useTenantId } from "@/hooks/useTenantId";
+>>>>>>> f333b542ae586d1c9082c2e5125fedc036a2dd75
 
 const PROJECT_ID_COOKIE = "ProjectId";
 const PROJECT_NAME_COOKIE = "ProjectName";
