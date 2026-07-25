@@ -6,8 +6,7 @@ import { HomeOutlined } from "@ant-design/icons";
 import SelectSitePage from "../select-project/page";
 
 export default async function ComponentsPage() {
-  const site: any = await getCookie(SiteSlug);
-  if (!site) return <SelectSitePage />;
+
   return (
     <>
       <EBreadcrumb

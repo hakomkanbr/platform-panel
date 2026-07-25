@@ -17,8 +17,7 @@ export default async function CollectionCreateUpdatePage({
   params: { "create-update": string };
   searchParams: { id: number };
 }) {
-  const site: any = await getCookie(SiteSlug);
-  if (!site) return <SelectSitePage />;
+
 
   const isCreate = params["create-update"] === "create";
   const title = isCreate ? "Create Collection" : "Update Collection";

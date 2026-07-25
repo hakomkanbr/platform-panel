@@ -11,8 +11,7 @@ export default async function CollectionsPage({
 }: {
   params: { slug: string };
 }) {
-  const site: any = await getCookie(SiteSlug);
-  if (!site) return <SelectSitePage />;
+
   return (
     <>
       <EBreadcrumb

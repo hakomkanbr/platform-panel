@@ -14,8 +14,7 @@ export default async function PageEditPage({
   params: { slug: string, "create-update": string }
   searchParams: { id: number }
 }) {
-  const site: any = await getCookie(SiteSlug);
-  if (!site) return <SelectSitePage />;
+
   return (
     <>
       <EBreadcrumb items={[

@@ -10,8 +10,7 @@ export default async function PresetsPage({
 }: {
   params: { slug: string };
 }) {
-  const site: any = await getCookie(SiteSlug);
-  if (!site) return <SelectSitePage />;
+
   return (
     <>
       <EBreadcrumb
