@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 import { checkOutError, listHtmlAlert } from '@/helper/checkout-error';
 import { DeleteOutlined } from '@ant-design/icons';
 
-const DtDelete: React.FC<{ data: any, url: string }> = ({ data, url }) => {
+const DtDelete: React.FC<{ data: any, url: string, customDelete?: () => Promise<any> }> = ({ data, url, customDelete }) => {
     const dispatch = useDispatch();
     const deleteRow = async () => {
         Swal.fire({
@@ -19,7 +19,8 @@ const DtDelete: React.FC<{ data: any, url: string }> = ({ data, url }) => {
             showCancelButton: true,
         }).then((res) => {
             if (res.isConfirmed) {
-                api.delete(`${url}?id=${data.id}`).then(() => {
+                const deletePromise = customDelete ? customDelete() : api.delete(`${url}?id=${data.id}`);
+                deletePromise.then(() => {
                     dispatch(dtRefresh());
                     Swal.fire({
                         position: "center",

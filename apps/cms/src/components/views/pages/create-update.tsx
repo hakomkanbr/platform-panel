@@ -114,21 +114,21 @@ export default function CreateUpdatePageView() {
         const slug = section.moduleSlug || section.type || section.slug;
         if (!slug) continue;
 
-        const module = allModules.find(
+        const mod = allModules.find(
           m => m.slug === slug || m.name?.toLowerCase() === slug?.toLowerCase()
         );
-        if (!module) continue;
+        if (!mod) continue;
 
-        if (module.isSingleton && selectedModules.some(m => m.moduleId === module.id)) continue;
+        if (mod.isSingleton && selectedModules.some(m => m.moduleId === mod.id)) continue;
 
         newBlocks.push({
-          uid: `${module.id}-${Date.now()}-${Math.random()}`,
-          moduleId: module.id,
-          moduleName: module.name,
-          moduleSlug: module.slug,
-          isSingleton: module.isSingleton,
+          uid: `${mod.id}-${Date.now()}-${Math.random()}`,
+          moduleId: mod.id,
+          moduleName: mod.name,
+          moduleSlug: mod.slug,
+          isSingleton: mod.isSingleton,
           order: selectedModules.length + newBlocks.length,
-          fields: module.fields || [],
+          fields: mod.fields || [],
           fieldValues: {}
         });
       }

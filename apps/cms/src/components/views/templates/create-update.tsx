@@ -57,7 +57,7 @@ export default function TemplateCreateUpdateView({
   const onFinish = useCallback(async (values: any) => {
     try {
       setLoading(true);
-      const payload = {
+      const payload: Record<string, any> = {
         name: values.name,
         slug: slugify(values.name ?? "", { lower: true }),
         description: values.description,

@@ -6,11 +6,7 @@ import HundleLanguage from "@/components/elements/hundle-language";
 import { getSidebarItems } from "@/utils/sidebarItems";
 import { AuthInitGate } from "@/components/auth/AuthInitGate";
 import CmsLayoutClient from "./CmsLayoutClient";
-<<<<<<< HEAD
-=======
 
-const inter = Inter({ subsets: ["latin"] });
->>>>>>> f333b542ae586d1c9082c2e5125fedc036a2dd75
 
 export const metadata: Metadata = {
   title: "Share2Sells Platform - CMS",
@@ -29,15 +25,11 @@ export default async function RootLayout({
   const user: any = token ? await getTokenPayload(token) : null;
 
   return (
-<<<<<<< HEAD
     <CmsLayoutClient
       currentProject={currentProjectId ? { id: currentProjectId, name: currentProjectName ?? "" } : null}
       sidebarItems={getSidebarItems(user?.role)}
       user={user || {}}
     >
-=======
-    <CmsLayoutClient sidebarItems={getSidebarItems(user.role)} user={user || {}}>
->>>>>>> f333b542ae586d1c9082c2e5125fedc036a2dd75
       <AuthInitGate>
         <FullScreenLoader />
         <HundleLanguage data={[]} />

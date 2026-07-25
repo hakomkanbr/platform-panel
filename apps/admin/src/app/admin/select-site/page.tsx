@@ -4,13 +4,11 @@ import { useRouter } from "next/navigation";
 import { SelectProjectPage } from "@repo/shell";
 import { setCookie } from "@/app/actions/set-cookie";
 import { useDispatch } from "react-redux";
-import { setSiteId, setSiteSlug } from "@repo/store";
-import { useProjects, useTenantId } from "@repo/hooks";
+import { setSiteId, setSiteSlug } from "@/lib/redux-toolkit/slice/site-slice";
+import { useProjects } from "@/hooks/useApps";
+import { useTenantId } from "@/hooks/useTenantId";
 
-const PROJECT_ID_COOKIE = "ProjectId";
-const PROJECT_NAME_COOKIE = "ProjectName";
-
-export default function SelectProjectPageWrapper() {
+export default function SelectSitePageWrapper() {
   const router = useRouter();
   const dispatch = useDispatch();
   const tenantId = useTenantId();
@@ -24,15 +22,9 @@ export default function SelectProjectPageWrapper() {
   }));
 
   const handleSelectProject = (project: { id: string; name: string; slug?: string }) => {
-    setCookie(PROJECT_ID_COOKIE, project.id);
-    setCookie(PROJECT_NAME_COOKIE, project.name);
-
-    // Also set legacy site cookies for backward compat
-    if (project.slug) {
-      setCookie("site", project.slug);
-      setCookie("siteId", project.id);
-      dispatch(setSiteSlug(project.slug));
-    }
+    setCookie("site", project.slug || project.id);
+    setCookie("siteId", project.id);
+    dispatch(setSiteSlug(project.slug || project.id));
     dispatch(setSiteId(Number(project.id)));
 
     const params = new URLSearchParams(window.location.search);
@@ -46,8 +38,8 @@ export default function SelectProjectPageWrapper() {
     <SelectProjectPage
       projects={quickProjects}
       loading={isLoading}
-      title="Content Management Hub"
-      subtitle="Select a project to access powerful content management tools and streamline your workflow"
+      title="Site Selection"
+      subtitle="Select a site to access its tools and manage your content"
       onSelectProject={handleSelectProject}
     />
   );
