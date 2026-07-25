@@ -12,6 +12,12 @@ const route_paths = {
     relations: "/admin/relations",
     forms: "/admin/forms",
     formsAnalytics: "/admin/forms/analytics",
+    presets: "/admin/presets",
+    templates: "/admin/templates",
+    themes: "/admin/themes",
+    menus: "/admin/menus",
+    components: "/admin/components",
+    tags: "/admin/tags",
     setting: "/admin/setting",
     auth: {
         login: "/auth/login",

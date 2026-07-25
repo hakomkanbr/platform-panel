@@ -15,7 +15,8 @@ import {
   Space,
   Spin,
   Badge,
-  Tooltip
+  Tooltip,
+  Select
 } from "antd";
 import {
   SaveOutlined,
@@ -32,7 +33,9 @@ import {
 } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createPage, updatePage, getPageById } from "@/api/repostories/pages";
-import { FieldValue, IField, IPage, IPageBlock } from "@/types/page";
+import templatesRepository from "@/api/repostories/templates";
+import { getModules } from "@/api/repostories/modules";
+import { FieldValue, IField, IPage, IPageBlock, IModule } from "@/types/page";
 import ModuleSelector from "./ModuleSelector";
 import enumCreateUpdate from "@/abstracts/create-update";
 import { validatePageData, generateSlugFromTitle } from "@/utils/pageValidation";
@@ -55,6 +58,10 @@ export default function CreateUpdatePageView() {
   const [selectedModules, setSelectedModules] = useState<IPageBlock[]>([]);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
+  const [templateList, setTemplateList] = useState<any[]>([]);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(null);
+  const [templateLoading, setTemplateLoading] = useState(false);
+  const [allModules, setAllModules] = useState<IModule[]>([]);
 
   const pageId = searchParams.get('id');
   const isEdit = pageId !== null;
@@ -63,7 +70,81 @@ export default function CreateUpdatePageView() {
     if (isEdit && pageId) {
       loadPageData(parseInt(pageId));
     }
+    loadTemplates();
+    loadModules();
   }, [isEdit, pageId]);
+
+  const loadTemplates = async () => {
+    try {
+      const resp = await templatesRepository.getAll();
+      setTemplateList(resp.data?.data || resp.data || []);
+    } catch { /* ignore */ }
+  };
+
+  const loadModules = async () => {
+    try {
+      const resp = await getModules();
+      setAllModules(resp.data || []);
+    } catch { /* ignore */ }
+  };
+
+  const handleTemplateSelect = async (templateId: number) => {
+    if (!templateId) return;
+    setTemplateLoading(true);
+    try {
+      const resp = await templatesRepository.getOne(templateId);
+      const template = resp.data?.data || resp.data;
+      if (!template) return;
+
+      setSelectedTemplateId(templateId);
+
+      let sections: any[] = [];
+      try {
+        const parsed = JSON.parse(template.contentJson || template.ContentJson || '{}');
+        sections = parsed.sections || parsed.blocks || [];
+      } catch { /* not valid JSON */ }
+
+      if (sections.length === 0) {
+        message.info('Template has no sections to add');
+        return;
+      }
+
+      const newBlocks: IPageBlock[] = [];
+      for (const section of sections) {
+        const slug = section.moduleSlug || section.type || section.slug;
+        if (!slug) continue;
+
+        const module = allModules.find(
+          m => m.slug === slug || m.name?.toLowerCase() === slug?.toLowerCase()
+        );
+        if (!module) continue;
+
+        if (module.isSingleton && selectedModules.some(m => m.moduleId === module.id)) continue;
+
+        newBlocks.push({
+          uid: `${module.id}-${Date.now()}-${Math.random()}`,
+          moduleId: module.id,
+          moduleName: module.name,
+          moduleSlug: module.slug,
+          isSingleton: module.isSingleton,
+          order: selectedModules.length + newBlocks.length,
+          fields: module.fields || [],
+          fieldValues: {}
+        });
+      }
+
+      if (newBlocks.length > 0) {
+        setSelectedModules(prev => [...prev, ...newBlocks]);
+        message.success(`Added ${newBlocks.length} module(s) from template`);
+      } else {
+        message.info('No matching modules found for this template');
+      }
+    } catch {
+      message.error('Failed to load template');
+    } finally {
+      setTemplateLoading(false);
+    }
+  };
 
   const loadPageData = async (id: number) => {
     try {
@@ -149,6 +230,7 @@ export default function CreateUpdatePageView() {
       const payload = {
         ...values,
         languageId: language.selectedLang?.id,
+        templateId: selectedTemplateId,
         blocks: sortedModules
       };
 
@@ -366,6 +448,21 @@ export default function CreateUpdatePageView() {
               <LanguageSelect singleItem={null} onClick={(e) => {
                 form.setFieldValue("categoryIds", null);
               }} title={language.selectedLang?.name ?? "choose language"} />
+
+              <Form.Item label="Template" style={{ marginTop: 15 }}>
+                <Select
+                  placeholder="Select a template (optional)"
+                  allowClear
+                  loading={templateLoading}
+                  onChange={handleTemplateSelect}
+                  onClear={() => setSelectedTemplateId(null)}
+                  options={templateList.map((t: any) => ({
+                    label: t.name || t.Name,
+                    value: t.id || t.Id,
+                  }))}
+                  style={{ width: '100%' }}
+                />
+              </Form.Item>
 
               <Form.Item
                 style={{ marginTop: 15 }}

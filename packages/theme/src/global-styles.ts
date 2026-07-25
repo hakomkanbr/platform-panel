@@ -84,6 +84,7 @@ body {
   border-right: 1px solid var(--s2s-border);
   position: fixed !important;
   left: 0;
+  overflow:auto!important;
   top: 0;
   bottom: 0;
   z-index: 100;

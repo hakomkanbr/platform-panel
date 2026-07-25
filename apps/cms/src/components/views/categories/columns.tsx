@@ -26,8 +26,8 @@ const columns: TableProps["columns"] = [
         dataIndex: "language",
         align: "right",
         width: 50,
-        render: (language: ILanguage) => (
-            <DtLanguage value={language.slug} />
+        render: (language: ILanguage, record: any) => (
+            <DtLanguage value={language?.slug || record?.languageCode || ""} />
         ),
     },
     {

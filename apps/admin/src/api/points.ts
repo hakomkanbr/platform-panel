@@ -4,7 +4,14 @@ const api_points = {
         create_update : "/Admin/Modules/CreateUpdate",
         changeState : "/Admin/Modules/ChangeState",
         getOne : "/Admin/Modules/GetOne",
-        delete: "/Admin/Modules/Delete"
+        delete: "/Admin/Modules/Delete",
+
+        // Module Fields
+        getFields: "/Admin/Modules/GetFields",
+        getField: "/Admin/Modules/GetField",
+        createField: "/Admin/Modules/CreateField",
+        updateField: "/Admin/Modules/UpdateField",
+        deleteField: "/Admin/Modules/DeleteField",
     },
     pages : {
         getAll : "/Admin/page",
@@ -99,7 +106,29 @@ const api_points = {
         addUpdateLanguage : "/Admin/Service/AddUpdateLanguage",
         getLanguageList : "/Admin/Service/GetLanguageList",
         deleteLanguage : "/Admin/Service/DeleteLanguage",
-    }
+    },
+    apiKeys : {
+        list : "/api/v1/projects/{projectId}/api-keys",
+        create : "/api/v1/projects/{projectId}/api-keys",
+        getOne : "/api/v1/projects/{projectId}/api-keys/{id}",
+        update : "/api/v1/projects/{projectId}/api-keys/{id}",
+        delete : "/api/v1/projects/{projectId}/api-keys/{id}",
+        rotate : "/api/v1/projects/{projectId}/api-keys/{id}/regenerate",
+        revoke : "/api/v1/projects/{projectId}/api-keys/{id}/revoke",
+        disable : "/api/v1/projects/{projectId}/api-keys/{id}/disable",
+        enable : "/api/v1/projects/{projectId}/api-keys/{id}/enable",
+        auditLog : "/api/v1/projects/{projectId}/api-keys/{id}/audit-log",
+    },
+    projectLanguages : {
+        list : "/api/v1/languages/by-project/{projectId}",
+        create : "/api/v1/languages",
+        update : "/api/v1/languages/{id}",
+        delete : "/api/v1/languages/{id}",
+        reorder : "/api/v1/languages/reorder",
+        setDefault : "/api/v1/languages/{id}/default",
+        enable : "/api/v1/languages/{id}/enable",
+        disable : "/api/v1/languages/{id}/disable",
+    },
 };
 
 export default api_points;

@@ -45,8 +45,9 @@ export const cols: TableProps["columns"] = [
     dataIndex: "language",
     align: "right",
     width: 50,
-    render(language:ILanguage) {
-      return <DtLanguage value={language.slug}/>;
+    render(language:ILanguage, record:any) {
+      const slug = language?.slug || record?.languageCode || "";
+      return <DtLanguage value={slug}/>;
     },
   },
   {

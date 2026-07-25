@@ -7,7 +7,9 @@ const api_points = {
 
         // Module Fields
         getFields: "/api/v1/cms/modules/{moduleId}/fields",
+        getField: "/api/v1/cms/modules/fields/{id}",
         createField: "/api/v1/cms/modules/{moduleId}/fields",
+        updateField: "/api/v1/cms/modules/fields/{id}",
         deleteField: "/api/v1/cms/modules/fields/{id}",
     },
 
@@ -58,6 +60,58 @@ const api_points = {
 
         createItem: "/api/v1/cms/navigations/items",
         deleteItem: "/api/v1/cms/navigations/items/{id}",
+    },
+
+    template: {
+        getAll: "/api/v1/management/templates",
+        create: "/api/v1/management/templates",
+        getOne: "/api/v1/management/templates",
+        update: "/api/v1/management/templates",
+        delete: "/api/v1/management/templates",
+    },
+
+    theme: {
+        getAll: "/api/v1/management/themes",
+        create: "/api/v1/management/themes",
+        getOne: "/api/v1/management/themes",
+        update: "/api/v1/management/themes",
+        delete: "/api/v1/management/themes",
+        activate: "/api/v1/management/themes/{id}/activate",
+    },
+
+    menu: {
+        getAll: "/api/v1/management/menus",
+        create: "/api/v1/management/menus",
+        getOne: "/api/v1/management/menus",
+        update: "/api/v1/management/menus",
+        delete: "/api/v1/management/menus",
+
+        createItem: "/api/v1/management/menus/{menuId}/items",
+        updateItem: "/api/v1/management/menus/items/{id}",
+        deleteItem: "/api/v1/management/menus/items/{id}",
+    },
+
+    component: {
+        getAll: "/api/v1/management/components",
+        create: "/api/v1/management/components",
+        getOne: "/api/v1/management/components",
+        update: "/api/v1/management/components",
+        delete: "/api/v1/management/components",
+
+        createField: "/api/v1/management/components/{componentId}/fields",
+        deleteField: "/api/v1/management/components/fields/{id}",
+    },
+
+    preset: {
+        getAll: "/api/v1/management/presets",
+        install: "/api/v1/management/presets/{slug}/install",
+    },
+
+    tag: {
+        getAll: "/api/v1/management/tags",
+        create: "/api/v1/management/tags",
+        getOne: "/api/v1/management/tags",
+        delete: "/api/v1/management/tags",
     },
 };
 

@@ -11,6 +11,11 @@ import {
   UserOutlined,
   SettingOutlined,
   CrownOutlined,
+  LayoutOutlined,
+  MenuOutlined,
+  BuildOutlined,
+  TagOutlined,
+  ThunderboltOutlined,
 } from "@ant-design/icons";
 import { IRoleType } from "@/abstracts/user/user";
 import { IoNavigateOutline } from "react-icons/io5";
@@ -26,6 +31,18 @@ export const getSidebarItems = (
       label: "Dashboard",
       icon: <DashboardOutlined />,
       path: "/admin",
+    },
+    {
+      key: "presets",
+      label: "Presets",
+      icon: <ThunderboltOutlined />,
+      path: "/admin/presets",
+    },
+    {
+      key: "contents",
+      label: "Contents",
+      icon: <FileTextOutlined />,
+      path: "/admin/contents",
     },
     {
       key: "pages",
@@ -52,10 +69,40 @@ export const getSidebarItems = (
       path: "/admin/collections",
     },
     {
-      key: "relations",
-      label: "Relations",
-      icon: <LinkOutlined />,
-      path: "/admin/relations",
+        key: "relations",
+        label: "Relations",
+        icon: <LinkOutlined />,
+        path: "/admin/relations",
+    },
+    {
+        key: "templates",
+        label: "Templates",
+        icon: <LayoutOutlined />,
+        path: "/admin/templates",
+    },
+    {
+        key: "themes",
+        label: "Themes",
+        icon: <LayoutOutlined />,
+        path: "/admin/themes",
+    },
+    {
+        key: "menus",
+        label: "Menus",
+        icon: <MenuOutlined />,
+        path: "/admin/menus",
+    },
+    {
+        key: "components",
+        label: "Components",
+        icon: <BuildOutlined />,
+        path: "/admin/components",
+    },
+    {
+        key: "tags",
+        label: "Tags",
+        icon: <TagOutlined />,
+        path: "/admin/tags",
     },
   ];
 

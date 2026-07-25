@@ -41,7 +41,11 @@ const ETable: React.FC<{
             ...payload
         };
         const queryString = toQueryString(p);
-        const response: any = await api.get(`${url}?${queryString}`, {
+        let resolvedUrl = url;
+        for (const [key, val] of Object.entries(payload)) {
+            resolvedUrl = resolvedUrl.replace(`{${key}}`, String(val));
+        }
+        const response: any = await api.get(`${resolvedUrl}?${queryString}`, {
             data: {
                 ...localePayload,
                 ...payload

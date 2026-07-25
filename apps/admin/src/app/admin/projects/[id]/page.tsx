@@ -29,6 +29,7 @@ import {
   CheckCircleOutlined,
   KeyOutlined,
   ApiOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -41,6 +42,7 @@ import {
   useDeleteProject,
 } from "@repo/hooks";
 import AppLauncher from "@/components/apps/AppLauncher";
+import ProjectSettingsTabs from "@/components/projects/project-settings-tabs";
 import { motion } from "framer-motion";
 import { AnimatedCard, PageTransition } from "@repo/ui";
 import dayjs from "dayjs";
@@ -315,7 +317,7 @@ export default function ProjectDetailPage() {
             <span>App Launcher</span>
           </Space>
         }
-        style={{ minHeight: 300 }}
+        style={{ minHeight: 300, marginBottom: 24 }}
       >
         <AppLauncher
           project={project}
@@ -325,6 +327,14 @@ export default function ProjectDetailPage() {
           isLoadingCapabilities={isLoadingCapabilities}
         />
       </AnimatedCard>
+
+      <div style={{ marginTop: 32 }}>
+        <Title level={4} style={{ marginBottom: 16 }}>
+          <SettingOutlined style={{ marginRight: 8, color: "var(--primary)" }} />
+          Project Settings
+        </Title>
+        <ProjectSettingsTabs project={project} />
+      </div>
 
       <Modal
         title={

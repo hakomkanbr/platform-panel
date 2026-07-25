@@ -147,4 +147,32 @@ export type {
   UsageHistoryResponse,
 } from './usage';
 
+export type {
+  ApiKeyEnvironment,
+  ApiKeyStatus,
+  ApiKeyExpiration,
+  ApiKeyPermission,
+  ApiKeyDto,
+  CreateApiKeyRequest,
+  UpdateApiKeyRequest,
+  CreateApiKeyResponse,
+  ApiKeyAuditLog,
+} from './api-key';
+
+export {
+  API_KEY_PERMISSIONS,
+} from './api-key';
+
+export type {
+  ProjectLanguageDto,
+  CreateProjectLanguageRequest,
+  UpdateProjectLanguageRequest,
+  ReorderLanguagesRequest,
+} from './project-language';
+
+export {
+  LANGUAGE_FLAGS,
+  LANGUAGES,
+} from './project-language';
+
 

@@ -5,6 +5,11 @@ import {
   DatabaseOutlined,
   LinkOutlined,
   FormOutlined,
+  LayoutOutlined,
+  MenuOutlined,
+  BuildOutlined,
+  TagOutlined,
+  ThunderboltOutlined,
 } from "@ant-design/icons";
 import type { AppMetadata } from "@repo/app-registry";
 
@@ -22,6 +27,20 @@ export const cmsAppMetadata: AppMetadata = {
       icon: <DashboardOutlined />,
       path: "/admin",
       description: "CMS Dashboard",
+    },
+    {
+      key: "presets",
+      label: "Presets",
+      icon: <ThunderboltOutlined />,
+      path: "/admin/presets",
+      description: "Install website presets",
+    },
+    {
+      key: "contents",
+      label: "Contents",
+      icon: <FileTextOutlined />,
+      path: "/admin/contents",
+      description: "Manage module contents",
     },
     {
       key: "pages",
@@ -57,6 +76,41 @@ export const cmsAppMetadata: AppMetadata = {
       icon: <LinkOutlined />,
       path: "/admin/relations",
       description: "Manage relations",
+    },
+    {
+      key: "templates",
+      label: "Templates",
+      icon: <LayoutOutlined />,
+      path: "/admin/templates",
+      description: "Manage templates",
+    },
+    {
+      key: "themes",
+      label: "Themes",
+      icon: <LayoutOutlined />,
+      path: "/admin/themes",
+      description: "Manage themes",
+    },
+    {
+      key: "menus",
+      label: "Menus",
+      icon: <MenuOutlined />,
+      path: "/admin/menus",
+      description: "Manage menus",
+    },
+    {
+      key: "components",
+      label: "Components",
+      icon: <BuildOutlined />,
+      path: "/admin/components",
+      description: "Manage components",
+    },
+    {
+      key: "tags",
+      label: "Tags",
+      icon: <TagOutlined />,
+      path: "/admin/tags",
+      description: "Manage tags",
     }
   ],
 };

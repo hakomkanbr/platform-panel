@@ -26,6 +26,7 @@ import {
   ShoppingCartOutlined,
   FileTextOutlined,
   DatabaseOutlined,
+  ThunderboltOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 
@@ -83,6 +84,13 @@ const favoriteProjects = [
 ];
 
 const quickActions = [
+  {
+    title: "Quick Start",
+    description: "Install a website preset",
+    icon: <ThunderboltOutlined />,
+    href: "/admin/presets",
+    color: "#fbbf24",
+  },
   {
     title: "Create Project",
     description: "Set up a new workspace",
