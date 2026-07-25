@@ -45,6 +45,8 @@ export function ProjectSelector({
     if (project) {
       setCurrentProject(project);
       onProjectChange?.(project);
+      Cookies.set("ProjectId", project.id);
+      Cookies.set("ProjectName", project.name);
     }
   };
 
