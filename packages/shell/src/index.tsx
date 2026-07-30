@@ -1,11 +1,11 @@
 export { default as AdminShell } from "./layout";
 export type { AdminShellProps } from "./layout";
-export { default as ModernHeader } from "./header/ModernHeader";
 export { default as ModernContent } from "./layout/ModernContent";
 export { default as ModernSiteSelect } from "./header/ModernSiteSelect";
 export { default as RedirectWebsite } from "./header/RedirectWebsite";
 export { default as MigrateDatabase } from "./header/MigrateDatabase";
 export { default as SelectProjectPage } from "./select-project";
+export { loadApplication } from "./loader/loadApplication";
 
 // New Architecture Exports
 export { ShellProvider, useShell } from "./context/ShellContext";

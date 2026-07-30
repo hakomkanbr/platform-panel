@@ -1,0 +1,27 @@
+اختيار ما إذا كان Singleton (نموذج له سجل واحد فقط)
+
+
+869a3gp5x
+[Home Page]: Active session should timeout after a defined period (let’s say overnight), this reduces many risks
+1 hour
+
+
+869a3gqw5
+[Employees]: Add Employee Form : general errors
+5-6 hour
+
+
+
+869a3gtnu
+[Human Resources]: [Employees]: Add Employee Form : data inconsistency between FE and BE
+1 hour
+
+
+869a3gvxn
+[Employees]: Add Employee Form : Some data are missing (N/A)
+1 hour
+
+
+869a5bge9
+[Shifts]: The title text in the shifts table should be truncated
+10 minute

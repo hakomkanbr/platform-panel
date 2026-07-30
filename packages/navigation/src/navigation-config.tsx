@@ -20,28 +20,29 @@ const config: NavigationConfig = {
       key: "home",
       label: "Dashboard",
       icon: <HomeOutlined />,
-      path: `${process.env.NODE_ENV == "production" ? "http://app.share2sells.com" : "http://localhost:3000"}/admin`,
+      path: `/admin`,
       description: "Platform overview and KPIs",
     },
     {
       key: "projects",
       label: "Projects",
       icon: <FolderOutlined />,
-      path: `${process.env.NODE_ENV == "production" ? "http://app.share2sells.com" : "http://localhost:3000"}/admin/projects`,
+      path: `/admin/projects`,
       description: "Manage your projects",
     },
     {
       key: "billing",
       label: "Billing",
       icon: <CreditCardOutlined />,
-      path: `${process.env.NODE_ENV == "production" ? "http://app.share2sells.com" : "http://localhost:3000"}/admin/billing`,
+      path: `/admin/billing`,
       description: "Manage subscriptions and invoices",
     },
     {
       key: "team",
-      label: "Team",
+      label: "Team (soon)",
+      disabled: true,
       icon: <TeamOutlined />,
-      path: `${process.env.NODE_ENV == "production" ? "http://app.share2sells.com" : "http://localhost:3000"}/admin/users`,
+      path: `/admin/users`,
       description: "Manage team members",
     },
     // {
@@ -54,7 +55,20 @@ const config: NavigationConfig = {
   ],
   workspace: [],
   project: [],
-  application: [],
+  application: [{
+    key: "ecommerce",
+    label: "E-Commerce",
+    icon: <AppstoreOutlined />,
+    path: `/admin/ecommerce`,
+    description: "Manage e-commerce functionality and products",
+  }, {
+    key: "cms",
+    label: "Content Management (soon)",
+    icon: <AppstoreOutlined />,
+    path: `/admin/cms`,
+    description: "Manage content and assets",
+    // disabled: true,
+  }],
   developer: [],
   settings: [],
 };
@@ -87,7 +101,7 @@ export const navigationRegistry: NavigationRegistry = {
   getShellNavigation: (): ShellNavigation => {
     return {
       platform: [...config.platform],
-      application: [...appNavigationItems],
+      application: [...config.application],
     };
   },
   setAppNavigation: (items: AppNavigationItem[]) => {

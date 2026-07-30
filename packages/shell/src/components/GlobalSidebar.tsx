@@ -60,12 +60,14 @@ export function GlobalSidebar() {
             </Text>
           ),
           disabled: true,
-          style: { cursor: "default", opacity: 1, padding: "4px 16px" },
+          style: { cursor: "default", opacity: 1, padding: "4px 0" },
         });
       }
 
       items.push(...renderMenuItems(appSidebarItems));
     }
+
+    console.info("items : ", items);
 
     setMenuItems(items);
   }, [platformItems, appSidebarItems, collapsed]);
@@ -355,12 +357,14 @@ function renderMenuItems(items: ISidebarItem[]): any[] {
         icon: item.icon,
         label: item.label,
         children: renderMenuItems(item.children),
+        disabled: item.disabled,
       };
     }
     return {
       key: item.key,
       icon: item.icon,
       label: item.label,
+      disabled: item.disabled,
     };
   });
 }

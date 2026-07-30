@@ -54,6 +54,8 @@ function toSidebarItem(item: AppNavigationItem): ISidebarItem {
     label: item.label,
     icon: item.icon,
     path: item.path,
+    disabled: item.disabled,
+    type: item.type,
     roles: item.roles,
     children: item.children?.map(toSidebarItem),
   };

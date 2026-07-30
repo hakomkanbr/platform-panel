@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Layout } from "antd";
 import { useRouter } from "next/navigation";
 import { NavigationProvider } from "@repo/navigation";
@@ -9,7 +9,6 @@ import { ShellProvider, useShell } from "../context/ShellContext";
 import type { QuickProject } from "../context/ShellContext";
 import { GlobalSidebar } from "../components/GlobalSidebar";
 import { GlobalHeader } from "../components/GlobalHeader";
-import type { GlobalHeaderProps } from "../components/GlobalHeader";
 import ModernContent from "./ModernContent";
 import type { IModule, ISidebarItem } from "@repo/shared-types";
 import type { IUserProps } from "@repo/shared-types";
@@ -171,7 +170,6 @@ const AdminShellInner: React.FC<{
 
 const AdminShell: React.FC<AdminShellProps> = (props) => {
   const { children, user, basePath = "/admin", appMode = "main" } = props;
-  console.info("props.currentProject : ", props.currentProject);
   return (
     <AppRegistryProvider>
       <NavigationProvider>

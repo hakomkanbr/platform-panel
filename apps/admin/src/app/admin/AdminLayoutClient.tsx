@@ -8,11 +8,10 @@ import type { ISidebarItem, IUserProps } from "@repo/shared-types";
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
-  sidebarItems: ISidebarItem[];
   user: IUserProps;
 }
 
-function AdminShellWrapper({ children, sidebarItems, user }: AdminLayoutClientProps) {
+function AdminShellWrapper({ children, user }: AdminLayoutClientProps) {
   const tenantId = useTenantId();
   const { data: projects = [], isLoading: projectsLoading } = useProjects(tenantId);
 
@@ -24,7 +23,6 @@ function AdminShellWrapper({ children, sidebarItems, user }: AdminLayoutClientPr
 
   return (
     <AdminShell
-      sidebarItems={sidebarItems}
       user={user}
       projects={quickProjects}
       projectsLoading={projectsLoading}
@@ -34,9 +32,9 @@ function AdminShellWrapper({ children, sidebarItems, user }: AdminLayoutClientPr
   );
 }
 
-export default function AdminLayoutClient({ children, sidebarItems, user }: AdminLayoutClientProps) {
+export default function AdminLayoutClient({ children, user }: AdminLayoutClientProps) {
   return (
-    <AdminShellWrapper sidebarItems={sidebarItems} user={user}>
+    <AdminShellWrapper user={user}>
       {children}
     </AdminShellWrapper>
   );

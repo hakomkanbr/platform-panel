@@ -27,6 +27,7 @@
     "@repo/navigation": "workspace:*",
     "@repo/store": "workspace:*",
     "@repo/theme": "workspace:*",
+    "@repo/apps-cms": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "antd": "^5.16.5",

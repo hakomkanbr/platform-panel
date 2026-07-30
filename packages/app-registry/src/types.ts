@@ -6,6 +6,8 @@ export interface AppNavigationItem {
   icon?: React.ReactNode;
   path: string;
   description?: string;
+  disabled?: boolean;
+  type?: any;
   roles?: string[];
   children?: AppNavigationItem[];
 }

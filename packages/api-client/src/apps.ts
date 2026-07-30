@@ -11,12 +11,41 @@ import type {
 
 export const appsApi = {
   getAppCatalog: async (): Promise<AppCatalogDto[]> => {
-    const client = getGatewayClient();
-    const response = await client.get<{
-      success: boolean;
-      data: AppCatalogDto[];
-    }>("/api/v1/app-catalog");
-    return response.data.data;
+    // const client = getGatewayClient();
+    // const response = await client.get<{
+    //   success: boolean;
+    //   data: AppCatalogDto[];
+    // }>("/api/v1/app-catalog");
+    // return response.data.data;
+
+    return [
+      {
+        baseUrl: "cms",
+        capabilityCode: "share2sells",
+        name: "CMS",
+        description: "Content Management System",
+        icon: "https://cdn-icons-png.flaticon.com/512/2910/2910762.png",
+        isActive: true,
+        displayName: "Content Management System",
+        createdAt: new Date().toISOString(),
+        port: 3000,
+        healthCheckUrl: "http://localhost:3000/health",
+        id: "1",
+      },
+      {
+        baseUrl: "ecommerce",
+        capabilityCode: "share2sells",
+        name: "E-Commerce",
+        description: "E-Commerce Platform",
+        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeHWsfscgIsrPrpXfYGs4UOhNFko3z_HAi6EQRIZ0S6g&s=10",
+        isActive: true,
+        displayName: "E-Commerce Platform",
+        createdAt: new Date().toISOString(),
+        port: 3000,
+        healthCheckUrl: "http://localhost:3000/health",
+        id: "1",
+      }
+    ]
   },
 
   getAppCatalogById: async (id: string): Promise<AppCatalogDto> => {

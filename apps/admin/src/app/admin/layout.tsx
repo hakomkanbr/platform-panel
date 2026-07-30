@@ -21,7 +21,7 @@ export default async function RootLayout({
   const user: any = await getTokenPayload(token ?? "");
 
   return (
-    <AdminLayoutClient sidebarItems={getSidebarItems(user?.role)} user={user}>
+    <AdminLayoutClient user={user}>
       <FullScreenLoader />
       <HundleLanguage data={[]} />
       {children}

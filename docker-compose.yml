@@ -45,50 +45,50 @@ services:
       # Middlewares
       - traefik.http.routers.admin.middlewares=admin-redirect,admin-security,admin-compress
 
-  cms:
-    build:
-      context: .
-      dockerfile: docker/cms.Dockerfile
-    container_name: panel-cms
-    restart: unless-stopped
-    env_file:
-      - apps/cms/.env.production
-    expose:
-      - "3001"
-    networks:
-      - backend
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=platform_backend
+# cms:
+#   build:
+#     context: .
+#     dockerfile: docker/cms.Dockerfile
+#   container_name: panel-cms
+#   restart: unless-stopped
+#   env_file:
+#     - apps/cms/.env.production
+#   expose:
+#     - "3001"
+#   networks:
+#     - backend
+#   labels:
+#     - traefik.enable=true
+#     - traefik.docker.network=platform_backend
 
-      # Router
-      - traefik.http.routers.cms.rule=Host(`cms.share2sells.com`) || Host(`www.cms.share2sells.com`)
-      - traefik.http.routers.cms.entrypoints=websecure
-      - traefik.http.routers.cms.tls=true
-      - traefik.http.routers.cms.tls.certresolver=letsencrypt
+#     # Router
+#     - traefik.http.routers.cms.rule=Host(`cms.share2sells.com`) || Host(`www.cms.share2sells.com`)
+#     - traefik.http.routers.cms.entrypoints=websecure
+#     - traefik.http.routers.cms.tls=true
+#     - traefik.http.routers.cms.tls.certresolver=letsencrypt
 
-      # Service
-      - traefik.http.services.cms.loadbalancer.server.port=3001
+#     # Service
+#     - traefik.http.services.cms.loadbalancer.server.port=3001
 
-      # WWW -> Non-WWW
-      - traefik.http.middlewares.cms-redirect.redirectregex.regex=^https://www\.(.*)
-      - traefik.http.middlewares.cms-redirect.redirectregex.replacement=https://$${1}
-      - traefik.http.middlewares.cms-redirect.redirectregex.permanent=true
+#     # WWW -> Non-WWW
+#     - traefik.http.middlewares.cms-redirect.redirectregex.regex=^https://www\.(.*)
+#     - traefik.http.middlewares.cms-redirect.redirectregex.replacement=https://$${1}
+#     - traefik.http.middlewares.cms-redirect.redirectregex.permanent=true
 
-      # Security Headers
-      - traefik.http.middlewares.cms-security.headers.browserXssFilter=true
-      - traefik.http.middlewares.cms-security.headers.contentTypeNosniff=true
-      - traefik.http.middlewares.cms-security.headers.forceSTSHeader=true
-      - traefik.http.middlewares.cms-security.headers.stsSeconds=31536000
-      - traefik.http.middlewares.cms-security.headers.stsIncludeSubdomains=true
-      - traefik.http.middlewares.cms-security.headers.stsPreload=true
-      - traefik.http.middlewares.cms-security.headers.referrerPolicy=strict-origin-when-cross-origin
+#     # Security Headers
+#     - traefik.http.middlewares.cms-security.headers.browserXssFilter=true
+#     - traefik.http.middlewares.cms-security.headers.contentTypeNosniff=true
+#     - traefik.http.middlewares.cms-security.headers.forceSTSHeader=true
+#     - traefik.http.middlewares.cms-security.headers.stsSeconds=31536000
+#     - traefik.http.middlewares.cms-security.headers.stsIncludeSubdomains=true
+#     - traefik.http.middlewares.cms-security.headers.stsPreload=true
+#     - traefik.http.middlewares.cms-security.headers.referrerPolicy=strict-origin-when-cross-origin
 
-      # Compression
-      - traefik.http.middlewares.cms-compress.compress=true
+#     # Compression
+#     - traefik.http.middlewares.cms-compress.compress=true
 
-      # Middlewares
-      - traefik.http.routers.cms.middlewares=cms-redirect,cms-security,cms-compress
+#     # Middlewares
+#     - traefik.http.routers.cms.middlewares=cms-redirect,cms-security,cms-compress
 
 networks:
   backend:

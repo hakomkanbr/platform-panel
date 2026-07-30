@@ -33,6 +33,7 @@ import {
 } from "@ant-design/icons";
 import type { ProjectDetailDto, AppCatalogDto, PlanCapability } from "@repo/shared-types";
 import { useEnableApp, useDisableApp } from "@repo/hooks";
+import Link from "next/link";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -229,15 +230,28 @@ export default function AppLauncher({
                   hoverable
                   style={{ borderRadius: 12, height: "100%", opacity: 0.85 }}
                   actions={[
-                    <Tooltip title="Enable App" key="enable">
-                      <Button
-                        type="dashed"
-                        icon={<CheckCircleOutlined />}
-                        onClick={() => handleToggleApp(app, true)}
-                        loading={enableApp.isPending}
-                      >
-                        Enable
-                      </Button>
+                    // <Tooltip title="Enable App" key="enable">
+                    //   <Button
+                    //     type="dashed"
+                    //     icon={<CheckCircleOutlined />}
+                    //     onClick={() => handleToggleApp(app, true)}
+                    //     loading={enableApp.isPending}
+                    //   >
+                    //     Enable
+                    //   </Button>
+                    // </Tooltip>,
+
+                    <Tooltip title="Open App" key="open">
+                      <Link href={`${project.id}/${app.baseUrl}`}>
+                        <Button
+                          type="text"
+                          icon={<CheckCircleOutlined />}
+                          // onClick={() => handleToggleApp(app, true)}
+                          loading={enableApp.isPending}
+                        >
+                          Open
+                        </Button>
+                      </Link>
                     </Tooltip>,
                   ]}
                 >
