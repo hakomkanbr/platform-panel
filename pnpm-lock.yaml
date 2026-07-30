@@ -38,6 +38,9 @@ importers:
       '@repo/app-registry':
         specifier: workspace:*
         version: link:../../packages/app-registry
+      '@repo/apps-cms':
+        specifier: workspace:*
+        version: link:../../packages/apps/cms
       '@repo/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -202,9 +205,6 @@ importers:
       '@ant-design/icons':
         specifier: ^5.3.6
         version: 5.3.6(react-dom@18.0.0(react@18.0.0))(react@18.0.0)
-      '@repo/apps-cms':
-        specifier: workspace:*
-        version: link:../apps/cms
       react:
         specifier: ^18
         version: 18.0.0

@@ -15,6 +15,7 @@
     "@reduxjs/toolkit": "^2.2.5",
     "@repo/api-client": "workspace:*",
     "@repo/app-registry": "workspace:*",
+    "@repo/apps-cms": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/config": "workspace:*",
     "@repo/forms": "workspace:*",
