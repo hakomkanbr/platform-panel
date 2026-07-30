@@ -1,37 +1,33 @@
 "use client";
 
-import { useMemo } from "react";
-import { usePathname } from "next/navigation";
-import { navigationRegistry } from "./navigation-config";
-import { useNavigationContext } from "./NavigationContext";
-import type { ISidebarItem } from "@repo/shared-types";
-import type { ShellNavigation } from "./types";
+import {
+  usePathname,
+} from "next/navigation";
+
+import {
+  useNavigationContext,
+} from "./NavigationProvider";
 
 export function useNavigation() {
+
   const pathname = usePathname();
-  const { shellNavigation, sidebarItems, appSidebarItems, setAppNavigation, clearAppNavigation } = useNavigationContext();
 
-  const currentApp = useMemo(() => {
-    if (!pathname) return null;
-    const segments = pathname.split("/").filter(Boolean);
-    if (segments.length >= 2) {
-      return segments[1];
-    }
-    return null;
-  }, [pathname]);
+  const navigation = useNavigationContext();
 
-  const isActive = (path: string): boolean => {
-    return pathname?.startsWith(path) ?? false;
+  const isActive = (path: string) => {
+
+    return pathname.startsWith(path);
+
   };
 
   return {
-    sidebarItems,
-    appSidebarItems,
-    shellNavigation,
-    currentApp,
+
+    ...navigation,
+
+    pathname,
+
     isActive,
-    navigationRegistry,
-    setAppNavigation,
-    clearAppNavigation,
+
   };
+
 }

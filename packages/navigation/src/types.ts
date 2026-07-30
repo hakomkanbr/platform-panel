@@ -1,24 +1,21 @@
-import type { ISidebarItem } from "@repo/shared-types";
-import type { AppNavigationItem } from "@repo/app-registry";
+import type { ReactNode } from "react";
 
-export type { AppNavigationItem };
+export interface NavigationItem {
+  key: string;
+  label: string;
+  path: string;
 
-export interface ShellNavigation {
-  platform: AppNavigationItem[];
-  application: AppNavigationItem[];
+  icon?: ReactNode;
+
+  disabled?: boolean;
+
+  children?: NavigationItem[];
 }
 
-export interface NavigationConfig {
-  platform: AppNavigationItem[];
-  workspace: AppNavigationItem[];
-  project: AppNavigationItem[];
-  application: AppNavigationItem[];
-  developer: AppNavigationItem[];
-  settings: AppNavigationItem[];
-}
+export interface NavigationState {
 
-export interface NavigationRegistry {
-  getNavigationConfig: () => NavigationConfig;
-  getSidebarItems: (section: keyof NavigationConfig) => ISidebarItem[];
-  getShellNavigation: () => ShellNavigation;
+  platform: NavigationItem[];
+
+  application: NavigationItem[];
+
 }

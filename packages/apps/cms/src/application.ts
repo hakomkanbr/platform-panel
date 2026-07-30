@@ -1,5 +1,6 @@
 import { CmsNavigation } from "./navigation";
 import { CmsRoutes } from "./routes";
+import CmsAppRoot from "./Root";
 
 export const CmsApplication = {
     id: "cms",
@@ -10,5 +11,7 @@ export const CmsApplication = {
 
     navigation: CmsNavigation,
 
-    routes: CmsRoutes
+    routes: CmsRoutes,
+
+    Root: CmsAppRoot
 };

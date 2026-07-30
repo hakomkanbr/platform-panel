@@ -58,7 +58,7 @@ export function ApplicationSelector({ onAppChange }: ApplicationSelectorProps) {
             <div>
               <Text strong style={{ fontSize: 14 }}>{app.name}</Text>
               <Text type="secondary" style={{ fontSize: 12, display: "block" }}>
-                {app.description}
+                {"app.description"}
               </Text>
             </div>
           </div>

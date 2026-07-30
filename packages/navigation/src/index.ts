@@ -1,4 +1,7 @@
-export { createNavigationConfig } from './navigation-config';
-export type { NavigationConfig, NavigationRegistry, ShellNavigation } from './types';
-export { useNavigation } from './useNavigation';
-export { NavigationProvider, useNavigationContext } from './NavigationContext';
+export * from "./types";
+
+export * from "./navigation";
+
+export * from "./NavigationProvider";
+
+export * from "./useNavigation";
