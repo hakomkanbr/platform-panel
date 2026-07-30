@@ -14,36 +14,12 @@ services:
     labels:
       - traefik.enable=true
 
-      # Router
-      - traefik.http.routers.admin.rule=Host(`app.share2sells.com`) || Host(`www.app.share2sells.com`)
-      - traefik.http.routers.admin.entrypoints=websecure
-      - traefik.http.routers.admin.tls=true
-      - traefik.http.routers.admin.tls.certresolver=letsencrypt
+      - "traefik.http.routers.admin.rule=Host(`app.share2sells.com`)"
+      - "traefik.http.routers.admin.entrypoints=websecure"
+      - "traefik.http.routers.admin.tls=true"
+      - "traefik.http.routers.admin.tls.certresolver=letsencrypt"
 
-      - traefik.docker.network=platform_backend
-      
-      # Service
-      - traefik.http.services.admin.loadbalancer.server.port=3000
-
-      # WWW -> Non-WWW
-      - traefik.http.middlewares.admin-redirect.redirectregex.regex=^https://www\.(.*)
-      - traefik.http.middlewares.admin-redirect.redirectregex.replacement=https://$${1}
-      - traefik.http.middlewares.admin-redirect.redirectregex.permanent=true
-
-      # Security Headers
-      - traefik.http.middlewares.admin-security.headers.browserXssFilter=true
-      - traefik.http.middlewares.admin-security.headers.contentTypeNosniff=true
-      - traefik.http.middlewares.admin-security.headers.forceSTSHeader=true
-      - traefik.http.middlewares.admin-security.headers.stsSeconds=31536000
-      - traefik.http.middlewares.admin-security.headers.stsIncludeSubdomains=true
-      - traefik.http.middlewares.admin-security.headers.stsPreload=true
-      - traefik.http.middlewares.admin-security.headers.referrerPolicy=strict-origin-when-cross-origin
-
-      # Compression
-      - traefik.http.middlewares.admin-compress.compress=true
-
-      # Middlewares
-      - traefik.http.routers.admin.middlewares=admin-redirect,admin-security,admin-compress
+      - "traefik.http.services.admin.loadbalancer.server.port=3000"
 
 # cms:
 #   build:
