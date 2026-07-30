@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.scss";
 import HundleFullPage from "@/helper/get-page-url";
 import { S2SProvider } from "@repo/providers";
+import RegisterApps from "@/lib/register-apps";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,9 @@ export default async function RootLayout({
       </head>
       <body className={inter.className}>
         <S2SProvider>
-          {children}
+          <RegisterApps>
+            {children}
+          </RegisterApps>
           <HundleFullPage />
         </S2SProvider>
       </body>

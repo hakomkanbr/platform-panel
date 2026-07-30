@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import { Layout } from "antd";
 import { useRouter } from "next/navigation";
 import { NavigationProvider } from "@repo/navigation";
-import { AppRegistryProvider } from "@repo/app-registry";
 import { ShellProvider, useShell } from "../context/ShellContext";
 import type { QuickProject } from "../context/ShellContext";
 import { GlobalSidebar } from "../components/GlobalSidebar";
@@ -12,19 +11,20 @@ import { GlobalHeader } from "../components/GlobalHeader";
 import ModernContent from "./ModernContent";
 import type { IModule, ISidebarItem } from "@repo/shared-types";
 import type { IUserProps } from "@repo/shared-types";
+import type { ApplicationDefinition } from "@repo/app-registry";
 
 const { Sider } = Layout;
 
 export interface AdminShellProps {
   children: React.ReactNode;
   user: IUserProps;
-  sidebarItems?: ISidebarItem[];
   modules?: IModule[];
   siteSlug?: string;
   onLogout?: () => void;
   siteRequiredPaths?: string[];
   basePath?: string;
   appMode?: "main" | "sub";
+  application?: ApplicationDefinition;
   headerComponents?: {
     siteSelect?: React.ReactNode;
     redirectWebsite?: React.ReactNode;
@@ -37,7 +37,6 @@ export interface AdminShellProps {
 
 const AdminShellInner: React.FC<{
   children: React.ReactNode;
-  sidebarItems?: ISidebarItem[];
   siteSlug?: string;
   onLogout?: () => void;
   siteRequiredPaths?: string[];
@@ -47,7 +46,6 @@ const AdminShellInner: React.FC<{
   projectsLoading?: boolean;
 }> = ({
   children,
-  sidebarItems,
   siteSlug,
   onLogout,
   siteRequiredPaths = [],
@@ -79,7 +77,6 @@ const AdminShellInner: React.FC<{
     }, [propProjectsLoading, setProjectsLoading]);
 
     useEffect(() => {
-      console.info("current project from cookie : ", currentProject);
       if (currentProject) {
         setCurrentProject({
           id: String(currentProject.id),
@@ -169,15 +166,13 @@ const AdminShellInner: React.FC<{
   };
 
 const AdminShell: React.FC<AdminShellProps> = (props) => {
-  const { children, user, basePath = "/admin", appMode = "main" } = props;
+  const { children, user, basePath = "/admin", appMode = "main", application } = props;
   return (
-    <AppRegistryProvider>
-      <NavigationProvider>
-        <ShellProvider user={user} initialBasePath={basePath} appMode={appMode}>
-          <AdminShellInner currentProject={props.currentProject} {...props}>{children}</AdminShellInner>
-        </ShellProvider>
-      </NavigationProvider>
-    </AppRegistryProvider>
+    <NavigationProvider application={application}>
+      <ShellProvider user={user} initialBasePath={basePath} appMode={appMode}>
+        <AdminShellInner currentProject={props.currentProject} {...props}>{children}</AdminShellInner>
+      </ShellProvider>
+    </NavigationProvider>
   );
 };
 

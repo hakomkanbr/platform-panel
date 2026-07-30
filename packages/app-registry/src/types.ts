@@ -31,8 +31,3 @@ export interface ApplicationDefinition {
 
   Root: ComponentType<any>;
 }
-
-export interface AppRegistryState {
-  applications: Map<string, ApplicationDefinition>;
-  activeAppId: string | null;
-}

@@ -35,7 +35,7 @@ export function S2SProvider({
       <style dangerouslySetInnerHTML={{ __html: globalStyles }} />
       <ConfigProvider theme={modernTheme}>
         <AntdRegistry>
-          {includeStore ? <StoreProvider>{content}</StoreProvider> : content}
+          <StoreProvider>{content}</StoreProvider>
         </AntdRegistry>
       </ConfigProvider>
     </>

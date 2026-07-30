@@ -1,4 +1,4 @@
-import { loadApplication } from "@repo/shell";
+import { loadApplication } from "@repo/app-registry";
 import { notFound } from "next/navigation";
 
 interface Props {

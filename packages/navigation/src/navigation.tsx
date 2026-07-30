@@ -3,6 +3,7 @@ import {
     HomeOutlined,
     CreditCardOutlined,
     SettingOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 
 import type { NavigationItem } from "./types";
@@ -17,7 +18,7 @@ export const platformNavigation: NavigationItem[] = [
 
         path: "/admin",
 
-        icon: <HomeOutlined/>
+        icon: <HomeOutlined />
 
     },
 
@@ -29,7 +30,7 @@ export const platformNavigation: NavigationItem[] = [
 
         path: "/admin/projects",
 
-        icon: <FolderOutlined/>
+        icon: <FolderOutlined />
 
     },
 
@@ -41,19 +42,20 @@ export const platformNavigation: NavigationItem[] = [
 
         path: "/admin/billing",
 
-        icon: <CreditCardOutlined/>
+        icon: <CreditCardOutlined />
 
     },
 
     {
 
-        key: "settings",
+        key: "team",
 
-        label: "Settings",
+        label: "Team (soon)",
 
-        path: "/admin/settings",
+        path: "/admin/users",
+        disabled: true,
 
-        icon: <SettingOutlined/>
+        icon: <UserOutlined />
 
     }
 

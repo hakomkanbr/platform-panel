@@ -4,7 +4,7 @@ import React from "react";
 import { AdminShell } from "@repo/shell";
 import { useProjects } from "@repo/hooks";
 import { useTenantId } from "@repo/hooks";
-import type { ISidebarItem, IUserProps } from "@repo/shared-types";
+import type { IUserProps } from "@repo/shared-types";
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;

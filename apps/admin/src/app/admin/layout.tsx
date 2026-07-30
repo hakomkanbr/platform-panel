@@ -3,7 +3,6 @@ import { getTokenPayload } from "@repo/utils";
 import { cookies } from "next/headers";
 import FullScreenLoader from "@/components/elements/full-screnn-loader/full-screnn-loader";
 import HundleLanguage from "@/components/elements/hundle-language";
-import { getSidebarItems } from "@repo/utils";
 import AdminLayoutClient from "./AdminLayoutClient";
 
 export const metadata: Metadata = {

@@ -1,88 +1,60 @@
 "use client";
 
 import {
-
     createContext,
-
     useContext,
-
     useMemo,
-
+    useState,
+    useCallback,
 } from "react";
 
-
 import {
-
     platformNavigation,
-
 } from "./navigation";
 
 import type {
-
     NavigationState,
-
 } from "./types";
-import { loadApplication } from "@repo/app-registry";
-
+import type { ApplicationDefinition } from "@repo/app-registry";
 
 interface Props {
-
-    appSlug?: string;
-
+    application?: ApplicationDefinition;
     children: React.ReactNode;
-
 }
 
-const Context = createContext<NavigationState | null>(null);
+interface NavigationContextValue extends NavigationState {
+    setApplication: (app: ApplicationDefinition | null) => void;
+}
+
+const Context = createContext<NavigationContextValue | null>(null);
 
 export function NavigationProvider({
-
-    appSlug,
-
+    application: initialApp,
     children,
-
 }: Props) {
+    const [app, setApp] = useState<ApplicationDefinition | undefined>(initialApp);
 
-    const value = useMemo(() => {
+    const setApplication = useCallback((application: ApplicationDefinition | null) => {
+        setApp(application ?? undefined);
+    }, []);
 
-        const app = appSlug
-
-            ? loadApplication(appSlug)
-
-            : undefined;
-
-        return {
-
-            platform: platformNavigation,
-
-            application: app?.navigation ?? [],
-
-        };
-
-    }, [appSlug]);
+    const value = useMemo<NavigationContextValue>(() => ({
+        platform: platformNavigation,
+        application: app?.navigation ?? [],
+        setApplication,
+    }), [app, setApplication]);
 
     return (
-
         <Context.Provider value={value}>
-
             {children}
-
         </Context.Provider>
-
     );
-
 }
 
 export function useNavigationContext() {
-
     const ctx = useContext(Context);
-
     if (!ctx) {
-
         throw new Error("NavigationProvider missing");
-
     }
-
     return ctx;
-
 }

@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigation } from "@repo/navigation";
 import { useShell } from "../context/ShellContext";
-import type { ISidebarItem } from "@repo/shared-types";
+import type { NavigationItem } from "@repo/navigation";
 
 const { Text } = Typography;
 
@@ -20,7 +20,7 @@ export function GlobalSidebar() {
   const router = useRouter();
   const { collapsed, isMobile, setCollapsed, user, projects, projectsLoading } =
     useShell();
-  const { sidebarItems: platformItems, appSidebarItems } = useNavigation();
+  const { platform, application } = useNavigation();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [menuItems, setMenuItems] = useState<any[]>([]);
 
@@ -33,10 +33,10 @@ export function GlobalSidebar() {
     const items: any[] = [];
 
     // Platform Navigation
-    items.push(...renderMenuItems(platformItems));
+    items.push(...renderMenuItems(platform));
 
     // Application Navigation Divider + Items
-    if (appSidebarItems.length > 0) {
+    if (application.length > 0) {
       items.push({
         type: "divider",
         key: "app-divider",
@@ -64,16 +64,14 @@ export function GlobalSidebar() {
         });
       }
 
-      items.push(...renderMenuItems(appSidebarItems));
+      items.push(...renderMenuItems(application));
     }
 
-    console.info("items : ", items);
-
     setMenuItems(items);
-  }, [platformItems, appSidebarItems, collapsed]);
+  }, [platform, application, collapsed]);
 
   const handleMenuClick = ({ key }: { key: string }) => {
-    const findItem = (items: ISidebarItem[]): ISidebarItem | null => {
+    const findItem = (items: NavigationItem[]): NavigationItem | null => {
       for (const item of items) {
         if (item.key === key) return item;
         if (item.children) {
@@ -84,7 +82,7 @@ export function GlobalSidebar() {
       return null;
     };
 
-    const allItems = [...platformItems, ...appSidebarItems];
+    const allItems = [...platform, ...application];
     const target = findItem(allItems);
     if (target?.path) router.push(target.path);
     if (isMobile) setCollapsed(true);
@@ -349,7 +347,7 @@ export function GlobalSidebar() {
   );
 }
 
-function renderMenuItems(items: ISidebarItem[]): any[] {
+function renderMenuItems(items: NavigationItem[]): any[] {
   return items.map((item) => {
     if (item.children && item.children.length > 0) {
       return {

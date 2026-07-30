@@ -14,6 +14,7 @@
     "@hello-pangea/dnd": "^18.0.1",
     "@reduxjs/toolkit": "^2.2.5",
     "@repo/api-client": "workspace:*",
+    "@repo/app-registry": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/config": "workspace:*",
     "@repo/forms": "workspace:*",

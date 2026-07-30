@@ -3,38 +3,37 @@
 import React from "react";
 import { Select, Typography, Space, Avatar } from "antd";
 import { AppstoreOutlined } from "@ant-design/icons";
-import { useAppRegistry } from "@repo/app-registry";
-import { useShell } from "../context/ShellContext";
+import { appRegistry } from "@repo/app-registry";
+import { useParams, useRouter } from "next/navigation";
 
 const { Text } = Typography;
 const { Option } = Select;
 
-interface ApplicationSelectorProps {
-  onAppChange?: (appId: string) => void;
-}
+export function ApplicationSelector() {
+  const params = useParams();
+  const router = useRouter();
+  const projectId = params?.projectId as string | undefined;
+  const currentAppSlug = params?.appSlug as string | undefined;
 
-export function ApplicationSelector({ onAppChange }: ApplicationSelectorProps) {
-  const { registeredApps, activeAppId, setActiveApp } = useAppRegistry();
-  const { basePath } = useShell();
+  const allApps = appRegistry.getAllApps();
 
-  const handleChange = (value: string | undefined) => {
-    if (!value) return;
-    setActiveApp(value);
-    onAppChange?.(value);
+  const handleChange = (appSlug: string | undefined) => {
+    if (!appSlug || !projectId) return;
+    router.push(`/admin/projects/${projectId}/${appSlug}`);
   };
 
-  if (registeredApps.length === 0) return null;
+  if (allApps.length === 0) return null;
 
   return (
     <Select
-      value={activeAppId ?? undefined}
+      value={currentAppSlug ?? undefined}
       placeholder="Switch application..."
       onChange={handleChange}
       style={{ minWidth: 180, maxWidth: 280 }}
       size="middle"
       optionLabelProp="label"
     >
-      {registeredApps.map((app) => (
+      {allApps.map((app) => (
         <Option
           key={app.id}
           value={app.id}
@@ -57,9 +56,6 @@ export function ApplicationSelector({ onAppChange }: ApplicationSelectorProps) {
             />
             <div>
               <Text strong style={{ fontSize: 14 }}>{app.name}</Text>
-              <Text type="secondary" style={{ fontSize: 12, display: "block" }}>
-                {"app.description"}
-              </Text>
             </div>
           </div>
         </Option>
