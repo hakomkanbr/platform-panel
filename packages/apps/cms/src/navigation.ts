@@ -8,18 +8,18 @@ export const CmsNavigation = [
     {
         key: "pages",
         label: "Pages",
-        path: "pages",
+        path: "cms/pages",
     },
 
     {
-        key: "media",
-        label: "Media",
-        path: "media",
+        key: "modules",
+        label: "Modules",
+        path: "cms/modules",
     },
 
     {
         key: "menus",
         label: "Menus",
-        path: "menus",
+        path: "cms/menus",
     },
 ];

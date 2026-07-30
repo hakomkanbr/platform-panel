@@ -1,12 +1,11 @@
+import { Applications } from "./applications";
 import type { ApplicationDefinition } from "./types";
 
-const registry = new Map<string, ApplicationDefinition>();
+const registry = new Map(
+  Applications.map(app => [app.id, app])
+);
 
 export const appRegistry = {
-  registerApp(app: ApplicationDefinition): void {
-    registry.set(app.id, app);
-  },
-
   getApp(id: string): ApplicationDefinition | undefined {
     return registry.get(id);
   },
