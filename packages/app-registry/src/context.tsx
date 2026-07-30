@@ -1,52 +1,42 @@
 "use client";
 
-import React, { createContext, useContext, useCallback, useMemo, useState } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import { appRegistry } from "./registry";
-import type { AppMetadata, AppNavigationItem } from "./types";
+import type { ApplicationDefinition, AppNavigationItem } from "./types";
 
 interface AppRegistryContextValue {
-  registeredApps: AppMetadata[];
+  registeredApps: ApplicationDefinition[];
   activeAppId: string | null;
-  activeApp: AppMetadata | null;
+  activeApp: ApplicationDefinition | null;
   activeAppNavigation: AppNavigationItem[];
-  registerApp: (metadata: AppMetadata) => void;
-  unregisterApp: (appId: string) => void;
   setActiveApp: (appId: string | null) => void;
-  getApp: (appId: string) => AppMetadata | undefined;
+  getApp: (appId: string) => ApplicationDefinition | undefined;
 }
 
 const AppRegistryContext = createContext<AppRegistryContextValue | null>(null);
 
-export function AppRegistryProvider({ children }: { children: React.ReactNode }) {
-  const [version, setVersion] = useState(0);
+export function AppRegistryProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [activeAppId, setActiveAppId] = useState<string | null>(null);
 
-  const registerApp = useCallback((metadata: AppMetadata) => {
-    appRegistry.register(metadata);
-    setVersion((v) => v + 1);
-  }, []);
-
-  const unregisterApp = useCallback((appId: string) => {
-    appRegistry.unregister(appId);
-    setVersion((v) => v + 1);
-  }, []);
-
-  const setActiveApp = useCallback((appId: string | null) => {
-    appRegistry.setActiveApp(appId);
-    setVersion((v) => v + 1);
-  }, []);
+  const activeApp = useMemo(() => {
+    if (!activeAppId) return null;
+    return appRegistry.getApp(activeAppId) ?? null;
+  }, [activeAppId]);
 
   const value = useMemo(
     () => ({
       registeredApps: appRegistry.getAllApps(),
-      activeAppId: appRegistry.getActiveAppId(),
-      activeApp: appRegistry.getActiveApp(),
-      activeAppNavigation: appRegistry.getActiveApp()?.navigation ?? [],
-      registerApp,
-      unregisterApp,
-      setActiveApp,
-      getApp: appRegistry.getApp.bind(appRegistry),
+      activeAppId,
+      activeApp,
+      activeAppNavigation: activeApp?.navigation ?? [],
+      setActiveApp: setActiveAppId,
+      getApp: appRegistry.getApp,
     }),
-    [version, registerApp, unregisterApp, setActiveApp],
+    [activeAppId, activeApp],
   );
 
   return (
@@ -58,8 +48,10 @@ export function AppRegistryProvider({ children }: { children: React.ReactNode })
 
 export function useAppRegistry() {
   const ctx = useContext(AppRegistryContext);
+
   if (!ctx) {
-    throw new Error("useAppRegistry must be used within an AppRegistryProvider");
+    throw new Error("useAppRegistry must be used within AppRegistryProvider");
   }
+
   return ctx;
 }

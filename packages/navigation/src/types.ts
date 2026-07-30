@@ -18,10 +18,7 @@ export interface NavigationConfig {
 }
 
 export interface NavigationRegistry {
-  registerApp: (appName: string, items: AppNavigationItem[], section: keyof NavigationConfig) => void;
   getNavigationConfig: () => NavigationConfig;
   getSidebarItems: (section: keyof NavigationConfig) => ISidebarItem[];
   getShellNavigation: () => ShellNavigation;
-  setAppNavigation: (items: AppNavigationItem[]) => void;
-  clearAppNavigation: () => void;
 }

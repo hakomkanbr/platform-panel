@@ -206,6 +206,9 @@ importers:
         specifier: ^18
         version: 18.0.0(react@18.0.0)
     devDependencies:
+      '@repo/apps-cms':
+        specifier: workspace:*
+        version: link:../apps/cms
       '@repo/shared-types':
         specifier: workspace:*
         version: link:../shared-types

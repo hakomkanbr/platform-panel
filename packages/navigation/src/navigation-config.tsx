@@ -73,7 +73,6 @@ const config: NavigationConfig = {
   settings: [],
 };
 
-let appNavigationItems: AppNavigationItem[] = [];
 
 function toSidebarItem(item: AppNavigationItem): ISidebarItem {
   return {
@@ -87,13 +86,6 @@ function toSidebarItem(item: AppNavigationItem): ISidebarItem {
 }
 
 export const navigationRegistry: NavigationRegistry = {
-  registerApp: (
-    appName: string,
-    items: AppNavigationItem[],
-    section: keyof NavigationConfig,
-  ) => {
-    config[section].push(...items);
-  },
   getNavigationConfig: () => config,
   getSidebarItems: (section: keyof NavigationConfig): ISidebarItem[] => {
     return config[section].map(toSidebarItem);
@@ -103,13 +95,7 @@ export const navigationRegistry: NavigationRegistry = {
       platform: [...config.platform],
       application: [...config.application],
     };
-  },
-  setAppNavigation: (items: AppNavigationItem[]) => {
-    appNavigationItems = items;
-  },
-  clearAppNavigation: () => {
-    appNavigationItems = [];
-  },
+  }
 };
 
 export function createNavigationConfig() {

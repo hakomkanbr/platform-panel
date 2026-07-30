@@ -2,24 +2,16 @@ export const CmsRoutes = [
     {
         id: "dashboard",
         path: "",
-        component: "CmsDashboardPage",
+        title: "Dashboard",
     },
-
-    // {
-    //     id: "pages",
-    //     path: "pages",
-    //     component: CmsPagesPage,
-    // },
-
-    // {
-    //     id: "media",
-    //     path: "media",
-    //     component: CmsMediaPage,
-    // },
-
-    // {
-    //     id: "menus",
-    //     path: "menus",
-    //     component: CmsMenusPage,
-    // },
+    {
+        id: "pages",
+        path: "pages",
+        title: "Pages",
+    },
+    {
+        id: "media",
+        path: "media",
+        title: "Media",
+    },
 ];

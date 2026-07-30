@@ -1,36 +1,38 @@
-import type { ISidebarItem } from "@repo/shared-types";
+import type { ComponentType, ReactNode } from "react";
 
 export interface AppNavigationItem {
   key: string;
   label: string;
-  icon?: React.ReactNode;
   path: string;
+  icon?: ReactNode;
   description?: string;
   disabled?: boolean;
-  type?: any;
   roles?: string[];
   children?: AppNavigationItem[];
 }
 
-export interface AppMetadata {
+export interface AppRoute {
   id: string;
-  name: string;
-  description: string;
-  version: string;
+  path: string;
+  title?: string;
   icon?: React.ReactNode;
-  baseRoute: string;
-  navigation: AppNavigationItem[];
-  settingsRoute?: string;
 }
 
-export interface AppRegistration {
-  metadata: AppMetadata;
-  register: () => void;
-  unregister: () => void;
+export interface ApplicationDefinition {
+  id: string;
+  name: string;
+  version: string;
+
+  icon?: ReactNode;
+
+  navigation: AppNavigationItem[];
+
+  routes: AppRoute[];
+
+  Root: ComponentType<any>;
 }
 
 export interface AppRegistryState {
-  applications: Map<string, AppMetadata>;
+  applications: Map<string, ApplicationDefinition>;
   activeAppId: string | null;
-  availableApps: string[];
 }

@@ -2,24 +2,24 @@ export const CmsNavigation = [
     {
         key: "dashboard",
         label: "Dashboard",
-        route: "",
+        path: "",
     },
 
     {
         key: "pages",
         label: "Pages",
-        route: "pages",
+        path: "pages",
     },
 
     {
         key: "media",
         label: "Media",
-        route: "media",
+        path: "media",
     },
 
     {
         key: "menus",
         label: "Menus",
-        route: "menus",
+        path: "menus",
     },
 ];
