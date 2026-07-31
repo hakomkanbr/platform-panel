@@ -1,50 +1,38 @@
-// export const EcommerceApplication: ApplicationDefinition = {
+import type { ApplicationDefinition } from "@repo/application-types";
 
-//     id: "ecommerce",
+// Placeholder component until ecommerce is implemented
+function EcommerceRoot({ projectId }: { projectId: string }) {
+  return null;
+}
 
-//     name: "Ecommerce",
+export const EcommerceApplication: ApplicationDefinition = {
+  id: "ecommerce",
+  name: "Ecommerce",
+  version: "0.0.1",
 
-//     component: null,
+  navigation: [
+    {
+      key: "products",
+      label: "Products",
+      path: "products",
+    },
+    {
+      key: "orders",
+      label: "Orders",
+      path: "orders",
+    },
+    {
+      key: "customers",
+      label: "Customers",
+      path: "customers",
+    },
+  ],
 
-//     sidebar: [
+  routes: [
+    { id: "dashboard", path: "", title: "Dashboard" },
+    { id: "products", path: "products", title: "Products" },
+    { id: "orders", path: "orders", title: "Orders" },
+  ],
 
-//         {
-//             key: "products",
-//             title: "Products",
-//             href: "products",
-//         },
-
-//         {
-//             key: "orders",
-//             title: "Orders",
-//             href: "orders",
-//         },
-
-//         {
-//             key: "customers",
-//             title: "Customers",
-//             href: "customers",
-//         }
-
-//     ],
-
-//     routes: [
-
-//         {
-//             path: "",
-//             title: "Dashboard",
-//         },
-
-//         {
-//             path: "products",
-//             title: "Products",
-//         },
-
-//         {
-//             path: "orders",
-//             title: "Orders",
-//         }
-
-//     ]
-
-// }
+  Root: EcommerceRoot,
+};

@@ -1,4 +1,4 @@
-import { loadApplication } from "@repo/app-registry";
+import { registry } from "@/lib/app-registry";
 import { notFound } from "next/navigation";
 
 interface Props {
@@ -9,8 +9,7 @@ interface Props {
 }
 
 export default async function Page({ params }: Props) {
-
-    const app = loadApplication(params.appSlug);
+    const app = registry.get(params.appSlug);
 
     if (!app) {
         notFound();

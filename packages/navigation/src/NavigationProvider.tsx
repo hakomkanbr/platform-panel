@@ -15,7 +15,7 @@ import {
 import type {
     NavigationState,
 } from "./types";
-import type { ApplicationDefinition } from "@repo/app-registry";
+import type { ApplicationDefinition } from "@repo/application-types";
 
 interface Props {
     application?: ApplicationDefinition;

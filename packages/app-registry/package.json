@@ -21,8 +21,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
+    "@repo/application-types": "workspace:*",
     "react": "^18",
-    "@repo/apps-cms": "workspace:*",
     "react-dom": "^18"
   }
 }

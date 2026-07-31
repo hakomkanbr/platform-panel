@@ -5,6 +5,7 @@ import { AdminShell } from "@repo/shell";
 import { useProjects } from "@repo/hooks";
 import { useTenantId } from "@repo/hooks";
 import type { IUserProps } from "@repo/shared-types";
+import { allApplications } from "@/lib/app-registry";
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ function AdminShellWrapper({ children, user }: AdminLayoutClientProps) {
       user={user}
       projects={quickProjects}
       projectsLoading={projectsLoading}
+      applications={allApplications}
     >
       {children}
     </AdminShell>

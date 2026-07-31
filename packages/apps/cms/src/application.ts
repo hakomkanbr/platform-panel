@@ -1,8 +1,9 @@
+import type { ApplicationDefinition } from "@repo/application-types";
 import { CmsNavigation } from "./navigation";
 import { CmsRoutes } from "./routes";
 import CmsAppRoot from "./Root";
 
-export const CmsApplication = {
+export const CmsApplication: ApplicationDefinition = {
     id: "cms",
 
     name: "CMS",

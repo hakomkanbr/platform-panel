@@ -1,5 +1,5 @@
-import { appRegistry } from "../registry";
+import type { AppRegistry } from "../registry";
 
-export function loadApplication(id: string) {
-    return appRegistry.getApp(id);
+export function loadApplication(registry: AppRegistry, id: string) {
+  return registry.get(id);
 }

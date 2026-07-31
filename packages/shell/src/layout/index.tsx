@@ -11,7 +11,7 @@ import { GlobalHeader } from "../components/GlobalHeader";
 import ModernContent from "./ModernContent";
 import type { IModule, ISidebarItem } from "@repo/shared-types";
 import type { IUserProps } from "@repo/shared-types";
-import type { ApplicationDefinition } from "@repo/app-registry";
+import type { ApplicationDefinition } from "@repo/application-types";
 
 const { Sider } = Layout;
 
@@ -25,6 +25,7 @@ export interface AdminShellProps {
   basePath?: string;
   appMode?: "main" | "sub";
   application?: ApplicationDefinition;
+  applications?: ApplicationDefinition[];
   headerComponents?: {
     siteSelect?: React.ReactNode;
     redirectWebsite?: React.ReactNode;
@@ -44,6 +45,7 @@ const AdminShellInner: React.FC<{
   currentProject?: { name: string; id: string | number } | null;
   projects?: QuickProject[];
   projectsLoading?: boolean;
+  applications?: ApplicationDefinition[];
 }> = ({
   children,
   siteSlug,
@@ -53,6 +55,7 @@ const AdminShellInner: React.FC<{
   currentProject,
   projects: propProjects,
   projectsLoading: propProjectsLoading,
+  applications,
 }) => {
     const {
       collapsed,
@@ -142,6 +145,7 @@ const AdminShellInner: React.FC<{
             onLogout={onLogout}
             projects={propProjects}
             projectsLoading={propProjectsLoading}
+            applications={applications}
             headerExtras={
               <>
                 {headerComponents?.redirectWebsite}
@@ -166,11 +170,11 @@ const AdminShellInner: React.FC<{
   };
 
 const AdminShell: React.FC<AdminShellProps> = (props) => {
-  const { children, user, basePath = "/admin", appMode = "main", application } = props;
+  const { children, user, basePath = "/admin", appMode = "main", application, applications } = props;
   return (
     <NavigationProvider application={application}>
       <ShellProvider user={user} initialBasePath={basePath} appMode={appMode}>
-        <AdminShellInner currentProject={props.currentProject} {...props}>{children}</AdminShellInner>
+        <AdminShellInner currentProject={props.currentProject} {...props} applications={applications}>{children}</AdminShellInner>
       </ShellProvider>
     </NavigationProvider>
   );

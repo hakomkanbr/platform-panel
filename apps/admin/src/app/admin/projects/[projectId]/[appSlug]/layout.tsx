@@ -1,4 +1,4 @@
-import { loadApplication } from "@repo/app-registry";
+import { registry } from "@/lib/app-registry";
 import { notFound } from "next/navigation";
 import AppShellUpdater from "./AppShellUpdater";
 
@@ -11,8 +11,7 @@ interface Props {
 }
 
 export default async function AppLayout({ params, children }: Props) {
-
-    const app = loadApplication(params.appSlug);
+    const app = registry.get(params.appSlug);
 
     if (!app) {
         notFound();

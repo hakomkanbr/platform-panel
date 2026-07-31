@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useNavigationContext } from "@repo/navigation";
-import type { ApplicationDefinition } from "@repo/app-registry";
+import type { ApplicationDefinition } from "@repo/application-types";
 
 interface AppShellUpdaterProps {
   app: ApplicationDefinition;

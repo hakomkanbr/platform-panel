@@ -3,26 +3,28 @@
 import React from "react";
 import { Select, Typography, Space, Avatar } from "antd";
 import { AppstoreOutlined } from "@ant-design/icons";
-import { appRegistry } from "@repo/app-registry";
 import { useParams, useRouter } from "next/navigation";
+import type { ApplicationDefinition } from "@repo/application-types";
 
 const { Text } = Typography;
 const { Option } = Select;
 
-export function ApplicationSelector() {
+interface ApplicationSelectorProps {
+  applications: ApplicationDefinition[];
+}
+
+export function ApplicationSelector({ applications }: ApplicationSelectorProps) {
   const params = useParams();
   const router = useRouter();
   const projectId = params?.projectId as string | undefined;
   const currentAppSlug = params?.appSlug as string | undefined;
-
-  const allApps = appRegistry.getAllApps();
 
   const handleChange = (appSlug: string | undefined) => {
     if (!appSlug || !projectId) return;
     router.push(`/admin/projects/${projectId}/${appSlug}`);
   };
 
-  if (allApps.length === 0) return null;
+  if (applications.length === 0) return null;
 
   return (
     <Select
@@ -33,7 +35,7 @@ export function ApplicationSelector() {
       size="middle"
       optionLabelProp="label"
     >
-      {allApps.map((app) => (
+      {applications.map((app) => (
         <Option
           key={app.id}
           value={app.id}

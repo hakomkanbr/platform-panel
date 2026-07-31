@@ -1,16 +1,30 @@
-import { Applications } from "./applications";
-import type { ApplicationDefinition } from "./types";
+import type { ApplicationDefinition } from "@repo/application-types";
 
-const registry = new Map(
-  Applications.map(app => [app.id, app])
-);
+export interface AppRegistry {
+  register(app: ApplicationDefinition): void;
+  get(id: string): ApplicationDefinition | undefined;
+  getAll(): ApplicationDefinition[];
+  find(predicate: (app: ApplicationDefinition) => boolean): ApplicationDefinition[];
+}
 
-export const appRegistry = {
-  getApp(id: string): ApplicationDefinition | undefined {
-    return registry.get(id);
-  },
+export function createApplicationRegistry(): AppRegistry {
+  const apps = new Map<string, ApplicationDefinition>();
 
-  getAllApps(): ApplicationDefinition[] {
-    return Array.from(registry.values());
-  }
-};
+  return {
+    register(app: ApplicationDefinition): void {
+      apps.set(app.id, app);
+    },
+
+    get(id: string): ApplicationDefinition | undefined {
+      return apps.get(id);
+    },
+
+    getAll(): ApplicationDefinition[] {
+      return Array.from(apps.values());
+    },
+
+    find(predicate: (app: ApplicationDefinition) => boolean): ApplicationDefinition[] {
+      return Array.from(apps.values()).filter(predicate);
+    },
+  };
+}

@@ -31,6 +31,7 @@ import { ProjectSelector } from "./ProjectSelector";
 import { ApplicationSelector } from "./ApplicationSelector";
 import { WorkspaceSelector } from "./WorkspaceSelector";
 import { CommandPalette } from "@repo/ui";
+import type { ApplicationDefinition } from "@repo/application-types";
 import type { MenuProps } from "antd";
 
 const { Header } = Layout;
@@ -50,6 +51,7 @@ export interface GlobalHeaderProps {
     slug?: string;
   }) => void;
   headerExtras?: React.ReactNode;
+  applications?: ApplicationDefinition[];
 }
 
 export function GlobalHeader({
@@ -62,6 +64,7 @@ export function GlobalHeader({
   onWorkspaceChange,
   onProjectChange,
   headerExtras,
+  applications,
 }: GlobalHeaderProps) {
   const router = useRouter();
   const { collapsed, isMobile, setCollapsed, user, theme, basePath } =
@@ -128,12 +131,7 @@ export function GlobalHeader({
               {user?.username || "User"}
             </Text>
             <Text
-              style={{
-                fontSize: 12,
-                display: "block",
-                color: "#6B7280",
-                marginTop: 2,
-              }}
+              style={{ fontSize: 12, color: "#9CA3AF", display: "block" }}
             >
               {user?.email || ""}
             </Text>
@@ -142,74 +140,69 @@ export function GlobalHeader({
       ),
       disabled: true,
     },
-    { type: "divider", key: "divider-1" },
+    { type: "divider" },
     {
       key: "profile",
       icon: <UserOutlined />,
       label: (
-        <Link
-          href={profilePath || `${basePath}/users`}
-          style={{ color: "#1F2937" }}
-        >
-          My Profile
+        <Link href={profilePath ?? `${basePath}/users/profile`}>
+          View Profile
         </Link>
       ),
     },
     {
       key: "settings",
       icon: <SettingOutlined />,
-      label: (
-        <Link href={`${basePath}/setting`} style={{ color: "#1F2937" }}>
-          Workspace Settings
-        </Link>
-      ),
+      label: <Link href={`${basePath}/setting`}>Settings</Link>,
     },
-    { type: "divider", key: "divider-2" },
+    { type: "divider" },
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: <span style={{ color: "#EF4444" }}>Sign Out</span>,
+      label: "Logout",
       danger: true,
-      onClick: () => {
-        if (onLogout) {
-          onLogout();
-        } else {
-          location.href = "/auth/login";
-        }
-      },
+      onClick: onLogout,
     },
   ];
 
   return (
     <>
       <Header
+        className="modern-header"
         style={{
+          background: "#FFFFFF",
+          padding: "0 24px",
+          height: 64,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          height: 64,
-          padding: "0 28px",
-          background: "#FFFFFF",
-          borderBottom: "1px solid #E5E7EB",
+          borderBottom: "1px solid #F3F4F6",
           position: "sticky",
           top: 0,
-          zIndex: 99,
-          backdropFilter: "blur(12px)",
+          zIndex: 100,
         }}
       >
-        {/* Left Section */}
+        {/* Left Section: App Navigation */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            flex: 1,
+          }}
         >
+          {/* Mobile menu toggle */}
           {isMobile && (
             <Button
               type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              icon={
+                collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
+              }
               onClick={() => setCollapsed(!collapsed)}
               style={{
-                width: 38,
-                height: 38,
-                borderRadius: 10,
+                fontSize: 18,
+                width: 36,
+                height: 36,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -230,7 +223,7 @@ export function GlobalHeader({
             onProjectChange={onProjectChange}
           />
 
-          <ApplicationSelector />
+          {applications && <ApplicationSelector applications={applications} />}
         </div>
 
         {/* Center Section: Global Search */}
@@ -248,166 +241,187 @@ export function GlobalHeader({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 10,
-              padding: "0 14px",
-              height: 38,
-              borderRadius: 10,
+              gap: 8,
+              padding: "6px 16px",
+              borderRadius: 8,
               border: "1px solid #E5E7EB",
-              background: "#F9FAFB",
               cursor: "pointer",
-              transition: "all 0.2s ease",
+              color: "#9CA3AF",
+              fontSize: 13,
+              background: "#FAFBFC",
+              maxWidth: 320,
               width: "100%",
-              maxWidth: 420,
+              transition: "all 0.2s ease",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = "#F7931E";
-              e.currentTarget.style.background = "#FFFFFF";
+              e.currentTarget.style.background = "#FFF8F0";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.borderColor = "#E5E7EB";
-              e.currentTarget.style.background = "#F9FAFB";
+              e.currentTarget.style.background = "#FAFBFC";
             }}
           >
-            <SearchOutlined
-              style={{ color: "#F7931E", fontSize: 15, flexShrink: 0 }}
-            />
-            <span
+            <SearchOutlined style={{ fontSize: 14 }} />
+            <span>Search...</span>
+            <div
               style={{
-                fontSize: 13,
-                color: "#9CA3AF",
-                flex: 1,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+                marginLeft: "auto",
+                display: "flex",
+                gap: 2,
+                alignItems: "center",
               }}
             >
-              Search projects, applications, APIs...
-            </span>
-            <kbd
-              style={{
-                padding: "2px 6px",
-                borderRadius: 5,
-                border: "1px solid #E5E7EB",
-                background: "#FFFFFF",
-                fontSize: 11,
-                fontWeight: 600,
-                color: "#6B7280",
-                fontFamily: "monospace",
-                flexShrink: 0,
-                display: "contents",
-              }}
-            >
-              ⌘K
-            </kbd>
+              <kbd
+                style={{
+                  padding: "1px 5px",
+                  fontSize: 11,
+                  borderRadius: 4,
+                  border: "1px solid #D1D5DB",
+                  background: "#FFFFFF",
+                  color: "#6B7280",
+                }}
+              >
+                ⌘
+              </kbd>
+              <kbd
+                style={{
+                  padding: "1px 5px",
+                  fontSize: 11,
+                  borderRadius: 4,
+                  border: "1px solid #D1D5DB",
+                  background: "#FFFFFF",
+                  color: "#6B7280",
+                }}
+              >
+                K
+              </kbd>
+            </div>
           </div>
         </div>
 
-        {/* Right Section */}
+        {/* Right Section: Actions */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-end",
-            gap: 8,
+            gap: 6,
             flex: 1,
+            justifyContent: "flex-end",
           }}
         >
-          {headerExtras}
-
-          {/* Theme Toggle */}
-          <Tooltip title={theme.mode === "light" ? "Dark Mode" : "Light Mode"}>
+          {/* Quick Actions */}
+          <Tooltip title="Toggle Fullscreen">
             <Button
               type="text"
-              icon={theme.mode === "light" ? <MoonOutlined /> : <SunOutlined />}
+              icon={
+                isFullscreen ? <CompressOutlined /> : <ExpandOutlined />
+              }
+              onClick={toggleFullscreen}
+              style={{
+                width: 36,
+                height: 36,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#6B7280",
+              }}
+            />
+          </Tooltip>
+
+          <Tooltip title="Toggle theme">
+            <Button
+              type="text"
+              icon={
+                theme.mode === "dark" ? <SunOutlined /> : <MoonOutlined />
+              }
               onClick={theme.toggle}
               style={{
                 width: 36,
                 height: 36,
-                borderRadius: 8,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: "#9CA3AF",
+                color: "#6B7280",
               }}
             />
           </Tooltip>
 
           {/* Notifications */}
-          {/* <Tooltip title="Notifications">
-            <Badge count={0} size="small">
+          <Tooltip title="Notifications">
+            <Badge count={0} size="small" offset={[-2, 2]}>
               <Button
                 type="text"
-                icon={<BellOutlined />}
+                icon={
+                  <BellOutlined
+                    style={{ fontSize: 16, color: "#6B7280" }}
+                  />
+                }
                 style={{
                   width: 36,
                   height: 36,
-                  borderRadius: 8,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: "#9CA3AF",
                 }}
               />
             </Badge>
-          </Tooltip> */}
-
-          {/* Fullscreen */}
-          <Tooltip
-            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-          >
-            <Button
-              type="text"
-              icon={isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
-              onClick={toggleFullscreen}
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 8,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#9CA3AF",
-              }}
-            />
           </Tooltip>
 
           <Divider
             type="vertical"
-            style={{ height: 24, margin: "0 4px", borderColor: "#E5E7EB" }}
+            style={{ height: 28, margin: "0 4px", background: "#E5E7EB" }}
           />
 
+          {headerExtras}
+
           {/* User Menu */}
-          <Dropdown
-            menu={{ items: userMenuItems }}
-            trigger={["click"]}
-            placement="bottomRight"
-            overlayStyle={{ minWidth: 260 }}
-          >
+          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
             <div
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "4px 8px",
+                borderRadius: 8,
                 cursor: "pointer",
-                transition: "all 0.2s ease",
+                transition: "background 0.2s",
                 marginLeft: 4,
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#F3F4F6";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+              }}
             >
-              <Badge dot status="success" offset={[-4, 4]}>
-                <Avatar
-                  size={36}
-                  src={
-                    user?.image
-                      ? `${process.env.NEXT_PUBLIC_CDN}/user/${user.image}`
-                      : undefined
-                  }
-                  icon={<UserOutlined />}
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
-                    cursor: "pointer",
-                    border: "2px solid #E5E7EB",
-                    flexShrink: 0,
-                  }}
-                />
-              </Badge>
+              <Avatar
+                size={30}
+                src={
+                  user?.image
+                    ? `${process.env.NEXT_PUBLIC_CDN}/user/${user.image}`
+                    : undefined
+                }
+                icon={!user?.image ? <UserOutlined /> : undefined}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
+                  flexShrink: 0,
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: "#1F2937",
+                  maxWidth: 120,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {user?.username || "User"}
+              </span>
             </div>
           </Dropdown>
         </div>
@@ -416,7 +430,6 @@ export function GlobalHeader({
       <CommandPalette
         open={commandPaletteOpen}
         onClose={() => setCommandPaletteOpen(false)}
-        basePath={basePath}
       />
     </>
   );
