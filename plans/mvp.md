@@ -15,7 +15,7 @@
 5. Catalog
    🏠 Home
 
-   🛍 Commerce
+   🛍 Catalog
    • Products
    • Categories
    • Brands

@@ -17,7 +17,6 @@ export interface S2SProviderProps {
 
 export function S2SProvider({
   children,
-  includeStore = true,
   includeAuth = true,
   includeQuery = true,
 }: S2SProviderProps) {

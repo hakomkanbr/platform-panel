@@ -164,7 +164,7 @@ export function GlobalSidebar() {
   return (
     <div
       className="modern-sidebar-content"
-      style={{ position: "relative", height: "100%" }}
+      style={{ position: "relative" }}
     >
       {/* Brand Logo */}
       <div

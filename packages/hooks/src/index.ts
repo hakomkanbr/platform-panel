@@ -3,3 +3,4 @@ export { useCurrentSubscription, useAllPlans, useCanConsume, useUpgradeSubscript
 export { useTenantId } from './useTenantId';
 export { useUsageSummary, useCurrentUsage, useUsageHistory } from './useUsage';
 export { useWallet, useWalletTransactions, useAdjustWallet, useRefundToWallet, useCreateTopUpRequest, useMyTopUpRequests, useBankDetails, useCardPayment } from './useWallet';
+export { useDebouncedValue } from './useDebouncedValue';
