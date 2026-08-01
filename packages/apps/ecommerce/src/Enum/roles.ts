@@ -1,0 +1,26 @@
+export enum PermissionListEnum {
+  listeleme = "list",
+  create = "create",
+  edit = "edit",
+  delete = "delete",
+  detail = "detail",
+}
+export enum ModuleListEnum {
+  banner = "banner",
+  content = "content",
+  order = "order",
+  indirimler = "İndirimler",
+  markalar = "Markalar",
+  roles = "roles",
+  user = "user",
+  setting = "setting",
+  contact = "contact",
+  kariyer = "kariyer",
+  content_category = "content_category",
+  home = "home",
+  blog = "blog",
+  blog_category = "blog_category",
+  products = "products",
+  forms = "forms",
+  products_category = "products_category",
+}

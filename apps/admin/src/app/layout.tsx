@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.scss";
 import HundleFullPage from "@/helper/get-page-url";
 import { S2SProvider } from "@repo/providers";
 

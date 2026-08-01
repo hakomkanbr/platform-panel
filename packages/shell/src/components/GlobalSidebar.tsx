@@ -1,19 +1,24 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Menu, Typography, Avatar, Tooltip, Spin } from "antd";
+import { Menu, Typography, Avatar, Tooltip, Spin, Dropdown } from "antd";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   FolderOutlined,
+  UpOutlined,
+  DownOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { useNavigation } from "@repo/navigation";
 import { useShell } from "../context/ShellContext";
 import type { NavigationItem } from "@repo/navigation";
 
 const { Text } = Typography;
+
+const BOTTOM_KEYS = ["projects", "billing", "team"];
 
 export function GlobalSidebar() {
   const pathname = usePathname();
@@ -22,52 +27,111 @@ export function GlobalSidebar() {
     useShell();
   const { platform, application } = useNavigation();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+  const [mainMenuItems, setMainMenuItems] = useState<any[]>([]);
+  const [bottomMenuItems, setBottomMenuItems] = useState<any[]>([]);
+  const [bottomOpen, setBottomOpen] = useState(false);
 
   useEffect(() => {
-    const currentPath = pathname?.replace("/admin/", "") || "dashboard";
-    setSelectedKeys([currentPath.split("/")[0] || "dashboard"]);
-  }, [pathname]);
+    if (!pathname) return;
+    const allItems = [...platform, ...application];
+    const findActive = (items: NavigationItem[]): NavigationItem | null => {
+      let best: NavigationItem | null = null;
+      const walk = (list: NavigationItem[]) => {
+        for (const item of list) {
+          if (item.path && pathname.startsWith(item.path)) {
+            if (!best || item.path.length > best.path.length) best = item;
+          }
+          if (item.children) walk(item.children);
+        }
+      };
+      walk(items);
+      return best;
+    };
+    const getOpenChain = (
+      items: NavigationItem[],
+      activeKey: string,
+      parents: string[] = [],
+    ): string[] => {
+      for (const item of items) {
+        if (item.key === activeKey) return parents;
+        if (item.children) {
+          const res = getOpenChain(item.children, activeKey, [
+            ...parents,
+            item.key,
+          ]);
+          if (res) return res;
+        }
+      }
+      return [];
+    };
+    const active = findActive(allItems);
+    const activeKey = active?.key || "dashboard";
+    setSelectedKeys([activeKey]);
+    setOpenKeys((prev) => Array.from(new Set([...prev, ...getOpenChain(allItems, activeKey)])));
+  }, [pathname, platform, application]);
 
   useEffect(() => {
+    const mainItems = platform.filter((i) => !BOTTOM_KEYS.includes(i.key));
+    const bottomItems = platform.filter((i) => BOTTOM_KEYS.includes(i.key));
+
     const items: any[] = [];
 
-    // Platform Navigation
-    items.push(...renderMenuItems(platform));
+    // Application Navigation (top)
+    // if (application.length > 0) {
+    //   if (!collapsed) {
+    //     items.push({
+    //       key: "app-section-label",
+    //       label: (
+    //         <Text
+    //           style={{
+    //             fontSize: 11,
+    //             fontWeight: 700,
+    //             color: "#9CA3AF",
+    //             textTransform: "uppercase",
+    //             letterSpacing: "0.08em",
+    //           }}
+    //         >
+    //           Applications
+    //         </Text>
+    //       ),
+    //       disabled: true,
+    //       style: { cursor: "default", opacity: 1, padding: "4px 0" },
+    //     });
+    //   }
+    //   items.push(...renderMenuItems(application));
+    //   items.push({
+    //     type: "divider",
+    //     key: "app-divider",
+    //     style: { margin: "8px 0", borderColor: "#E5E7EB" },
+    //   });
+    // }
 
-    // Application Navigation Divider + Items
-    if (application.length > 0) {
+    // Main Platform Navigation
+    if (!collapsed) {
       items.push({
-        type: "divider",
-        key: "app-divider",
-        style: { margin: "8px 0", borderColor: "#E5E7EB" },
+        key: "main-section-label",
+        label: (
+          <Text
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: "#9CA3AF",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+            }}
+          >
+            Overview
+          </Text>
+        ),
+        disabled: true,
+        style: { cursor: "default", opacity: 1, padding: "4px 0" },
       });
-
-      if (!collapsed) {
-        items.push({
-          key: "app-section-label",
-          label: (
-            <Text
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                color: "#9CA3AF",
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-              }}
-            >
-              Active Application
-            </Text>
-          ),
-          disabled: true,
-          style: { cursor: "default", opacity: 1, padding: "4px 0" },
-        });
-      }
-
-      items.push(...renderMenuItems(application));
     }
+    items.push(...renderMenuItems(mainItems));
 
-    setMenuItems(items);
+    setMainMenuItems(items);
+    setBottomMenuItems(renderMenuItems(bottomItems));
   }, [platform, application, collapsed]);
 
   const handleMenuClick = ({ key }: { key: string }) => {
@@ -84,12 +148,24 @@ export function GlobalSidebar() {
 
     const allItems = [...platform, ...application];
     const target = findItem(allItems);
+    if (!target || target.disabled) return;
     if (target?.path) router.push(target.path);
     if (isMobile) setCollapsed(true);
+    setBottomOpen(false);
+  };
+
+  const menuProps = {
+    mode: "inline" as const,
+    selectedKeys,
+    onClick: handleMenuClick,
+    style: { border: "none", background: "transparent" },
   };
 
   return (
-    <div className="modern-sidebar-content">
+    <div
+      className="modern-sidebar-content"
+      style={{ position: "relative", height: "100%" }}
+    >
       {/* Brand Logo */}
       <div
         className="sidebar-logo"
@@ -205,19 +281,20 @@ export function GlobalSidebar() {
 
       {/* Navigation */}
       <div
+        className="sidebar-scroll-area"
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: "auto",
-          padding: collapsed ? "4px 0" : "0 6px",
+          padding: collapsed ? "4px 0 160px" : "0 6px 160px",
         }}
       >
         <Menu
-          mode="inline"
-          selectedKeys={selectedKeys}
-          defaultOpenKeys={selectedKeys}
-          items={menuItems}
-          onClick={handleMenuClick}
-          style={{ border: "none", background: "transparent" }}
+          {...menuProps}
+          openKeys={openKeys}
+          onOpenChange={(keys) => setOpenKeys(keys)}
+          items={mainMenuItems}
+          inlineIndent={18}
         />
 
         {/* Quick Projects */}
@@ -311,38 +388,162 @@ export function GlobalSidebar() {
         )}
       </div>
 
-      {/* Collapse Toggle */}
-      {!isMobile && (
-        <div
-          onClick={() => setCollapsed(!collapsed)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 40,
-            margin: "12px 14px",
-            borderRadius: 10,
-            border: "1px solid #E5E7EB",
-            cursor: "pointer",
-            transition: "all 0.2s ease",
-            color: "#6B7280",
-            background: "#FFFFFF",
-            flexShrink: 0,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "#F7931E";
-            e.currentTarget.style.color = "#F7931E";
-            e.currentTarget.style.background = "#FFF3E0";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "#E5E7EB";
-            e.currentTarget.style.color = "#6B7280";
-            e.currentTarget.style.background = "#FFFFFF";
-          }}
-        >
-          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </div>
-      )}
+      {/* Bottom Pinned Select: Projects, Billing, Team */}
+      <div
+        className="sidebar-bottom-fixed"
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          borderTop: "1px solid #E5E7EB",
+          padding: collapsed ? "8px 0" : "10px 10px",
+          flexShrink: 0,
+          background: "#FFFFFF",
+          zIndex: 10,
+        }}
+      >
+        {!collapsed && (
+          <Dropdown
+            placement="topLeft"
+            trigger={["click"]}
+            open={bottomOpen}
+            onOpenChange={(open) => setBottomOpen(open)}
+            getPopupContainer={(node) => node.parentElement as HTMLElement}
+            menu={{
+              items: bottomMenuItems,
+              selectable: true,
+              selectedKeys,
+              onClick: handleMenuClick,
+              style: { width: 240 },
+            }}
+          >
+            <div
+              className="sidebar-bottom-select"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "9px 12px",
+                borderRadius: 10,
+                border: "1px solid #E5E7EB",
+                background: "#FAFBFC",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#F7931E";
+                e.currentTarget.style.background = "#FFF3E0";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "#E5E7EB";
+                e.currentTarget.style.background = "#FAFBFC";
+              }}
+            >
+              <AppstoreOutlined style={{ color: "#F7931E", fontSize: 15 }} />
+              <span
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#1F2937",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Workspace
+              </span>
+              {bottomOpen ? (
+                <DownOutlined style={{ fontSize: 10, color: "#F7931E" }} />
+              ) : (
+                <UpOutlined
+                  className="sidebar-bottom-arrow"
+                  style={{ fontSize: 10, color: "#9CA3AF" }}
+                />
+              )}
+            </div>
+          </Dropdown>
+        )}
+        {collapsed && (
+          <Tooltip title="Workspace">
+            <Dropdown
+              placement="top"
+              trigger={["click"]}
+              open={bottomOpen}
+              onOpenChange={(open) => setBottomOpen(open)}
+              getPopupContainer={(node) => node.parentElement as HTMLElement}
+              menu={{
+                items: bottomMenuItems,
+                selectable: true,
+                selectedKeys,
+                onClick: handleMenuClick,
+                style: { width: 200 },
+              }}
+            >
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  margin: "0 auto",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 10,
+                  border: "1px solid #E5E7EB",
+                  background: "#FAFBFC",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "#F7931E";
+                  e.currentTarget.style.background = "#FFF3E0";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "#E5E7EB";
+                  e.currentTarget.style.background = "#FAFBFC";
+                }}
+              >
+                <AppstoreOutlined style={{ color: "#F7931E", fontSize: 16 }} />
+              </div>
+            </Dropdown>
+          </Tooltip>
+        )}
+
+        {/* Collapse Toggle */}
+        {!isMobile && (
+          <div
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: 36,
+              margin: "10px 0 0",
+              borderRadius: 10,
+              border: "1px solid #E5E7EB",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+              color: "#6B7280",
+              background: "#FFFFFF",
+              flexShrink: 0,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#F7931E";
+              e.currentTarget.style.color = "#F7931E";
+              e.currentTarget.style.background = "#FFF3E0";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "#E5E7EB";
+              e.currentTarget.style.color = "#6B7280";
+              e.currentTarget.style.background = "#FFFFFF";
+            }}
+          >
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

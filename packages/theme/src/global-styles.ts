@@ -122,10 +122,11 @@ body {
 }
 
 .modern-layout .ant-menu-item {
-  margin: 4px 10px !important;
+  margin: 4px auto !important;
   border-radius: 10px !important;
-  padding: 0 20px !important;
-  height: 44px !important;
+  padding: 6px 13px !important;
+  width: 94%;
+  height: 49px !important;
   line-height: 44px !important;
   display: flex !important;
   align-items: center !important;
@@ -149,11 +150,17 @@ body {
 }
 
 .modern-layout .ant-menu-submenu-title {
-  margin: 4px 10px !important;
+  margin: 4px 7px !important;
   border-radius: 10px !important;
   height: 44px !important;
   line-height: 44px !important;
   font-weight: 500;
+  width: calc(100% - 15px);
+  padding-left : 14px!important;
+}
+
+.ant-menu.ant-menu-sub .ant-menu-item{
+  padding-left: 32px!important;
 }
 
 .modern-layout .ant-menu-submenu-title:hover {

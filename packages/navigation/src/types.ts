@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export interface NavigationItem {
   key: string;
-  label: string;
+  label: ReactNode;
   path: string;
 
   icon?: ReactNode;
