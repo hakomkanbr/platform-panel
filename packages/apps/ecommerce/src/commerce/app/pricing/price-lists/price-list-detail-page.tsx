@@ -8,7 +8,6 @@ import {
   Descriptions,
   Form,
   Input,
-  InputNumber,
   message,
   Modal,
   Popconfirm,
@@ -18,48 +17,30 @@ import {
   Typography,
 } from "antd";
 import type { TableColumnsType } from "antd";
-import { ArrowLeftOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, DeleteOutlined } from "@ant-design/icons";
 import { AsyncBoundary, EmptyState } from "@repo/ui";
 import { formatDateTime } from "@repo/utils";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
 import { enumLabel } from "../../../types/enums";
-import type {
-  PriceListChannel,
-  PriceListCustomerGroup,
-  PriceListRegion,
-  PriceListStore,
-} from "../../../types/pricing";
+import type { PriceListReadModel } from "../../../types/pricing";
+import { priceListsApi } from "../../../api/pricing/price-lists";
 import { usePriceList } from "../../../hooks/usePriceLists";
-import {
-  useDeletePriceList,
-  usePriceListChannels,
-  useSavePriceListChannel,
-  useDeletePriceListChannel,
-  usePriceListCustomerGroups,
-  useSavePriceListCustomerGroup,
-  useDeletePriceListCustomerGroup,
-  usePriceListRegions,
-  useSavePriceListRegion,
-  useDeletePriceListRegion,
-  usePriceListStores,
-  useSavePriceListStore,
-  useDeletePriceListStore,
-} from "../../../hooks/usePriceLists";
+import { useDeletePriceList } from "../../../hooks/usePriceLists";
+import { useQueryClient } from "@tanstack/react-query";
 import { getApiErrorMessage } from "../../../api/http";
 
 const { Text } = Typography;
 
-interface SubEntityModalProps<T> {
+function AssignModal({ open, onClose, title, label, placeholder, onSubmit, loading }: {
   open: boolean;
   onClose: () => void;
   title: string;
-  fields: { name: string; label: string; placeholder?: string; required?: boolean }[];
-  onSubmit: (values: T) => Promise<void>;
+  label: string;
+  placeholder: string;
+  onSubmit: (id: string) => Promise<void>;
   loading?: boolean;
-}
-
-function SubEntityModal<T>({ open, onClose, title, fields, onSubmit, loading }: SubEntityModalProps<T>) {
+}) {
   const [form] = Form.useForm();
   return (
     <Modal
@@ -71,50 +52,21 @@ function SubEntityModal<T>({ open, onClose, title, fields, onSubmit, loading }: 
       confirmLoading={loading}
       destroyOnClose
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={async (values) => {
-          await onSubmit(values as T);
-          form.resetFields();
-        }}
-      >
-        {fields.map((f) => (
-          <Form.Item key={f.name} name={f.name} label={f.label} rules={f.required ? [{ required: true }] : []}>
-            <Input placeholder={f.placeholder} />
-          </Form.Item>
-        ))}
+      <Form form={form} layout="vertical" onFinish={async (values) => {
+        await onSubmit(values.id as string);
+        form.resetFields();
+      }}>
+        <Form.Item name="id" label={label} rules={[{ required: true }]}>
+          <Input placeholder={placeholder} />
+        </Form.Item>
       </Form>
     </Modal>
   );
 }
 
-function SimpleTable<T extends object>({
-  dataSource,
-  columns,
-  loading,
-  emptyTitle,
-}: {
-  dataSource: T[];
-  columns: TableColumnsType<T & Record<string, unknown>>;
-  loading?: boolean;
-  emptyTitle: string;
-}) {
-  return (
-    <Table<T & Record<string, unknown>>
-      rowKey={(r) => (r as { id?: string }).id ?? Math.random().toString(36)}
-      columns={columns}
-      dataSource={dataSource as (T & Record<string, unknown>)[]}
-      loading={loading}
-      pagination={false}
-      size="middle"
-      locale={{ emptyText: <EmptyState title={emptyTitle} /> }}
-    />
-  );
-}
-
 export function PriceListDetailPage({ id }: { id: string }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: priceList, isLoading, isError, error, refetch } = usePriceList(id);
   const remove = useDeletePriceList();
 
@@ -122,22 +74,6 @@ export function PriceListDetailPage({ id }: { id: string }) {
   const [groupModal, setGroupModal] = useState(false);
   const [regionModal, setRegionModal] = useState(false);
   const [storeModal, setStoreModal] = useState(false);
-
-  const channels = usePriceListChannels(id);
-  const saveChannel = useSavePriceListChannel(id);
-  const removeChannel = useDeletePriceListChannel(id);
-
-  const groups = usePriceListCustomerGroups(id);
-  const saveGroup = useSavePriceListCustomerGroup(id);
-  const removeGroup = useDeletePriceListCustomerGroup(id);
-
-  const regions = usePriceListRegions(id);
-  const saveRegion = useSavePriceListRegion(id);
-  const removeRegion = useDeletePriceListRegion(id);
-
-  const stores = usePriceListStores(id);
-  const saveStore = useSavePriceListStore(id);
-  const removeStore = useDeletePriceListStore(id);
 
   const confirmDelete = () => {
     Modal.confirm({
@@ -157,10 +93,92 @@ export function PriceListDetailPage({ id }: { id: string }) {
     });
   };
 
-  const channelColumns: TableColumnsType<PriceListChannel & Record<string, unknown>> = [
-    { title: "Channel", dataIndex: "channelName", render: (v) => v ?? "\u2014" },
-    { title: "ID", dataIndex: "channelId" },
-    { title: "Priority", dataIndex: "priority", render: (v) => v ?? "\u2014" },
+  const handleAssignChannel = async (channelId: string) => {
+    try {
+      await priceListsApi.assignChannel(id, { channelId });
+      message.success("Channel assigned");
+      setChannelModal(false);
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const handleRemoveChannel = async (channelId: string) => {
+    try {
+      await priceListsApi.removeChannel(id, channelId);
+      message.success("Channel removed");
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const handleAssignGroup = async (groupId: string) => {
+    try {
+      await priceListsApi.assignCustomerGroup(id, { customerGroupId: groupId });
+      message.success("Customer group assigned");
+      setGroupModal(false);
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const handleRemoveGroup = async (groupId: string) => {
+    try {
+      await priceListsApi.removeCustomerGroup(id, groupId);
+      message.success("Customer group removed");
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const handleAssignRegion = async (regionId: string) => {
+    try {
+      await priceListsApi.assignRegion(id, { regionId });
+      message.success("Region assigned");
+      setRegionModal(false);
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const handleRemoveRegion = async (regionId: string) => {
+    try {
+      await priceListsApi.removeRegion(id, regionId);
+      message.success("Region removed");
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const handleAssignStore = async (storeId: string) => {
+    try {
+      await priceListsApi.assignStore(id, { storeId });
+      message.success("Store assigned");
+      setStoreModal(false);
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const handleRemoveStore = async (storeId: string) => {
+    try {
+      await priceListsApi.removeStore(id, storeId);
+      message.success("Store removed");
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list", undefined, id] });
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const channelColumns: TableColumnsType<{ id: string }> = [
+    { title: "Channel ID", dataIndex: "id" },
     {
       title: "",
       key: "actions",
@@ -168,14 +186,7 @@ export function PriceListDetailPage({ id }: { id: string }) {
       render: (_, record) => (
         <Popconfirm
           title="Remove channel?"
-          onConfirm={async () => {
-            try {
-              await removeChannel.mutateAsync(record.id as string);
-              message.success("Channel removed");
-            } catch (e) {
-              message.error(getApiErrorMessage(e));
-            }
-          }}
+          onConfirm={() => handleRemoveChannel(record.id)}
         >
           <Button type="link" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>
@@ -183,9 +194,8 @@ export function PriceListDetailPage({ id }: { id: string }) {
     },
   ];
 
-  const groupColumns: TableColumnsType<PriceListCustomerGroup & Record<string, unknown>> = [
-    { title: "Customer group", dataIndex: "customerGroupName", render: (v) => v ?? "\u2014" },
-    { title: "ID", dataIndex: "customerGroupId" },
+  const groupColumns: TableColumnsType<{ id: string }> = [
+    { title: "Customer group ID", dataIndex: "id" },
     {
       title: "",
       key: "actions",
@@ -193,14 +203,7 @@ export function PriceListDetailPage({ id }: { id: string }) {
       render: (_, record) => (
         <Popconfirm
           title="Remove group?"
-          onConfirm={async () => {
-            try {
-              await removeGroup.mutateAsync(record.id as string);
-              message.success("Group removed");
-            } catch (e) {
-              message.error(getApiErrorMessage(e));
-            }
-          }}
+          onConfirm={() => handleRemoveGroup(record.id)}
         >
           <Button type="link" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>
@@ -208,9 +211,8 @@ export function PriceListDetailPage({ id }: { id: string }) {
     },
   ];
 
-  const regionColumns: TableColumnsType<PriceListRegion & Record<string, unknown>> = [
-    { title: "Region", dataIndex: "regionName", render: (v) => v ?? "\u2014" },
-    { title: "ID", dataIndex: "regionId" },
+  const regionColumns: TableColumnsType<{ id: string }> = [
+    { title: "Region ID", dataIndex: "id" },
     {
       title: "",
       key: "actions",
@@ -218,14 +220,7 @@ export function PriceListDetailPage({ id }: { id: string }) {
       render: (_, record) => (
         <Popconfirm
           title="Remove region?"
-          onConfirm={async () => {
-            try {
-              await removeRegion.mutateAsync(record.id as string);
-              message.success("Region removed");
-            } catch (e) {
-              message.error(getApiErrorMessage(e));
-            }
-          }}
+          onConfirm={() => handleRemoveRegion(record.id)}
         >
           <Button type="link" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>
@@ -233,9 +228,8 @@ export function PriceListDetailPage({ id }: { id: string }) {
     },
   ];
 
-  const storeColumns: TableColumnsType<PriceListStore & Record<string, unknown>> = [
-    { title: "Store", dataIndex: "storeName", render: (v) => v ?? "\u2014" },
-    { title: "ID", dataIndex: "storeId" },
+  const storeColumns: TableColumnsType<{ id: string }> = [
+    { title: "Store ID", dataIndex: "id" },
     {
       title: "",
       key: "actions",
@@ -243,14 +237,7 @@ export function PriceListDetailPage({ id }: { id: string }) {
       render: (_, record) => (
         <Popconfirm
           title="Remove store?"
-          onConfirm={async () => {
-            try {
-              await removeStore.mutateAsync(record.id as string);
-              message.success("Store removed");
-            } catch (e) {
-              message.error(getApiErrorMessage(e));
-            }
-          }}
+          onConfirm={() => handleRemoveStore(record.id)}
         >
           <Button type="link" size="small" danger icon={<DeleteOutlined />} />
         </Popconfirm>
@@ -286,11 +273,11 @@ export function PriceListDetailPage({ id }: { id: string }) {
                 </Descriptions.Item>
                 <Descriptions.Item label="Tax mode">{enumLabel("taxMode", priceList.taxMode)}</Descriptions.Item>
                 <Descriptions.Item label="Priority">{priceList.priority ?? "\u2014"}</Descriptions.Item>
-                <Descriptions.Item label="Default">{priceList.isDefault ? "Yes" : "No"}</Descriptions.Item>
-                <Descriptions.Item label="Currency">{priceList.currencyCode ?? "\u2014"}</Descriptions.Item>
+                <Descriptions.Item label="Active">{priceList.isActive ? "Yes" : "No"}</Descriptions.Item>
+                <Descriptions.Item label="Currency">{priceList.currencyId}</Descriptions.Item>
+                <Descriptions.Item label="Version">{priceList.versionNumber}</Descriptions.Item>
                 <Descriptions.Item label="Effective from">{formatDateTime(priceList.effectiveFrom)}</Descriptions.Item>
                 <Descriptions.Item label="Effective to">{formatDateTime(priceList.effectiveTo)}</Descriptions.Item>
-                <Descriptions.Item label="Products">{priceList.productCount ?? 0}</Descriptions.Item>
               </Descriptions>
             </Card>
 
@@ -299,76 +286,76 @@ export function PriceListDetailPage({ id }: { id: string }) {
               items={[
                 {
                   key: "channels",
-                  label: `Channels (${channels.data?.length ?? 0})`,
+                  label: `Channels (${priceList.channelIds.length})`,
                   children: (
                     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button type="primary" icon={<PlusOutlined />} onClick={() => setChannelModal(true)}>
-                          Add channel
-                        </Button>
+                        <Button type="primary" onClick={() => setChannelModal(true)}>Add channel</Button>
                       </div>
-                      <SimpleTable
-                        dataSource={channels.data ?? []}
+                      <Table<{ id: string }>
+                        rowKey="id"
                         columns={channelColumns}
-                        loading={channels.isLoading}
-                        emptyTitle="No channels assigned"
+                        dataSource={priceList.channelIds.map((cid) => ({ id: cid }))}
+                        pagination={false}
+                        size="middle"
+                        locale={{ emptyText: <EmptyState title="No channels assigned" /> }}
                       />
                     </div>
                   ),
                 },
                 {
                   key: "groups",
-                  label: `Customer groups (${groups.data?.length ?? 0})`,
+                  label: `Customer groups (${priceList.customerGroupIds.length})`,
                   children: (
                     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button type="primary" icon={<PlusOutlined />} onClick={() => setGroupModal(true)}>
-                          Add group
-                        </Button>
+                        <Button type="primary" onClick={() => setGroupModal(true)}>Add group</Button>
                       </div>
-                      <SimpleTable
-                        dataSource={groups.data ?? []}
+                      <Table<{ id: string }>
+                        rowKey="id"
                         columns={groupColumns}
-                        loading={groups.isLoading}
-                        emptyTitle="No customer groups assigned"
+                        dataSource={priceList.customerGroupIds.map((gid) => ({ id: gid }))}
+                        pagination={false}
+                        size="middle"
+                        locale={{ emptyText: <EmptyState title="No customer groups assigned" /> }}
                       />
                     </div>
                   ),
                 },
                 {
                   key: "regions",
-                  label: `Regions (${regions.data?.length ?? 0})`,
+                  label: `Regions (${priceList.regionIds.length})`,
                   children: (
                     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button type="primary" icon={<PlusOutlined />} onClick={() => setRegionModal(true)}>
-                          Add region
-                        </Button>
+                        <Button type="primary" onClick={() => setRegionModal(true)}>Add region</Button>
                       </div>
-                      <SimpleTable
-                        dataSource={regions.data ?? []}
+                      <Table<{ id: string }>
+                        rowKey="id"
                         columns={regionColumns}
-                        loading={regions.isLoading}
-                        emptyTitle="No regions assigned"
+                        dataSource={priceList.regionIds.map((rid) => ({ id: rid }))}
+                        pagination={false}
+                        size="middle"
+                        locale={{ emptyText: <EmptyState title="No regions assigned" /> }}
                       />
                     </div>
                   ),
                 },
                 {
                   key: "stores",
-                  label: `Stores (${stores.data?.length ?? 0})`,
+                  label: `Stores (${priceList.storeIds.length})`,
                   children: (
                     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                        <Button type="primary" icon={<PlusOutlined />} onClick={() => setStoreModal(true)}>
-                          Add store
-                        </Button>
+                        <Button type="primary" onClick={() => setStoreModal(true)}>Add store</Button>
                       </div>
-                      <SimpleTable
-                        dataSource={stores.data ?? []}
+                      <Table<{ id: string }>
+                        rowKey="id"
                         columns={storeColumns}
-                        loading={stores.isLoading}
-                        emptyTitle="No stores assigned"
+                        dataSource={priceList.storeIds.map((sid) => ({ id: sid }))}
+                        pagination={false}
+                        size="middle"
+                        locale={{ emptyText: <EmptyState title="No stores assigned" /> }}
                       />
                     </div>
                   ),
@@ -376,81 +363,37 @@ export function PriceListDetailPage({ id }: { id: string }) {
               ]}
             />
 
-            <SubEntityModal<{ channelId: string; channelName?: string; priority?: number }>
+            <AssignModal
               open={channelModal}
               onClose={() => setChannelModal(false)}
               title="Add channel"
-              loading={saveChannel.isPending}
-              fields={[
-                { name: "channelId", label: "Channel ID", required: true },
-                { name: "channelName", label: "Channel name" },
-              ]}
-              onSubmit={async (values) => {
-                try {
-                  await saveChannel.mutateAsync({ body: values });
-                  message.success("Channel added");
-                  setChannelModal(false);
-                } catch (e) {
-                  message.error(getApiErrorMessage(e));
-                }
-              }}
+              label="Channel ID"
+              placeholder="Enter channel GUID"
+              onSubmit={handleAssignChannel}
             />
-            <SubEntityModal<{ customerGroupId: string; customerGroupName?: string }>
+            <AssignModal
               open={groupModal}
               onClose={() => setGroupModal(false)}
               title="Add customer group"
-              loading={saveGroup.isPending}
-              fields={[
-                { name: "customerGroupId", label: "Customer group ID", required: true },
-                { name: "customerGroupName", label: "Name" },
-              ]}
-              onSubmit={async (values) => {
-                try {
-                  await saveGroup.mutateAsync(values);
-                  message.success("Group added");
-                  setGroupModal(false);
-                } catch (e) {
-                  message.error(getApiErrorMessage(e));
-                }
-              }}
+              label="Customer group ID"
+              placeholder="Enter group GUID"
+              onSubmit={handleAssignGroup}
             />
-            <SubEntityModal<{ regionId: string; regionName?: string }>
+            <AssignModal
               open={regionModal}
               onClose={() => setRegionModal(false)}
               title="Add region"
-              loading={saveRegion.isPending}
-              fields={[
-                { name: "regionId", label: "Region ID", required: true },
-                { name: "regionName", label: "Region name" },
-              ]}
-              onSubmit={async (values) => {
-                try {
-                  await saveRegion.mutateAsync(values);
-                  message.success("Region added");
-                  setRegionModal(false);
-                } catch (e) {
-                  message.error(getApiErrorMessage(e));
-                }
-              }}
+              label="Region ID"
+              placeholder="Enter region GUID"
+              onSubmit={handleAssignRegion}
             />
-            <SubEntityModal<{ storeId: string; storeName?: string }>
+            <AssignModal
               open={storeModal}
               onClose={() => setStoreModal(false)}
               title="Add store"
-              loading={saveStore.isPending}
-              fields={[
-                { name: "storeId", label: "Store ID", required: true },
-                { name: "storeName", label: "Store name" },
-              ]}
-              onSubmit={async (values) => {
-                try {
-                  await saveStore.mutateAsync(values);
-                  message.success("Store added");
-                  setStoreModal(false);
-                } catch (e) {
-                  message.error(getApiErrorMessage(e));
-                }
-              }}
+              label="Store ID"
+              placeholder="Enter store GUID"
+              onSubmit={handleAssignStore}
             />
           </>
         )}

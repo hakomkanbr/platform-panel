@@ -50,12 +50,6 @@ function GeneralSettings({ project }: { project: ProjectDetailDto }) {
             </Text>
             <Text>{project.description || "No description"}</Text>
           </div>
-          <div>
-            <Text type="secondary" style={{ display: "block", marginBottom: 4 }}>
-              Applications
-            </Text>
-            <Text strong>{project.apps.length}</Text>
-          </div>
         </div>
       </Card>
     </div>

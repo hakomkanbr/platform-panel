@@ -130,36 +130,36 @@ export default function ProjectSettingsTabs({ project }: ProjectSettingsTabsProp
       ),
       children: <GeneralSettings project={project} />,
     },
-    {
-      key: "members",
-      label: (
-        <Space>
-          <TeamOutlined />
-          Members
-        </Space>
-      ),
-      children: <MembersSettings />,
-    },
-    {
-      key: "domains",
-      label: (
-        <Space>
-          <GlobalOutlined />
-          Domains
-        </Space>
-      ),
-      children: <DomainsSettings />,
-    },
-    {
-      key: "api-keys",
-      label: (
-        <Space>
-          <KeyOutlined />
-          API Keys
-        </Space>
-      ),
-      children: <ApiKeyTable projectId={project.id} />,
-    },
+    // {
+    //   key: "members",
+    //   label: (
+    //     <Space>
+    //       <TeamOutlined />
+    //       Members
+    //     </Space>
+    //   ),
+    //   children: <MembersSettings />,
+    // },
+    // {
+    // key: "domains",
+    // label: (
+    //   <Space>
+    //     <GlobalOutlined />
+    //     Domains
+    //   </Space>
+    // ),
+    // children: <DomainsSettings />,
+    //},
+    // {
+    //   key: "api-keys",
+    //   label: (
+    //     <Space>
+    //       <KeyOutlined />
+    //       API Keys
+    //     </Space>
+    //   ),
+    //   children: <ApiKeyTable projectId={project.id} />,
+    // },
     {
       key: "languages",
       label: (

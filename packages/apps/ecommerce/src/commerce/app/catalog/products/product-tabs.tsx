@@ -24,6 +24,7 @@ import { formatCurrency } from "@repo/utils";
 import { enumLabel, enumOptions } from "../../../types/enums";
 import type { MediaItem, OptionValue, ProductOption, Relation, Variant } from "../../../types/catalog";
 import {
+  useAddProductOptionValue,
   useAddProductRelation,
   useDeleteProductDetail,
   useProductMedia,
@@ -151,10 +152,27 @@ export function ProductMediaTab({ productId }: { productId: string }) {
 
 /* ---------------------------------- Options ---------------------------------- */
 
-export function ProductOptionsTab({ productId }: { productId: string }) {
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60) || "option";
+}
+
+export function ProductOptionsTab({
+  productId,
+  languageCode = "en-US",
+  languageId = "4f7d8a31-2d4e-4b9c-a8f6-9e1d73c5b4a2",
+}: {
+  productId: string;
+  languageCode?: string;
+  languageId?: string;
+}) {
   const { data, isLoading, isError, error } = useProductOptions(productId);
   const save = useSaveProductDetail("options", productId);
   const remove = useDeleteProductDetail("options", productId);
+  const addValue = useAddProductOptionValue(productId);
 
   const [form] = Form.useForm();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -179,17 +197,52 @@ export function ProductOptionsTab({ productId }: { productId: string }) {
     setDrawerOpen(true);
   };
 
+  type SavedProductWithOptions = { options?: Array<{ id?: string; code?: string; name?: string }> };
+
   const onFinish = async (values: Record<string, unknown>) => {
     try {
-      await save.mutateAsync({
+      const name = String(values.name ?? "").trim();
+      const inputValues = (values.values as OptionValue[] | undefined)
+        ?.map((v) => String(v.value ?? "").trim())
+        .filter(Boolean) ?? [];
+      const optionCode = slugify(name);
+
+      const saved = (await save.mutateAsync({
         entityId: editing?.id,
         body: {
-          name: values.name,
+          ...(editing ? { code: editing.id } : { code: optionCode }),
+          name,
           inputType: values.inputType,
           isRequired: values.isRequired,
-          values: (values.values as OptionValue[] | undefined)?.filter((v) => v.value.trim()) ?? [],
+          languageId,
+          cultureCode: languageCode,
+          displayOrder: 0,
         },
-      });
+      })) as SavedProductWithOptions;
+
+      if (!editing && inputValues.length > 0) {
+        const createdOptions = saved?.options ?? [];
+        const created =
+          createdOptions.find((o) => o.code === optionCode || o.name === name) ??
+          createdOptions[createdOptions.length - 1];
+        const optionId = created?.id;
+        if (optionId) {
+          for (let i = 0; i < inputValues.length; i++) {
+            const v = inputValues[i]!;
+            await addValue.mutateAsync({
+              optionId,
+              body: {
+                languageId,
+                cultureCode: languageCode,
+                value: v,
+                name: v,
+                displayOrder: i,
+              },
+            });
+          }
+        }
+      }
+
       message.success(editing ? "Option updated" : "Option created");
       setDrawerOpen(false);
       setEditing(null);

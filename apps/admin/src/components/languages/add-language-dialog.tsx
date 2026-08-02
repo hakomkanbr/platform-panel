@@ -22,7 +22,7 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
     name: "",
     nativeName: "",
     flag: "🏳️",
-    rtl: false,
+    rtl: 0,
   });
 
   const isEdit = !!editData;
@@ -52,7 +52,7 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
           name: formData.name,
           nativeName: formData.nativeName,
           flag: formData.flag,
-          rtl: formData.rtl,
+          rtl: formData.rtl == "RTL" ? 0 : 1,
         });
         message.success("Language added successfully");
       }

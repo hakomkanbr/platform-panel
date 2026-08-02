@@ -1,48 +1,80 @@
 import * as http from "../http";
-import type { PaginatedResult, ListParams, KeyValue } from "../../types/common";
-import type { PriceConstraint, PriceTier, ProductPrice, ProductPriceUpsertRequest } from "../../types/pricing";
-
-export interface ProductPriceFilters extends ListParams {
-  productId?: string;
-  priceListId?: string;
-  status?: string;
-  currencyId?: string;
-}
+import type { PaginatedResult, ListParams } from "../../types/common";
+import type {
+  ProductPriceReadModel,
+  ProductPriceFilters,
+  CreateProductPriceCommand,
+  UpdateProductPriceRequest,
+  AddPriceTierBody,
+  UpdatePriceTierBody,
+  AddPriceConstraintBody,
+  UpdatePriceConstraintBody,
+  RejectProductPriceBody,
+  ScheduleProductPriceBody,
+  UpsertPriceMetadataBody,
+} from "../../types/pricing";
 
 export const productPricesApi = {
   list: (params?: ProductPriceFilters) =>
-    http.get<PaginatedResult<ProductPrice> | ProductPrice[]>("/Admin/ProductPrices", params),
+    http.get<PaginatedResult<ProductPriceReadModel>>("/Admin/ProductPrices", params),
 
-  getById: (id: string) => http.get<ProductPrice>(`/Admin/ProductPrices/${id}`),
+  getById: (id: string) => http.get<ProductPriceReadModel>(`/Admin/ProductPrices/${id}`),
 
-  create: (body: ProductPriceUpsertRequest) => http.post<ProductPrice>("/Admin/ProductPrices", body),
+  getByProduct: (productId: string, variantId?: string) =>
+    http.get<ProductPriceReadModel[]>(`/Admin/ProductPrices/by-product/${productId}`, variantId ? { variantId } : undefined),
 
-  update: (id: string, body: Partial<ProductPriceUpsertRequest>) =>
-    http.put<ProductPrice>(`/Admin/ProductPrices/${id}`, body),
+  getVersionHistory: (id: string) =>
+    http.get<unknown>(`/Admin/ProductPrices/${id}/versions`),
+
+  create: (body: CreateProductPriceCommand) => http.post<ProductPriceReadModel>("/Admin/ProductPrices", body),
+
+  update: (id: string, body: UpdateProductPriceRequest) =>
+    http.put<ProductPriceReadModel>(`/Admin/ProductPrices/${id}`, body),
 
   delete: (id: string) => http.del<void>(`/Admin/ProductPrices/${id}`),
 
-  getTiers: (id: string) => http.get<PriceTier[]>(`/Admin/ProductPrices/${id}/tiers`),
+  publish: (id: string) => http.put<void>(`/Admin/ProductPrices/${id}/publish`),
 
-  addTier: (id: string, body: Partial<PriceTier>) => http.post<PriceTier>(`/Admin/ProductPrices/${id}/tiers`, body),
+  archive: (id: string) => http.put<void>(`/Admin/ProductPrices/${id}/archive`),
 
-  updateTier: (id: string, tierId: string, body: Partial<PriceTier>) =>
-    http.put<PriceTier>(`/Admin/ProductPrices/${id}/tiers/${tierId}`, body),
+  activate: (id: string) => http.put<void>(`/Admin/ProductPrices/${id}/activate`),
 
-  deleteTier: (id: string, tierId: string) => http.del<void>(`/Admin/ProductPrices/${id}/tiers/${tierId}`),
+  deactivate: (id: string) => http.put<void>(`/Admin/ProductPrices/${id}/deactivate`),
 
-  getConstraints: (id: string) => http.get<PriceConstraint[]>(`/Admin/ProductPrices/${id}/constraints`),
+  submitForApproval: (id: string) =>
+    http.put<void>(`/Admin/ProductPrices/${id}/submit-for-approval`),
 
-  addConstraint: (id: string, body: Partial<PriceConstraint>) =>
-    http.post<PriceConstraint>(`/Admin/ProductPrices/${id}/constraints`, body),
+  approve: (id: string) => http.put<void>(`/Admin/ProductPrices/${id}/approve`),
 
-  updateConstraint: (id: string, constraintId: string, body: Partial<PriceConstraint>) =>
-    http.put<PriceConstraint>(`/Admin/ProductPrices/${id}/constraints/${constraintId}`, body),
+  reject: (id: string, body: RejectProductPriceBody) =>
+    http.put<void>(`/Admin/ProductPrices/${id}/reject`, body),
+
+  schedule: (id: string, body: ScheduleProductPriceBody) =>
+    http.put<void>(`/Admin/ProductPrices/${id}/schedule`, body),
+
+  expire: (id: string) => http.put<void>(`/Admin/ProductPrices/${id}/expire`),
+
+  addTier: (id: string, body: AddPriceTierBody) =>
+    http.put<ProductPriceReadModel>(`/Admin/ProductPrices/${id}/tiers`, body),
+
+  updateTier: (id: string, tierId: string, body: UpdatePriceTierBody) =>
+    http.put<ProductPriceReadModel>(`/Admin/ProductPrices/${id}/tiers/${tierId}`, body),
+
+  deleteTier: (id: string, tierId: string) =>
+    http.del<void>(`/Admin/ProductPrices/${id}/tiers/${tierId}`),
+
+  addConstraint: (id: string, body: AddPriceConstraintBody) =>
+    http.put<ProductPriceReadModel>(`/Admin/ProductPrices/${id}/constraints`, body),
+
+  updateConstraint: (id: string, constraintId: string, body: UpdatePriceConstraintBody) =>
+    http.put<ProductPriceReadModel>(`/Admin/ProductPrices/${id}/constraints/${constraintId}`, body),
 
   deleteConstraint: (id: string, constraintId: string) =>
     http.del<void>(`/Admin/ProductPrices/${id}/constraints/${constraintId}`),
 
-  setMetadata: (id: string, metadata: KeyValue[]) => http.put<void>(`/Admin/ProductPrices/${id}/metadata`, { metadata }),
+  upsertMetadata: (id: string, body: UpsertPriceMetadataBody) =>
+    http.put<void>(`/Admin/ProductPrices/${id}/metadata`, body),
 
-  getVersions: (id: string) => http.get<KeyValue[]>(`/Admin/ProductPrices/${id}/versions`),
+  removeMetadata: (id: string, key: string) =>
+    http.del<void>(`/Admin/ProductPrices/${id}/metadata/${key}`),
 };

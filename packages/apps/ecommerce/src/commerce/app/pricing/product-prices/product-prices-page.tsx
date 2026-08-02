@@ -25,18 +25,12 @@ import { formatCurrency, formatDateTime } from "@repo/utils";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
 import { enumLabel, enumOptions } from "../../../types/enums";
-import type { PriceConstraint, PriceStatus, PriceTier, ProductPrice } from "../../../types/pricing";
+import type { ProductPriceReadModel, PriceStatus, PriceTier, PriceConstraint } from "../../../types/pricing";
 import {
   useDeleteProductPrice,
-  usePriceConstraints,
-  usePriceTiers,
   useProductPrice,
   useProductPrices,
-  useSavePriceConstraint,
-  useSavePriceTier,
   useSaveProductPrice,
-  useDeletePriceTier,
-  useDeletePriceConstraint,
 } from "../../../hooks/useProductPrices";
 import { usePriceLists } from "../../../hooks/usePriceLists";
 import { useProducts } from "../../../hooks/useProducts";
@@ -44,7 +38,7 @@ import { getApiErrorMessage } from "../../../api/http";
 
 const { Text } = Typography;
 
-type PriceRow = ProductPrice & Record<string, unknown>;
+type PriceRow = ProductPriceReadModel & Record<string, unknown>;
 
 export function ProductPricesPage() {
   const [page, setPage] = useState(1);
@@ -103,20 +97,20 @@ export function ProductPricesPage() {
   const columns: TableColumnsType<PriceRow> = [
     {
       title: "Product",
-      dataIndex: "productName",
+      dataIndex: "productId",
       render: (v) => <Text strong>{v ?? "\u2014"}</Text>,
     },
-    { title: "Price list", dataIndex: "priceListName", render: (v) => v ?? "\u2014" },
-    { title: "Currency", dataIndex: "currencyCode", render: (v) => v ?? "\u2014" },
+    { title: "Price list", dataIndex: "priceListId", render: (v) => v ?? "\u2014" },
+    { title: "Currency", dataIndex: "currencyId", render: (v) => v ?? "\u2014" },
     {
       title: "Base price",
-      dataIndex: "baseAmount",
-      render: (v, r) => <Text strong>{formatCurrency(v, r.currencyCode)}</Text>,
+      dataIndex: "basePrice",
+      render: (v, r) => <Text strong>{formatCurrency(v, r.currencyId)}</Text>,
     },
     {
       title: "Compare-at",
-      dataIndex: "compareAtAmount",
-      render: (v, r) => formatCurrency(v, r.currencyCode),
+      dataIndex: "compareAtPrice",
+      render: (v, r) => formatCurrency(v, r.currencyId),
     },
     { title: "Status", dataIndex: "status", width: 110, render: (v) => <StatusTag value={v} /> },
     {
@@ -338,8 +332,6 @@ function PriceDetailDrawer({
   priceId: string | null;
 }) {
   const { data: price, isLoading, error } = useProductPrice(priceId);
-  const tiers = usePriceTiers(priceId);
-  const constraints = usePriceConstraints(priceId);
   const saveTier = useSavePriceTier(priceId);
   const removeTier = useDeletePriceTier(priceId);
   const saveConstraint = useSavePriceConstraint(priceId);
@@ -364,7 +356,7 @@ function PriceDetailDrawer({
   const tierColumns: TableColumnsType<PriceTier> = [
     { title: "Min qty", dataIndex: "minQuantity" },
     { title: "Max qty", dataIndex: "maxQuantity", render: (v) => v ?? "\u221E" },
-    { title: "Price", dataIndex: "price", render: (v) => formatCurrency(v, price?.currencyCode) },
+    { title: "Price", dataIndex: "price", render: (v) => formatCurrency(v, price?.currencyId) },
     {
       title: "",
       key: "actions",
@@ -394,7 +386,7 @@ function PriceDetailDrawer({
       render: (v) => enumLabel("priceConstraintType", v),
     },
     { title: "Value", dataIndex: "value" },
-    { title: "Description", dataIndex: "description", render: (v) => v ?? "\u2014" },
+    { title: "Message", dataIndex: "message", render: (v) => v ?? "\u2014" },
     {
       title: "",
       key: "actions",
@@ -422,7 +414,7 @@ function PriceDetailDrawer({
       open={open}
       onClose={onClose}
       title="Product price"
-      description={price?.productName}
+      description={price?.productId}
       width={680}
       footer={
         <Space>
@@ -440,28 +432,30 @@ function PriceDetailDrawer({
       {price && (
         <Space direction="vertical" size={24} style={{ width: "100%" }}>
           <Descriptions column={2} size="small">
-            <Descriptions.Item label="Product">{price.productName ?? "\u2014"}</Descriptions.Item>
-            <Descriptions.Item label="Price list">{price.priceListName ?? "\u2014"}</Descriptions.Item>
+            <Descriptions.Item label="Product">{price.productId}</Descriptions.Item>
+            <Descriptions.Item label="Price list">{price.priceListId ?? "\u2014"}</Descriptions.Item>
             <Descriptions.Item label="Base price">
-              <Text strong>{formatCurrency(price.baseAmount, price.currencyCode)}</Text>
+              <Text strong>{formatCurrency(price.basePrice, price.currencyId)}</Text>
             </Descriptions.Item>
             <Descriptions.Item label="Status">
               <StatusTag value={price.status} />
             </Descriptions.Item>
+            <Descriptions.Item label="Approval">{enumLabel("approvalStatus", price.approvalStatus)}</Descriptions.Item>
+            <Descriptions.Item label="Active">{price.isActive ? "Yes" : "No"}</Descriptions.Item>
           </Descriptions>
 
           <AddListSection
-            title={`Tiers (${tiers.data?.length ?? 0})`}
+            title={`Tiers (${price.tiers.length})`}
             addLabel="Add tier"
             emptyTitle="No tiers"
-            loading={tiers.isLoading}
+            loading={saveTier.isPending}
             onSubmit={async (values) => {
               try {
                 await saveTier.mutateAsync({
                   body: {
                     minQuantity: values.minQuantity,
-                    maxQuantity: values.maxQuantity,
                     price: values.price,
+                    maxQuantity: values.maxQuantity,
                   },
                 });
                 message.success("Tier added");
@@ -486,7 +480,7 @@ function PriceDetailDrawer({
               <Table<PriceTier>
                 rowKey={(r) => r.id ?? Math.random().toString(36)}
                 columns={tierColumns}
-                dataSource={tiers.data ?? []}
+                dataSource={price.tiers}
                 pagination={false}
                 size="small"
                 locale={{ emptyText: <EmptyState title="No tiers" /> }}
@@ -495,14 +489,14 @@ function PriceDetailDrawer({
           />
 
           <AddListSection
-            title={`Constraints (${constraints.data?.length ?? 0})`}
+            title={`Constraints (${price.constraints.length})`}
             addLabel="Add constraint"
             emptyTitle="No constraints"
-            loading={constraints.isLoading}
+            loading={saveConstraint.isPending}
             onSubmit={async (values) => {
               try {
                 await saveConstraint.mutateAsync({
-                  body: { type: values.type, value: values.value, description: values.description },
+                  body: { type: values.type, value: values.value, message: values.message },
                 });
                 message.success("Constraint added");
               } catch (e) {
@@ -517,7 +511,7 @@ function PriceDetailDrawer({
                 <Form.Item name="value" label="Value" rules={[{ required: true }]}>
                   <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item name="description" label="Description">
+                <Form.Item name="message" label="Message">
                   <Input placeholder="Note" />
                 </Form.Item>
               </>
@@ -526,7 +520,7 @@ function PriceDetailDrawer({
               <Table<PriceConstraint>
                 rowKey={(r) => r.id ?? Math.random().toString(36)}
                 columns={constraintColumns}
-                dataSource={constraints.data ?? []}
+                dataSource={price.constraints}
                 pagination={false}
                 size="small"
                 locale={{ emptyText: <EmptyState title="No constraints" /> }}

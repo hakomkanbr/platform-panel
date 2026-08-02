@@ -1,77 +1,73 @@
 import * as http from "../http";
-import type { PaginatedResult, ListParams, KeyValue, TranslationField } from "../../types/common";
+import type { PaginatedResult, ListParams } from "../../types/common";
 import type {
-  PriceList,
-  PriceListChannel,
-  PriceListCustomerGroup,
-  PriceListRegion,
-  PriceListStore,
+  PriceListReadModel,
+  PriceListFilters,
+  CreatePriceListCommand,
+  UpdatePriceListRequest,
+  AddPriceListTranslationBody,
+  UpdatePriceListTranslationBody,
+  AssignCustomerGroupBody,
+  AssignChannelBody,
+  AssignRegionBody,
+  AssignStoreBody,
+  UpsertMetadataBody,
 } from "../../types/pricing";
-
-export interface PriceListFilters extends ListParams {
-  status?: string;
-  currencyId?: string;
-}
-
-export interface PriceListUpsertBody {
-  code?: string;
-  name: string;
-  description?: string;
-  taxMode?: number;
-  currencyId?: string;
-  priority?: number;
-  isDefault?: boolean;
-  effectiveFrom?: string;
-  effectiveTo?: string;
-  metadata?: KeyValue[];
-}
 
 export const priceListsApi = {
   list: (params?: PriceListFilters) =>
-    http.get<PaginatedResult<PriceList> | PriceList[]>("/Admin/PriceLists", params),
+    http.get<PaginatedResult<PriceListReadModel>>("/Admin/PriceLists", params),
 
-  getById: (id: string) => http.get<PriceList>(`/Admin/PriceLists/${id}`),
+  getById: (id: string) => http.get<PriceListReadModel>(`/Admin/PriceLists/${id}`),
 
-  create: (body: PriceListUpsertBody) => http.post<PriceList>("/Admin/PriceLists", body),
+  create: (body: CreatePriceListCommand) => http.post<PriceListReadModel>("/Admin/PriceLists", body),
 
-  update: (id: string, body: Partial<PriceListUpsertBody>) => http.put<PriceList>(`/Admin/PriceLists/${id}`, body),
+  update: (id: string, body: UpdatePriceListRequest) =>
+    http.put<PriceListReadModel>(`/Admin/PriceLists/${id}`, body),
 
   delete: (id: string) => http.del<void>(`/Admin/PriceLists/${id}`),
 
-  getChannels: (id: string) => http.get<PriceListChannel[]>(`/Admin/PriceLists/${id}/channels`),
+  publish: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/publish`),
 
-  addChannel: (id: string, body: Partial<PriceListChannel>) =>
-    http.post<PriceListChannel>(`/Admin/PriceLists/${id}/channels`, body),
+  activate: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/activate`),
 
-  updateChannel: (id: string, channelId: string, body: Partial<PriceListChannel>) =>
-    http.put<PriceListChannel>(`/Admin/PriceLists/${id}/channels/${channelId}`, body),
+  deactivate: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/deactivate`),
 
-  deleteChannel: (id: string, channelId: string) => http.del<void>(`/Admin/PriceLists/${id}/channels/${channelId}`),
+  archive: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/archive`),
 
-  getCustomerGroups: (id: string) => http.get<PriceListCustomerGroup[]>(`/Admin/PriceLists/${id}/customer-groups`),
+  addTranslation: (id: string, body: AddPriceListTranslationBody) =>
+    http.put<PriceListReadModel>(`/Admin/PriceLists/${id}/translations`, body),
 
-  addCustomerGroup: (id: string, body: Partial<PriceListCustomerGroup>) =>
-    http.post<PriceListCustomerGroup>(`/Admin/PriceLists/${id}/customer-groups`, body),
+  updateTranslation: (id: string, languageId: string, body: UpdatePriceListTranslationBody) =>
+    http.put<PriceListReadModel>(`/Admin/PriceLists/${id}/translations/${languageId}`, body),
 
-  deleteCustomerGroup: (id: string, customerGroupId: string) =>
+  assignCustomerGroup: (id: string, body: AssignCustomerGroupBody) =>
+    http.put<void>(`/Admin/PriceLists/${id}/customer-groups`, body),
+
+  removeCustomerGroup: (id: string, customerGroupId: string) =>
     http.del<void>(`/Admin/PriceLists/${id}/customer-groups/${customerGroupId}`),
 
-  getRegions: (id: string) => http.get<PriceListRegion[]>(`/Admin/PriceLists/${id}/regions`),
+  assignChannel: (id: string, body: AssignChannelBody) =>
+    http.put<void>(`/Admin/PriceLists/${id}/channels`, body),
 
-  addRegion: (id: string, body: Partial<PriceListRegion>) =>
-    http.post<PriceListRegion>(`/Admin/PriceLists/${id}/regions`, body),
+  removeChannel: (id: string, channelId: string) =>
+    http.del<void>(`/Admin/PriceLists/${id}/channels/${channelId}`),
 
-  deleteRegion: (id: string, regionId: string) => http.del<void>(`/Admin/PriceLists/${id}/regions/${regionId}`),
+  assignRegion: (id: string, body: AssignRegionBody) =>
+    http.put<void>(`/Admin/PriceLists/${id}/regions`, body),
 
-  getStores: (id: string) => http.get<PriceListStore[]>(`/Admin/PriceLists/${id}/stores`),
+  removeRegion: (id: string, regionId: string) =>
+    http.del<void>(`/Admin/PriceLists/${id}/regions/${regionId}`),
 
-  addStore: (id: string, body: Partial<PriceListStore>) =>
-    http.post<PriceListStore>(`/Admin/PriceLists/${id}/stores`, body),
+  assignStore: (id: string, body: AssignStoreBody) =>
+    http.put<void>(`/Admin/PriceLists/${id}/stores`, body),
 
-  deleteStore: (id: string, storeId: string) => http.del<void>(`/Admin/PriceLists/${id}/stores/${storeId}`),
+  removeStore: (id: string, storeId: string) =>
+    http.del<void>(`/Admin/PriceLists/${id}/stores/${storeId}`),
 
-  setMetadata: (id: string, metadata: KeyValue[]) => http.put<void>(`/Admin/PriceLists/${id}/metadata`, { metadata }),
+  upsertMetadata: (id: string, body: UpsertMetadataBody) =>
+    http.put<void>(`/Admin/PriceLists/${id}/metadata`, body),
 
-  setTranslations: (id: string, translations: TranslationField[]) =>
-    http.put<void>(`/Admin/PriceLists/${id}/translations`, { translations }),
+  removeMetadata: (id: string, key: string) =>
+    http.del<void>(`/Admin/PriceLists/${id}/metadata/${key}`),
 };

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productsApi } from "../api/catalog/products";
 import type { ProductFilters, ProductUpsertBody } from "../api/catalog/products";
 import { useCommerce } from "../context/CommerceContext";
-import type { ProductDetail, ProductListItem } from "../types/catalog";
+import type { ProductDetail, ProductListItem, AddProductOptionValueBody } from "../types/catalog";
 import type { PaginatedResult } from "../types/common";
 
 export function useProducts(params: ProductFilters) {
@@ -168,6 +168,29 @@ export function useAddProductRelation(productId: string | null) {
   return useMutation({
     mutationFn: (body: { productId: string; relationType?: number }) =>
       productsApi.addRelation(productId as string, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", "relations", undefined, productId] });
+    },
+  });
+}
+
+export function useAddProductOptionValue(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ optionId, body }: { optionId: string; body: AddProductOptionValueBody }) =>
+      productsApi.addOptionValue(productId as string, optionId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", "options", undefined, productId] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    },
+  });
+}
+
+export function useDeleteProductRelation(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (relatedProductId: string) =>
+      productsApi.deleteRelation(productId as string, relatedProductId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "product", "relations", undefined, productId] });
     },

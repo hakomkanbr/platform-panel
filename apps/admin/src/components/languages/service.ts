@@ -68,7 +68,7 @@ function mapUpdateToBackend(f: UpdateProjectLanguageRequest): Record<string, unk
   const result: Record<string, unknown> = {};
   if (f.name !== undefined) result.name = f.name;
   if (f.nativeName !== undefined) result.nativeName = f.nativeName;
-  if (f.rtl !== undefined) result.direction = f.rtl ? "RTL" : "LTR";
+  if (f.rtl !== undefined) result.direction = f.rtl ? "1" : "0";
   if (f.flag !== undefined) result.flagIcon = f.flag;
   if (f.order !== undefined) result.displayOrder = f.order;
   if (f.enabled !== undefined) result.isEnabled = f.enabled;

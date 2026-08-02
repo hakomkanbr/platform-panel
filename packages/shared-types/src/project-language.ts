@@ -19,7 +19,7 @@ export interface CreateProjectLanguageRequest {
   name: string;
   nativeName: string;
   flag: string;
-  rtl: boolean;
+  rtl: number;
 }
 
 export interface UpdateProjectLanguageRequest {
@@ -68,35 +68,35 @@ export const LANGUAGE_FLAGS: Record<string, string> = {
   vi: "🇻🇳",
 };
 
-export const LANGUAGES: { code: string; name: string; nativeName: string; rtl: boolean }[] = [
-  { code: "en", name: "English", nativeName: "English", rtl: false },
-  { code: "ar", name: "Arabic", nativeName: "العربية", rtl: true },
-  { code: "tr", name: "Turkish", nativeName: "Türkçe", rtl: false },
-  { code: "fr", name: "French", nativeName: "Français", rtl: false },
-  { code: "de", name: "German", nativeName: "Deutsch", rtl: false },
-  { code: "es", name: "Spanish", nativeName: "Español", rtl: false },
-  { code: "pt", name: "Portuguese", nativeName: "Português", rtl: false },
-  { code: "ru", name: "Russian", nativeName: "Русский", rtl: false },
-  { code: "zh", name: "Chinese", nativeName: "中文", rtl: false },
-  { code: "ja", name: "Japanese", nativeName: "日本語", rtl: false },
-  { code: "ko", name: "Korean", nativeName: "한국어", rtl: false },
-  { code: "hi", name: "Hindi", nativeName: "हिन्दी", rtl: false },
-  { code: "ur", name: "Urdu", nativeName: "اردو", rtl: true },
-  { code: "fa", name: "Persian", nativeName: "فارسی", rtl: true },
-  { code: "it", name: "Italian", nativeName: "Italiano", rtl: false },
-  { code: "nl", name: "Dutch", nativeName: "Nederlands", rtl: false },
-  { code: "pl", name: "Polish", nativeName: "Polski", rtl: false },
-  { code: "sv", name: "Swedish", nativeName: "Svenska", rtl: false },
-  { code: "da", name: "Danish", nativeName: "Dansk", rtl: false },
-  { code: "fi", name: "Finnish", nativeName: "Suomi", rtl: false },
-  { code: "no", name: "Norwegian", nativeName: "Norsk", rtl: false },
-  { code: "cs", name: "Czech", nativeName: "Čeština", rtl: false },
-  { code: "sk", name: "Slovak", nativeName: "Slovenčina", rtl: false },
-  { code: "hu", name: "Hungarian", nativeName: "Magyar", rtl: false },
-  { code: "ro", name: "Romanian", nativeName: "Română", rtl: false },
-  { code: "bg", name: "Bulgarian", nativeName: "Български", rtl: false },
-  { code: "el", name: "Greek", nativeName: "Ελληνικά", rtl: false },
-  { code: "he", name: "Hebrew", nativeName: "עברית", rtl: true },
-  { code: "th", name: "Thai", nativeName: "ไทย", rtl: false },
-  { code: "vi", name: "Vietnamese", nativeName: "Tiếng Việt", rtl: false },
+export const LANGUAGES: { code: string; name: string; nativeName: string; rtl: number }[] = [
+  { code: "en", name: "English", nativeName: "English", rtl: 0 },
+  { code: "ar", name: "Arabic", nativeName: "العربية", rtl: 1 },
+  { code: "tr", name: "Turkish", nativeName: "Türkçe", rtl: 0 },
+  { code: "fr", name: "French", nativeName: "Français", rtl: 0 },
+  { code: "de", name: "German", nativeName: "Deutsch", rtl: 0 },
+  { code: "es", name: "Spanish", nativeName: "Español", rtl: 0 },
+  { code: "pt", name: "Portuguese", nativeName: "Português", rtl: 0 },
+  { code: "ru", name: "Russian", nativeName: "Русский", rtl: 0 },
+  { code: "zh", name: "Chinese", nativeName: "中文", rtl: 0 },
+  { code: "ja", name: "Japanese", nativeName: "日本語", rtl: 0 },
+  { code: "ko", name: "Korean", nativeName: "한국어", rtl: 0 },
+  { code: "hi", name: "Hindi", nativeName: "हिन्दी", rtl: 0 },
+  { code: "ur", name: "Urdu", nativeName: "اردو", rtl: 1 },
+  { code: "fa", name: "Persian", nativeName: "فارسی", rtl: 1 },
+  { code: "it", name: "Italian", nativeName: "Italiano", rtl: 0 },
+  { code: "nl", name: "Dutch", nativeName: "Nederlands", rtl: 0 },
+  { code: "pl", name: "Polish", nativeName: "Polski", rtl: 0 },
+  { code: "sv", name: "Swedish", nativeName: "Svenska", rtl: 0 },
+  { code: "da", name: "Danish", nativeName: "Dansk", rtl: 0 },
+  { code: "fi", name: "Finnish", nativeName: "Suomi", rtl: 0 },
+  { code: "no", name: "Norwegian", nativeName: "Norsk", rtl: 0 },
+  { code: "cs", name: "Czech", nativeName: "Čeština", rtl: 0 },
+  { code: "sk", name: "Slovak", nativeName: "Slovenčina", rtl: 0 },
+  { code: "hu", name: "Hungarian", nativeName: "Magyar", rtl: 0 },
+  { code: "ro", name: "Romanian", nativeName: "Română", rtl: 0 },
+  { code: "bg", name: "Bulgarian", nativeName: "Български", rtl: 0 },
+  { code: "el", name: "Greek", nativeName: "Ελληνικά", rtl: 0 },
+  { code: "he", name: "Hebrew", nativeName: "עברית", rtl: 1 },
+  { code: "th", name: "Thai", nativeName: "ไทย", rtl: 0 },
+  { code: "vi", name: "Vietnamese", nativeName: "Tiếng Việt", rtl: 0 },
 ];

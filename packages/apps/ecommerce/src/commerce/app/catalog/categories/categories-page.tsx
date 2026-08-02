@@ -28,6 +28,8 @@ import {
   useSaveCategory,
   useSetCategoryStatus,
 } from "../../../hooks/useCategories";
+import { useCommerce } from "../../../context/CommerceContext";
+import { useProjectLanguages } from "../../../hooks/useLanguages";
 import { getApiErrorMessage } from "../../../api/http";
 import type { Category } from "../../../types/catalog";
 
@@ -57,11 +59,16 @@ export function CategoriesPage() {
   const remove = useDeleteCategory();
   const setStatus = useSetCategoryStatus();
 
+  const { projectId } = useCommerce();
+  const { data: languages } = useProjectLanguages(projectId);
+  const defaultLanguage = languages?.find((l) => l.isDefault) ?? languages?.[0];
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [form] = Form.useForm();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [parentId, setParentId] = useState<string | undefined>(undefined);
+  const [languageInitialized, setLanguageInitialized] = useState(false);
 
   const selected = tree.data?.find((c) => c.id === selectedId) ?? null;
 
@@ -69,6 +76,13 @@ export function CategoriesPage() {
     (cats ?? []).flatMap((c) => [c, ...flatten(c.children ?? [])]);
 
   const all = tree.data ? flatten(tree.data) : [];
+
+  useEffect(() => {
+    if (defaultLanguage && !languageInitialized && !drawerOpen) {
+      form.setFieldValue("languageId", defaultLanguage.id);
+      setLanguageInitialized(true);
+    }
+  }, [defaultLanguage, form, languageInitialized, drawerOpen]);
 
   useEffect(() => {
     if (selected && !drawerOpen) {
@@ -104,6 +118,11 @@ export function CategoriesPage() {
   };
 
   const onFinish = async (values: Record<string, unknown>) => {
+    const selectedLanguageId = (values.languageId as string) || defaultLanguage?.id;
+    const selectedCulture =
+      languages?.find((l) => l.id === selectedLanguageId)?.code ??
+      (values.cultureCode as string) ??
+      "en-US";
     try {
       await save.mutateAsync({
         id: editing?.id,
@@ -113,6 +132,8 @@ export function CategoriesPage() {
           description: values.description as string | undefined,
           sortOrder: values.sortOrder as number | undefined,
           imageUrl: values.imageUrl as string | undefined,
+          cultureCode: selectedCulture,
+          languageId: selectedLanguageId || "4f7d8a31-2d4e-4b9c-a8f6-9e1d73c5b4a2",
           status: editing ? (values.status as number) : 1,
           parentId: editing ? undefined : parentId,
         },
@@ -181,6 +202,18 @@ export function CategoriesPage() {
               ) : (
                 <Form form={form} layout="vertical" onFinish={onFinish}>
                   <Row gutter={16}>
+                    <Col xs={24}>
+                      <Form.Item name="languageId" label="Language">
+                        <Select
+                          loading={!languages && projectId ? true : undefined}
+                          placeholder="Select language"
+                          options={(languages ?? []).map((l) => ({
+                            value: l.id,
+                            label: `${l.flag ?? ""} ${l.nativeName || l.name} (${l.code})`,
+                          }))}
+                        />
+                      </Form.Item>
+                    </Col>
                     <Col xs={24} sm={12}>
                       <Form.Item name="name" label="Name" rules={[{ required: true }]}>
                         <Input />

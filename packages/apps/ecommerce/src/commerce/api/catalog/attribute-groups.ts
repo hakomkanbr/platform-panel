@@ -1,39 +1,26 @@
 import * as http from "../http";
 import type { PaginatedResult, ListParams } from "../../types/common";
-import type { AttributeGroup, AttributeDefinition, AttributeValue } from "../../types/catalog";
-
-export interface AttributeGroupFilters extends ListParams {
-  key?: string;
-}
+import type { AttributeGroupReadModel, AttributeGroupFilters, CreateAttributeGroupCommand, UpdateAttributeGroupRequest, AddAttributeDefinitionCommand, AddDefinitionValueBody } from "../../types/catalog";
 
 export const attributeGroupsApi = {
   list: (params?: AttributeGroupFilters) =>
-    http.get<PaginatedResult<AttributeGroup> | AttributeGroup[]>("/Admin/AttributeGroups", params),
+    http.get<PaginatedResult<AttributeGroupReadModel>>("/Admin/AttributeGroups", params),
 
-  getById: (id: string) => http.get<AttributeGroup>(`/Admin/AttributeGroups/${id}`),
+  getById: (id: string) => http.get<AttributeGroupReadModel>(`/Admin/AttributeGroups/${id}`),
 
-  create: (body: Partial<AttributeGroup>) => http.post<AttributeGroup>("/Admin/AttributeGroups", body),
+  create: (body: CreateAttributeGroupCommand) => http.post<AttributeGroupReadModel>("/Admin/AttributeGroups", body),
 
-  update: (id: string, body: Partial<AttributeGroup>) =>
-    http.put<AttributeGroup>(`/Admin/AttributeGroups/${id}`, body),
+  update: (id: string, body: UpdateAttributeGroupRequest) =>
+    http.put<AttributeGroupReadModel>(`/Admin/AttributeGroups/${id}`, body),
 
   delete: (id: string) => http.del<void>(`/Admin/AttributeGroups/${id}`),
 
-  addDefinition: (id: string, body: Partial<AttributeDefinition>) =>
-    http.post<AttributeDefinition>(`/Admin/AttributeGroups/${id}/definitions`, body),
-
-  updateDefinition: (id: string, definitionId: string, body: Partial<AttributeDefinition>) =>
-    http.put<AttributeDefinition>(`/Admin/AttributeGroups/${id}/definitions/${definitionId}`, body),
+  addDefinition: (id: string, body: AddAttributeDefinitionCommand) =>
+    http.post<AttributeGroupReadModel>(`/Admin/AttributeGroups/${id}/definitions`, body),
 
   deleteDefinition: (id: string, definitionId: string) =>
     http.del<void>(`/Admin/AttributeGroups/${id}/definitions/${definitionId}`),
 
-  addValue: (id: string, definitionId: string, body: Partial<AttributeValue>) =>
-    http.post<AttributeValue>(`/Admin/AttributeGroups/${id}/definitions/${definitionId}/values`, body),
-
-  updateValue: (id: string, definitionId: string, valueId: string, body: Partial<AttributeValue>) =>
-    http.put<AttributeValue>(`/Admin/AttributeGroups/${id}/definitions/${definitionId}/values/${valueId}`, body),
-
-  deleteValue: (id: string, definitionId: string, valueId: string) =>
-    http.del<void>(`/Admin/AttributeGroups/${id}/definitions/${definitionId}/values/${valueId}`),
+  addDefinitionValue: (id: string, definitionId: string, body: AddDefinitionValueBody) =>
+    http.post<AttributeGroupReadModel>(`/Admin/AttributeGroups/${id}/definitions/${definitionId}/values`, body),
 };

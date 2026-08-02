@@ -50,10 +50,8 @@ export function useDeleteAttributeGroup() {
 export function useSaveAttributeDefinition(groupId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ definitionId, body }: { definitionId?: string; body: Partial<AttributeDefinition> }) =>
-      definitionId
-        ? attributeGroupsApi.updateDefinition(groupId as string, definitionId, body)
-        : attributeGroupsApi.addDefinition(groupId as string, body),
+    mutationFn: (body: unknown) =>
+      attributeGroupsApi.addDefinition(groupId as string, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "attribute-groups"] });
       queryClient.invalidateQueries({ queryKey: ["catalog", "attribute-group"] });

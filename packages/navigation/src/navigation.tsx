@@ -409,13 +409,8 @@ export const platformNavigation: NavigationItem[] = [
   },
   {
     key: "settings",
-    label: (
-      <>
-        Settings <SoonBadge />
-      </>
-    ),
-    path: "/admin/settings",
+    label: "Settings",
+    path: "/admin/setting",
     icon: <SettingOutlined />,
-    disabled: true,
   },
 ];

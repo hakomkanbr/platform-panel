@@ -54,6 +54,11 @@ export function ProductDetailPage({ id }: { id: string }) {
     }
   };
 
+  const productLanguage = product?.translations?.[0] ?? {
+    languageId: "4f7d8a31-2d4e-4b9c-a8f6-9e1d73c5b4a2",
+    cultureCode: "en-US",
+  };
+
   const confirmDelete = () => {
     Modal.confirm({
       title: "Delete product",
@@ -189,7 +194,7 @@ export function ProductDetailPage({ id }: { id: string }) {
                   ),
                 },
                 { key: "media", label: `Media (${product.media?.length ?? 0})`, children: <ProductMediaTab productId={id} /> },
-                { key: "options", label: `Options (${product.options?.length ?? 0})`, children: <ProductOptionsTab productId={id} /> },
+                { key: "options", label: `Options (${product.options?.length ?? 0})`, children: <ProductOptionsTab productId={id} languageCode={productLanguage.cultureCode} languageId={productLanguage.languageId} /> },
                 { key: "variants", label: `Variants (${product.variants?.length ?? 0})`, children: <ProductVariantsTab productId={id} /> },
                 { key: "relations", label: "Relations", children: <ProductRelationsTab productId={id} /> },
               ]}

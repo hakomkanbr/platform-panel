@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Button,
@@ -25,8 +25,10 @@ import { useCreateProduct } from "../../../hooks/useProducts";
 import { useCategoryTree } from "../../../hooks/useCategories";
 import { useBrands } from "../../../hooks/useBrands";
 import { useTags } from "../../../hooks/useTags";
+import { useCommerce } from "../../../context/CommerceContext";
+import { useProjectLanguages } from "../../../hooks/useLanguages";
 import { getApiErrorMessage } from "../../../api/http";
-import type { Category } from "../../../types/catalog";
+import type { CategoryReadModel } from "../../../types/catalog";
 
 const { Text } = Typography;
 
@@ -36,12 +38,24 @@ interface CategoryTreeNode {
   children?: CategoryTreeNode[];
 }
 
-function toTreeData(categories: Category[]): CategoryTreeNode[] {
-  return (categories ?? []).map((c) => ({
-    title: c.name,
-    value: c.id,
-    children: c.children && c.children.length ? toTreeData(c.children) : undefined,
-  }));
+function toTreeData(categories: CategoryReadModel[]): CategoryTreeNode[] {
+  const byId = new Map<string, CategoryReadModel>();
+  const roots: CategoryReadModel[] = [];
+  for (const c of categories ?? []) {
+    byId.set(c.id, c);
+    if (!c.parentId) roots.push(c);
+  }
+  const getName = (c: CategoryReadModel) =>
+    c.translations[0]?.name ?? c.path.split("/").pop() ?? c.id;
+  const build = (cat: CategoryReadModel): CategoryTreeNode => ({
+    title: getName(cat),
+    value: cat.id,
+    children:
+      categories
+        .filter((c) => c.parentId === cat.id)
+        .map(build) || undefined,
+  });
+  return roots.map(build);
 }
 
 export function ProductCreatePage() {
@@ -50,17 +64,37 @@ export function ProductCreatePage() {
   const createMutation = useCreateProduct();
   const [saving, setSaving] = useState(false);
 
+  const { projectId } = useCommerce();
   const categories = useCategoryTree();
   const brands = useBrands({ page: 1, pageSize: 100 });
   const tags = useTags({ page: 1, pageSize: 100 });
+  const { data: languages } = useProjectLanguages(projectId);
 
   const categoryTreeData = useMemo(
     () => (categories.data ? toTreeData(categories.data) : []),
     [categories.data],
   );
 
+  const defaultLanguage = languages?.find((l) => l.isDefault) ?? languages?.[0];
+
+  const [languageInitialized, setLanguageInitialized] = useState(false);
+  const [isFormReady, setIsFormReady] = useState(false);
+
+  useEffect(() => {
+    if (defaultLanguage && !languageInitialized) {
+      form.setFieldValue("languageId", defaultLanguage.id);
+      setLanguageInitialized(true);
+    }
+    if (languages && !isFormReady) setIsFormReady(true);
+  }, [defaultLanguage, form, languageInitialized, isFormReady, languages]);
+
   const onFinish = async (values: Record<string, unknown>) => {
     setSaving(true);
+    const selectedLanguageId = (values.languageId as string) || defaultLanguage?.id;
+    const selectedCulture =
+      languages?.find((l) => l.id === selectedLanguageId)?.code ??
+      (values.CultureCode as string) ??
+      "en-US";
     try {
       const created = await createMutation.mutateAsync({
         name: values.name as string,
@@ -72,6 +106,8 @@ export function ProductCreatePage() {
         structure: values.structure as number | undefined,
         sku: (values.sku as string) || undefined,
         barcode: (values.barcode as string) || undefined,
+        cultureCode: selectedCulture,
+        languageId: selectedLanguageId || "4f7d8a31-2d4e-4b9c-a8f6-9e1d73c5b4a2",
         brandId: (values.brandId as string) || undefined,
         categoryIds: (values.categoryIds as string[]) ?? [],
         tagIds: (values.tagIds as string[]) ?? [],
@@ -153,6 +189,18 @@ export function ProductCreatePage() {
 
               <Card title="Organization" style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
                 <Row gutter={16}>
+                  <Col xs={24} sm={12}>
+                    <Form.Item name="languageId" label="Language">
+                      <Select
+                        loading={!languages && projectId ? true : undefined}
+                        placeholder="Select language"
+                        options={(languages ?? []).map((l) => ({
+                          value: l.id,
+                          label: `${l.flag ?? ""} ${l.nativeName || l.name} (${l.code})`,
+                        }))}
+                      />
+                    </Form.Item>
+                  </Col>
                   <Col xs={24} sm={12}>
                     <Form.Item name="type" label="Product type">
                       <Select allowClear placeholder="Select type" options={enumOptions("productType")} />

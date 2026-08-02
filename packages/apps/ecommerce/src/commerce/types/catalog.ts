@@ -1,92 +1,93 @@
-import type { AuditInfo, Id, KeyValue, TranslationField } from "./common";
+import type { AuditInfo, Id, KeyValue } from "./common";
 
-/* ---------------------------------- Categories ---------------------------------- */
+/* ---------------------------------- Enums ---------------------------------- */
 
-export interface Category {
+export type ProductType = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type ProductStructure = 1 | 2 | 3 | 4 | 5;
+export type ProductStatus = 1 | 2 | 3 | 4;
+export type ProductVisibility = 1 | 2 | 3 | 4;
+export type CategoryStatus = 1 | 2;
+export type BrandStatus = 1 | 2;
+export type TagStatus = 1 | 2;
+export type AttributeValueType = 1 | 2 | 3 | 4 | 5 | 6;
+export type RelationType = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type MediaType = 1 | 2 | 3 | 4 | 5 | 6;
+export type OptionInputType = 1 | 2 | 3 | 4 | 5;
+export type WeightUnit = 1 | 2 | 3 | 4;
+export type DimensionUnit = 1 | 2 | 3 | 4 | 5;
+
+/* ---------------------------------- Product Summary (list) ---------------------------------- */
+
+export interface ProductSummaryReadModel {
   id: Id;
-  parentId?: Id | null;
+  code: string;
+  type: ProductType;
+  structure: ProductStructure;
+  status: ProductStatus;
+  visibility: ProductVisibility;
+  brandId?: Id | null;
+  displayOrder: number;
+  publishedAt?: string | null;
   name: string;
-  slug?: string;
-  description?: string;
-  status: number;
-  sortOrder?: number;
-  imageUrl?: string;
-  icon?: string;
-  children?: Category[];
-  metadata?: KeyValue[];
-  translations?: TranslationField[];
-  productCount?: number;
-  createdAt?: string;
-  updatedAt?: string;
+  slug: string;
+  primaryMediaUrl?: string | null;
+  hasOptions: boolean;
+  variantCount: number;
+  activeVariantCount: number;
 }
 
-/* ----------------------------------- Brands ----------------------------------- */
-
-export interface Brand {
-  id: Id;
-  name: string;
-  slug?: string;
-  description?: string;
-  status: number;
-  logoUrl?: string;
-  websiteUrl?: string;
-  countryCode?: string;
-  metadata?: KeyValue[];
-  translations?: TranslationField[];
-  productCount?: number;
-  createdAt?: string;
-  updatedAt?: string;
+export interface ProductFilters {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  status?: string;
+  type?: string;
+  structure?: string;
+  visibility?: string;
+  brandId?: string;
+  categoryId?: string;
+  tagId?: string;
+  onlyPublished?: boolean;
+  languageId?: string;
 }
 
-/* ------------------------------------ Tags ------------------------------------ */
+/* ---------------------------------- Product Detail ---------------------------------- */
 
-export interface Tag {
+export interface ProductReadModel extends AuditInfo {
   id: Id;
-  name: string;
-  slug?: string;
-  description?: string;
-  status: number;
-  metadata?: KeyValue[];
-  productCount?: number;
-  createdAt?: string;
-  updatedAt?: string;
+  code: string;
+  type: ProductType;
+  structure: ProductStructure;
+  status: ProductStatus;
+  visibility: ProductVisibility;
+  brandId?: Id | null;
+  externalReference?: ExternalReferenceReadModel | null;
+  displayOrder: number;
+  publishedAt?: string | null;
+  archivedAt?: string | null;
+  translations: ProductTranslationReadModel[];
+  variants: ProductVariantReadModel[];
+  options: ProductOptionReadModel[];
+  media: ProductMediaReadModel[];
+  attributes: ProductAttributeReadModel[];
+  categories: ProductCategoryReadModel[];
+  tags: ProductTagReadModel[];
+  relations: ProductRelationReadModel[];
+  metadata: ProductMetadataReadModel[];
 }
 
-/* ---------------------------------- Attributes ---------------------------------- */
-
-export interface AttributeValue {
-  id?: Id;
-  value: string;
+export interface ProductUpsertBody {
+  code?: string;
+  brandId?: Id | null;
   displayOrder?: number;
-  isDefault?: boolean;
+  externalProvider?: string | null;
+  externalUrl?: string | null;
+  externalId?: string | null;
 }
 
-export interface AttributeDefinition {
-  id?: Id;
-  key: string;
-  name: string;
-  valueType: number;
-  unit?: string;
-  isRequired?: boolean;
-  isSearchable?: boolean;
-  isFilterable?: boolean;
-  isVisibleOnStorefront?: boolean;
-  displayOrder?: number;
-  values?: AttributeValue[];
-}
-
-export interface AttributeGroup {
-  id: Id;
-  key: string;
-  name: string;
-  description?: string;
-  displayOrder?: number;
-  definitions?: AttributeDefinition[];
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-/* ----------------------------------- Media ----------------------------------- */
+/* ---------------------------------- Product Detail (ui-shape) ---------------------------------- */
 
 export interface MediaItem {
   id?: Id;
@@ -97,8 +98,6 @@ export interface MediaItem {
   sortOrder?: number;
   isPrimary?: boolean;
 }
-
-/* ----------------------------------- Options ----------------------------------- */
 
 export interface OptionValue {
   id?: Id;
@@ -117,8 +116,6 @@ export interface ProductOption {
   displayOrder?: number;
   values?: OptionValue[];
 }
-
-/* ---------------------------------- Variants ---------------------------------- */
 
 export interface VariantValue {
   optionId?: Id;
@@ -144,100 +141,552 @@ export interface Variant {
   updatedAt?: string;
 }
 
-/* ---------------------------------- Product ---------------------------------- */
-
-export type ProductStatus = "draft" | "published" | "archived";
-
-export interface ProductListItem {
-  id: Id;
-  code?: string;
-  name: string;
-  slug?: string;
-  type?: number;
-  structure?: number;
-  status?: ProductStatus;
-  sku?: string;
-  brandId?: Id;
-  brandName?: string;
-  primaryImageUrl?: string;
-  categoryName?: string;
-  price?: number;
-  currency?: string;
-  stock?: number;
-  isFeatured?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface ProductCategory {
-  categoryId: Id;
-  categoryName?: string;
-  isPrimary?: boolean;
-}
-
-export interface ProductAttribute {
-  definitionId: Id;
-  definitionKey?: string;
-  definitionName?: string;
-  value: string;
-}
-
-export interface ProductTranslation extends TranslationField {
-  name?: string;
-  description?: string;
-  metaTitle?: string;
-  metaDescription?: string;
-}
-
-export interface ProductDetail extends AuditInfo {
-  id: Id;
-  code?: string;
-  name: string;
-  slug?: string;
-  description?: string;
-  shortDescription?: string;
-  type: number;
-  structure: number;
-  status: ProductStatus;
-  sku?: string;
-  barcode?: string;
-  brandId?: Id;
-  brandName?: string;
-  categories?: ProductCategory[];
-  tags?: Tag[];
-  attributes?: ProductAttribute[];
-  media?: MediaItem[];
-  options?: ProductOption[];
-  variants?: Variant[];
-  metadata?: KeyValue[];
-  translations?: ProductTranslation[];
-  price?: number;
-  compareAtPrice?: number;
-  cost?: number;
-  currency?: string;
-  stock?: number;
-  weight?: number;
-  length?: number;
-  width?: number;
-  height?: number;
-  isFeatured?: boolean;
-  isVisible?: boolean;
-  isTrackStock?: boolean;
-  seoTitle?: string;
-  seoDescription?: string;
-  publishedAt?: string;
-}
-
-export interface ProductLinkRequest {
-  productId: string;
-  productName?: string;
-  relationType?: number;
-}
-
 export interface Relation {
   id?: Id;
   productId: Id;
   productName?: string;
-  relationType: number;
+  relationType: RelationType;
   sortOrder?: number;
+}
+
+/* ---------------------------------- Translations ---------------------------------- */
+
+export interface ProductTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+}
+
+export interface AddProductTranslationBody {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+}
+
+export interface UpdateProductTranslationBody {
+  languageId: Id;
+  name: string;
+  slug: string;
+  description?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+}
+
+/* ---------------------------------- Variants ---------------------------------- */
+
+export interface WeightReadModel {
+  value: number;
+  unit: WeightUnit;
+}
+
+export interface DimensionsReadModel {
+  length: number;
+  width: number;
+  height: number;
+  unit: DimensionUnit;
+}
+
+export interface ProductVariantReadModel {
+  id: Id;
+  sku: string;
+  barcode?: string | null;
+  gtin?: string | null;
+  displayName?: string | null;
+  weight?: WeightReadModel | null;
+  dimensions?: DimensionsReadModel | null;
+  isActive: boolean;
+  isDefault: boolean;
+  displayOrder?: number | null;
+  optionValues: ProductVariantOptionReadModel[];
+}
+
+export interface ProductVariantOptionReadModel {
+  variantId: Id;
+  optionId: Id;
+  optionValueId: Id;
+}
+
+export interface AddProductVariantBody {
+  sku: string;
+  barcode?: string | null;
+  gtin?: string | null;
+  displayName?: string | null;
+  weightValue?: number | null;
+  weightUnit?: WeightUnit | null;
+  length?: number | null;
+  width?: number | null;
+  height?: number | null;
+  dimensionUnit?: DimensionUnit | null;
+  displayOrder?: number | null;
+}
+
+export interface AssignVariantOptionBody {
+  optionId: Id;
+  optionValueId: Id;
+}
+
+/* ---------------------------------- Options ---------------------------------- */
+
+export interface ProductOptionReadModel {
+  id: Id;
+  code: string;
+  inputType: OptionInputType;
+  isRequired: boolean;
+  displayOrder: number;
+  isSearchable: boolean;
+  isFilterable: boolean;
+  translations: OptionTranslationReadModel[];
+  values: ProductOptionValueReadModel[];
+}
+
+export interface OptionTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+}
+
+export interface ProductOptionValueReadModel {
+  id: Id;
+  optionId: Id;
+  value: string;
+  colorHex?: string | null;
+  imageUrl?: string | null;
+  displayOrder: number;
+  translations: OptionValueTranslationReadModel[];
+}
+
+export interface OptionValueTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+}
+
+export interface AddProductOptionBody {
+  code: string;
+  inputType: OptionInputType;
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  isRequired: boolean;
+  displayOrder: number;
+}
+
+export interface AddProductOptionValueBody {
+  languageId: Id;
+  cultureCode: string;
+  value: string;
+  name?: string | null;
+  colorHex?: string | null;
+  imageUrl?: string | null;
+  displayOrder: number;
+}
+
+/* ---------------------------------- Media ---------------------------------- */
+
+export interface ProductMediaReadModel {
+  id: Id;
+  productId: Id;
+  variantId?: Id | null;
+  mediaType: MediaType;
+  mediaUrl: string;
+  displayName?: string | null;
+  altText?: string | null;
+  contentType?: string | null;
+  sizeInBytes?: number | null;
+  sortOrder: number;
+  isPrimary: boolean;
+}
+
+export interface AddProductMediaBody {
+  mediaType: MediaType;
+  mediaUrl: string;
+  displayName?: string | null;
+  altText?: string | null;
+  contentType?: string | null;
+  sizeInBytes?: number | null;
+  isPrimary: boolean;
+  sortOrder: number;
+  variantId?: Id | null;
+}
+
+/* ---------------------------------- Attributes ---------------------------------- */
+
+export interface ProductAttributeReadModel {
+  id: Id;
+  attributeDefinitionId: Id;
+  key: string;
+  name: string;
+  isVisibleOnStorefront: boolean;
+  values: ProductAttributeValueReadModel[];
+}
+
+export interface ProductAttributeValueReadModel {
+  id: Id;
+  value: string;
+  valueSlug?: string | null;
+  valueId?: Id | null;
+}
+
+export interface AddProductAttributeBody {
+  attributeDefinitionId: Id;
+  key: string;
+  name: string;
+  isVisibleOnStorefront: boolean;
+}
+
+export interface SetAttributeValuesBody {
+  values: ProductAttributeValueInput[];
+}
+
+export interface ProductAttributeValueInput {
+  id?: Id | null;
+  value: string;
+  valueSlug?: string | null;
+}
+
+/* ---------------------------------- Categories (on product) ---------------------------------- */
+
+export interface ProductCategoryReadModel {
+  id: Id;
+  categoryId: Id;
+  isPrimary: boolean;
+  displayOrder: number;
+}
+
+export interface AddProductCategoryBody {
+  categoryId: Id;
+  isPrimary: boolean;
+  displayOrder: number;
+}
+
+/* ---------------------------------- Tags (on product) ---------------------------------- */
+
+export interface ProductTagReadModel {
+  id: Id;
+  tagId: Id;
+}
+
+export interface AddProductTagBody {
+  tagId: Id;
+}
+
+/* ---------------------------------- Relations ---------------------------------- */
+
+export interface ProductRelationReadModel {
+  id: Id;
+  relatedProductId: Id;
+  relationType: RelationType;
+  quantity: number;
+  strength?: number | null;
+}
+
+export interface AddProductRelationBody {
+  relatedProductId: Id;
+  relationType: RelationType;
+  quantity: number;
+  strength?: number | null;
+}
+
+/* ---------------------------------- Metadata ---------------------------------- */
+
+export interface ProductMetadataReadModel {
+  id: Id;
+  key: string;
+  value: string;
+}
+
+export interface UpsertProductMetadataBody {
+  key: string;
+  value: string;
+}
+
+/* ---------------------------------- External Reference ---------------------------------- */
+
+export interface ExternalReferenceReadModel {
+  provider?: string | null;
+  url?: string | null;
+  externalId?: string | null;
+}
+
+/* ---------------------------------- Categories ---------------------------------- */
+
+export interface CategoryReadModel {
+  id: Id;
+  status: CategoryStatus;
+  parentId?: Id | null;
+  path: string;
+  level: number;
+  translations: CategoryTranslationReadModel[];
+}
+
+export interface CategoryTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+}
+
+export interface CreateCategoryCommand {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  parentId?: Id | null;
+}
+
+export interface UpdateCategoryRequest {
+  languageId: Id;
+  name: string;
+  slug: string;
+  description?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+  parentId?: Id | null;
+}
+
+export interface ChangeCategoryStatusRequest {
+  status: CategoryStatus;
+}
+
+export interface CategoryFilters {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  status?: string;
+  parentId?: string;
+  languageId?: string;
+}
+
+/* ---------------------------------- Brands ---------------------------------- */
+
+export interface BrandReadModel {
+  id: Id;
+  status: BrandStatus;
+  logoUrl?: string | null;
+  websiteUrl?: string | null;
+  translations: BrandTranslationReadModel[];
+}
+
+export interface BrandTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+}
+
+export interface CreateBrandCommand {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+  logoUrl?: string | null;
+  websiteUrl?: string | null;
+}
+
+export interface UpdateBrandRequest {
+  languageId: Id;
+  name: string;
+  slug: string;
+  description?: string | null;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+  logoUrl?: string | null;
+  websiteUrl?: string | null;
+}
+
+export interface ChangeBrandStatusRequest {
+  status: BrandStatus;
+}
+
+export interface BrandFilters {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  status?: string;
+  languageId?: string;
+}
+
+/* ---------------------------------- Tags ---------------------------------- */
+
+export interface TagReadModel {
+  id: Id;
+  status: TagStatus;
+  translations: TagTranslationReadModel[];
+}
+
+export interface TagTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+}
+
+export interface CreateTagCommand {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  slug: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+}
+
+export interface UpdateTagRequest {
+  languageId: Id;
+  name: string;
+  slug: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  metaKeywords?: string | null;
+  canonicalUrl?: string | null;
+  redirectUrl?: string | null;
+}
+
+export interface ChangeTagStatusRequest {
+  status: TagStatus;
+}
+
+export interface TagFilters {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  status?: string;
+  languageId?: string;
+}
+
+/* ---------------------------------- Attribute Groups ---------------------------------- */
+
+export interface AttributeGroupReadModel {
+  id: Id;
+  key: string;
+  displayOrder: number;
+  translations: AttributeGroupTranslationReadModel[];
+  definitions: AttributeDefinitionReadModel[];
+}
+
+export interface AttributeGroupTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+}
+
+export interface AttributeDefinitionReadModel {
+  id: Id;
+  attributeGroupId: Id;
+  key: string;
+  valueType: AttributeValueType;
+  isRequired: boolean;
+  isSearchable: boolean;
+  isFilterable: boolean;
+  isVisibleOnStorefront: boolean;
+  unit?: string | null;
+  translations: AttributeDefinitionTranslationReadModel[];
+  values: AttributeDefinitionValueReadModel[];
+}
+
+export interface AttributeDefinitionTranslationReadModel {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+}
+
+export interface AttributeDefinitionValueReadModel {
+  id: Id;
+  value: string;
+  displayOrder: number;
+}
+
+export interface CreateAttributeGroupCommand {
+  languageId: Id;
+  cultureCode: string;
+  name: string;
+  key: string;
+  description?: string | null;
+  displayOrder?: number;
+}
+
+export interface UpdateAttributeGroupRequest {
+  languageId: Id;
+  name: string;
+  displayOrder: number;
+}
+
+export interface AddAttributeDefinitionCommand {
+  groupId?: Id;
+  languageId: Id;
+  cultureCode: string;
+  key: string;
+  name: string;
+  valueType: AttributeValueType;
+  isRequired: boolean;
+  isSearchable: boolean;
+  isFilterable: boolean;
+  isVisibleOnStorefront: boolean;
+  unit?: string | null;
+  displayOrder?: number;
+}
+
+export interface AddDefinitionValueBody {
+  value: string;
+  displayOrder: number;
+}
+
+export interface AttributeGroupFilters {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  key?: string;
+  languageId?: string;
 }
