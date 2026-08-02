@@ -13,6 +13,7 @@ import {
   AppstoreOutlined,
 } from "@ant-design/icons";
 import { useNavigation } from "@repo/navigation";
+import { useTranslations, type Translator } from "@repo/localization";
 import { useShell } from "../context/ShellContext";
 import type { NavigationItem } from "@repo/navigation";
 
@@ -26,6 +27,7 @@ export function GlobalSidebar() {
   const { collapsed, isMobile, setCollapsed, user, projects, projectsLoading } =
     useShell();
   const { platform, application } = useNavigation();
+  const t = useTranslations();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const [mainMenuItems, setMainMenuItems] = useState<any[]>([]);
@@ -121,18 +123,18 @@ export function GlobalSidebar() {
               letterSpacing: "0.08em",
             }}
           >
-            Overview
+            {t("common.sidebar.overview")}
           </Text>
         ),
         disabled: true,
         style: { cursor: "default", opacity: 1, padding: "4px 0" },
       });
     }
-    items.push(...renderMenuItems(mainItems));
+    items.push(...renderMenuItems(mainItems, t));
 
     setMainMenuItems(items);
-    setBottomMenuItems(renderMenuItems(bottomItems));
-  }, [platform, application, collapsed]);
+    setBottomMenuItems(renderMenuItems(bottomItems, t));
+  }, [platform, application, collapsed, t]);
 
   const handleMenuClick = ({ key }: { key: string }) => {
     const findItem = (items: NavigationItem[]): NavigationItem | null => {
@@ -311,7 +313,7 @@ export function GlobalSidebar() {
                 marginBottom: 10,
               }}
             >
-              Projects
+              {t("common.sidebar.projects")}
             </Text>
             {projectsLoading ? (
               <div style={{ textAlign: "center", padding: "8px 0" }}>
@@ -381,7 +383,7 @@ export function GlobalSidebar() {
                 }}
               >
                 <FolderOutlined />
-                <span>No projects yet</span>
+                <span>{t("common.sidebar.noProjectsYet")}</span>
               </div>
             )}
           </div>
@@ -453,7 +455,7 @@ export function GlobalSidebar() {
                   whiteSpace: "nowrap",
                 }}
               >
-                Workspace
+                {t("common.sidebar.workspace")}
               </span>
               {bottomOpen ? (
                 <DownOutlined style={{ fontSize: 10, color: "#F7931E" }} />
@@ -467,7 +469,7 @@ export function GlobalSidebar() {
           </Dropdown>
         )}
         {collapsed && (
-          <Tooltip title="Workspace">
+          <Tooltip title={t("common.sidebar.workspace")}>
             <Dropdown
               placement="top"
               trigger={["click"]}
@@ -548,21 +550,21 @@ export function GlobalSidebar() {
   );
 }
 
-function renderMenuItems(items: NavigationItem[]): any[] {
+function renderMenuItems(items: NavigationItem[], t: Translator): any[] {
   return items.map((item) => {
     if (item.children && item.children.length > 0) {
       return {
         key: item.key,
         icon: item.icon,
-        label: item.label,
-        children: renderMenuItems(item.children),
+        label: item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
+        children: renderMenuItems(item.children, t),
         disabled: item.disabled,
       };
     }
     return {
       key: item.key,
       icon: item.icon,
-      label: item.label,
+      label: item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
       disabled: item.disabled,
     };
   });

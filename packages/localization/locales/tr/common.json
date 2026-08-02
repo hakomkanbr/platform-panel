@@ -1,0 +1,27 @@
+{
+  "greeting": {
+    "morning": "Günaydın",
+    "afternoon": "İyi günler",
+    "evening": "İyi akşamlar"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "projects": "Projeler",
+    "billing": "Faturalandırma",
+    "catalog": "Katalog",
+    "products": "Ürünler",
+    "categories": "Kategoriler",
+    "brands": "Markalar",
+    "tags": "Etiketler",
+    "attributes": "Özellikler",
+    "pricing": "Fiyatlandırma",
+    "priceLists": "Fiyat Listeleri",
+    "settings": "Ayarlar"
+  },
+  "sidebar": {
+    "overview": "Genel Bakış",
+    "projects": "Projeler",
+    "noProjectsYet": "Henüz proje yok",
+    "workspace": "Çalışma Alanı"
+  }
+}

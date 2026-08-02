@@ -1,0 +1,27 @@
+{
+  "greeting": {
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "billing": "Billing",
+    "catalog": "Catalog",
+    "products": "Products",
+    "categories": "Categories",
+    "brands": "Brands",
+    "tags": "Tags",
+    "attributes": "Attributes",
+    "pricing": "Pricing",
+    "priceLists": "Price Lists",
+    "settings": "Settings"
+  },
+  "sidebar": {
+    "overview": "Overview",
+    "projects": "Projects",
+    "noProjectsYet": "No projects yet",
+    "workspace": "Workspace"
+  }
+}

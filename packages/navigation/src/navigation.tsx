@@ -55,18 +55,21 @@ export const platformNavigation: NavigationItem[] = [
   {
     key: "dashboard",
     label: "Dashboard",
+    labelKey: "common.nav.dashboard",
     path: "/admin",
     icon: <HomeOutlined />,
   },
   {
     key: "projects",
     label: "Projects",
+    labelKey: "common.nav.projects",
     path: "/admin/projects",
     icon: <FolderOutlined />,
   },
   {
     key: "billing",
     label: "Billing",
+    labelKey: "common.nav.billing",
     path: "/admin/billing",
     icon: <CreditCardOutlined />,
   },
@@ -84,36 +87,42 @@ export const platformNavigation: NavigationItem[] = [
   {
     key: "catalog",
     label: "Catalog",
+    labelKey: "common.nav.catalog",
     path: "/admin/catalog",
     icon: <AppstoreOutlined />,
     children: [
       {
         key: "products",
         label: "Products",
+        labelKey: "common.nav.products",
         path: "/admin/catalog/products",
         icon: <ShoppingOutlined />,
       },
       {
         key: "categories",
         label: "Categories",
+        labelKey: "common.nav.categories",
         path: "/admin/catalog/categories",
         icon: <UnorderedListOutlined />,
       },
       {
         key: "brands",
         label: "Brands",
+        labelKey: "common.nav.brands",
         path: "/admin/catalog/brands",
         icon: <CrownOutlined />,
       },
       {
         key: "tags",
         label: "Tags",
+        labelKey: "common.nav.tags",
         path: "/admin/catalog/tags",
         icon: <TagOutlined />,
       },
       {
         key: "attributes",
         label: "Attributes",
+        labelKey: "common.nav.attributes",
         path: "/admin/catalog/attributes",
         icon: <ControlOutlined />,
       },
@@ -122,12 +131,14 @@ export const platformNavigation: NavigationItem[] = [
   {
     key: "pricing",
     label: "Pricing",
+    labelKey: "common.nav.pricing",
     path: "/admin/pricing",
     icon: <TagsOutlined />,
     children: [
       {
         key: "price-lists",
         label: "Price Lists",
+        labelKey: "common.nav.priceLists",
         path: "/admin/pricing/price-lists",
         icon: <DollarOutlined />,
       },
@@ -410,6 +421,7 @@ export const platformNavigation: NavigationItem[] = [
   {
     key: "settings",
     label: "Settings",
+    labelKey: "common.nav.settings",
     path: "/admin/setting",
     icon: <SettingOutlined />,
   },

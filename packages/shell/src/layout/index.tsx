@@ -5,6 +5,7 @@ import { Layout } from "antd";
 import { useRouter } from "next/navigation";
 import { NavigationProvider } from "@repo/navigation";
 import { ShellProvider, useShell } from "../context/ShellContext";
+import { useLocalization } from "@repo/localization";
 import type { QuickProject } from "../context/ShellContext";
 import { GlobalSidebar } from "../components/GlobalSidebar";
 import { GlobalHeader } from "../components/GlobalHeader";
@@ -66,6 +67,8 @@ const AdminShellInner: React.FC<{
       setProjectsLoading,
       setCurrentProject,
     } = useShell();
+    const { direction } = useLocalization();
+    const isRTL = direction === "rtl";
     const router = useRouter();
     const sidebarWidth = 280;
     const sidebarCollapsedWidth = 80;
@@ -114,7 +117,6 @@ const AdminShellInner: React.FC<{
           className="s2s-sidebar-floating"
           style={{
             position: "fixed",
-            left: 12,
             top: 12,
             bottom: 12,
             height: "calc(100vh - 24px)",
@@ -125,6 +127,7 @@ const AdminShellInner: React.FC<{
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.04)",
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             overflow: "hidden",
+            ...(isRTL ? { right: 12 } : { left: 12 }),
           }}
         >
           <GlobalSidebar />
@@ -133,12 +136,9 @@ const AdminShellInner: React.FC<{
         <Layout
           className="modern-main-layout"
           style={{
-            marginLeft: isMobile
-              ? 0
-              : collapsed
-                ? sidebarCollapsedWidth + 24
-                : sidebarWidth + 24,
-            transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            ...(isMobile ? {} : { marginLeft: isRTL ? 0 : collapsed ? sidebarCollapsedWidth + 24 : sidebarWidth + 24 }),
+            ...(isMobile ? {} : { marginRight: isRTL ? (collapsed ? sidebarCollapsedWidth + 24 : sidebarWidth + 24) : 0 }),
+            transition: "margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           <GlobalHeader

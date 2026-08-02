@@ -30,6 +30,7 @@ import { useShell } from "../context/ShellContext";
 import { ProjectSelector } from "./ProjectSelector";
 import { ApplicationSelector } from "./ApplicationSelector";
 import { WorkspaceSelector } from "./WorkspaceSelector";
+import { LocaleSwitcher } from "@repo/localization";
 import { CommandPalette } from "@repo/ui";
 import type { ApplicationDefinition } from "@repo/application-types";
 import type { MenuProps } from "antd";
@@ -372,6 +373,8 @@ export function GlobalHeader({
             type="vertical"
             style={{ height: 28, margin: "0 4px", background: "#E5E7EB" }}
           />
+
+          <LocaleSwitcher />
 
           {headerExtras}
 

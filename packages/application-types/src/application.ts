@@ -1,5 +1,20 @@
 import type { ComponentType, ReactNode } from "react";
 
+/** A recursive message tree localized for one locale. */
+export interface AppDictionary {
+  [key: string]: AppDictionary | string;
+}
+
+/**
+ * Dictionaries an application exposes. The platform auto-loads and merges
+ * these with the global dictionaries; no manual import is required by pages.
+ */
+export interface ApplicationTranslations {
+  en: AppDictionary;
+  ar: AppDictionary;
+  tr: AppDictionary;
+}
+
 export interface AppNavigationItem {
   key: string;
   label: string;
@@ -28,6 +43,9 @@ export interface ApplicationDefinition {
   navigation: AppNavigationItem[];
 
   routes: AppRoute[];
+
+  /** Per-locale dictionaries contributed by this application (auto-merged). */
+  translations?: Partial<ApplicationTranslations>;
 
   Root: ComponentType<any>;
 }

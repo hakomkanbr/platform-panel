@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from "react";
 import {
   Row,
   Col,
@@ -36,15 +35,9 @@ import { useCurrentSubscription, useInvoices } from "@repo/hooks";
 import { useUsageSummary } from "@repo/hooks";
 import { useTenantId } from "@repo/hooks";
 import { StatSkeleton } from "@repo/ui";
+import { useTranslations } from "@repo/localization";
 
 const { Title, Text } = Typography;
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
-};
 
 const stagger = {
   hidden: { opacity: 0, y: 12 },
@@ -59,7 +52,7 @@ export default function HomePage() {
   const router = useRouter();
   const tenantId = useTenantId();
   const { user } = useAuth();
-  const [greeting, setGreeting] = useState("");
+  const t = useTranslations();
 
   const { data: projects = [], isLoading: projectsLoading } = useProjects(tenantId);
   const { data: appCatalog = [], isLoading: catalogLoading } = useAppCatalog();
@@ -67,10 +60,6 @@ export default function HomePage() {
   const { data: subscription } = useCurrentSubscription(tenantId);
   const { data: invoices = [] } = useInvoices(tenantId);
   const { data: usageSummary } = useUsageSummary(tenantId);
-
-  useEffect(() => {
-    setGreeting(getGreeting());
-  }, []);
 
   const isLoading = projectsLoading || catalogLoading;
 
@@ -110,32 +99,43 @@ export default function HomePage() {
   const apiLimit = apiUsage?.limitValue ?? 0;
   const apiPercentage = apiUsage?.percentageUsed ?? 0;
 
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 12
+      ? t("common.greeting.morning")
+      : hour < 18
+        ? t("common.greeting.afternoon")
+        : t("common.greeting.evening");
+
   const kpiData = [
     {
-      title: "Total Projects",
-      value: `${totalProjects} Projects`,
-      trend: `${totalProjects > 0 ? "Active" : "No projects yet"}`,
+      title: t("dashboard.kpi.projects"),
+      value: t("dashboard.kpi.projectsValue", { value: totalProjects }),
+      trend: totalProjects > 0 ? t("dashboard.kpi.active") : t("dashboard.kpi.noProjects"),
       icon: <FolderOutlined />,
       accent: "#F7931E",
     },
     {
-      title: "App Catalog",
-      value: `${totalApps} Apps`,
-      trend: `${appCatalog.filter((a) => a.isActive).length} active`,
+      title: t("dashboard.kpi.catalog"),
+      value: t("dashboard.kpi.appsValue", { count: totalApps }),
+      trend: t("dashboard.kpi.activeCount", { count: appCatalog.filter((a) => a.isActive).length }),
       icon: <CloudServerOutlined />,
       accent: "#009FE3",
     },
     {
-      title: "API Calls",
-      value: apiLimit > 0 ? `${(apiCalls / 1000).toFixed(1)}K` : "N/A",
-      trend: apiLimit > 0 ? `${apiPercentage.toFixed(0)}% of limit` : "No data",
+      title: t("dashboard.kpi.api"),
+      value: apiLimit > 0 ? `${(apiCalls / 1000).toFixed(1)}K` : t("dashboard.kpi.apiNoLimit"),
+      trend:
+        apiLimit > 0
+          ? t("dashboard.kpi.percent", { percent: apiPercentage.toFixed(0) })
+          : t("dashboard.kpi.apiNoData"),
       icon: <ApiOutlined />,
       accent: "#10B981",
     },
     {
-      title: "Subscription",
+      title: t("dashboard.kpi.subscription"),
       value: planName,
-      trend: isOnline ? "Active" : status,
+      trend: isOnline ? t("dashboard.kpi.subscriptionActive") : status,
       icon: <TeamOutlined />,
       accent: "#8B5CF6",
     },
@@ -198,15 +198,15 @@ export default function HomePage() {
                 <span style={{ fontSize: 14, fontWeight: 600, color: "#F7931E", letterSpacing: "0.04em", textTransform: "uppercase" }}>
                   {greeting}, {user?.firstName || user?.email || "User"}
                 </span>
-                <StatusPill status={isOnline ? "healthy" : "maintenance"} label={isOnline ? "Platform Online" : planName} size="sm" />
+                <StatusPill status={isOnline ? "healthy" : "maintenance"} label={isOnline ? t("dashboard.platformOnline") : planName} size="sm" />
               </div>
               <h1 style={{ margin: 0, fontSize: 30, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.03em", lineHeight: 1.2 }}>
-                Share2Sells SaaS Workspace
+                {t("dashboard.title")}
               </h1>
               <p style={{ fontSize: 15, color: "#9CA3AF", marginTop: 6, marginBottom: 0, lineHeight: 1.5 }}>
                 {totalProjects > 0
-                  ? `${totalProjects} project${totalProjects > 1 ? "s" : ""} running with ${totalApps} available applications.`
-                  : "Start by creating your first project."}
+                  ? t("dashboard.subtitleActive", { projects: totalProjects, applications: totalApps })
+                  : t("dashboard.subtitleEmpty")}
               </p>
             </div>
 
@@ -217,13 +217,13 @@ export default function HomePage() {
                 onClick={() => router.push("/admin/projects/new")}
                 className="s2s-btn-premium"
               >
-                New Project
+                {t("dashboard.newProject")}
               </Button>
               <Button
                 onClick={() => router.push("/admin/app-library")}
                 className="s2s-btn-glass"
               >
-                App Library
+                {t("dashboard.appLibrary")}
               </Button>
             </div>
           </div>
@@ -289,11 +289,11 @@ export default function HomePage() {
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <CloudServerOutlined style={{ color: "#009FE3", fontSize: 18 }} />
                   <Title level={4} style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#1F2937" }}>
-                    App Catalog
+                    {t("dashboard.appCatalogHeading")}
                   </Title>
                 </div>
                 <Button type="text" icon={<RightOutlined />} onClick={() => router.push("/admin/app-library")} style={{ color: "#F7931E", fontWeight: 600, padding: 0 }}>
-                  Explore All
+                  {t("dashboard.exploreAll")}
                 </Button>
               </div>
             </motion.div>
@@ -304,7 +304,7 @@ export default function HomePage() {
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   description={
                     <div style={{ textAlign: "center" }}>
-                      <Text type="secondary" style={{ fontSize: 14 }}>No applications available</Text>
+                      <Text type="secondary" style={{ fontSize: 14 }}>{t("dashboard.noApplications")}</Text>
                     </div>
                   }
                 />
@@ -357,7 +357,7 @@ export default function HomePage() {
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 18, paddingTop: 14, borderTop: "1px solid #F3F4F6" }}>
                           <span style={{ fontSize: 11, color: "#9CA3AF" }}>{app.capabilityCode}</span>
                           <span style={{ fontSize: 12, fontWeight: 600, color: "#F7931E" }}>
-                            {app.isActive ? "open" : "Available"} &rarr;
+                            {app.isActive ? t("dashboard.appOpen") : t("dashboard.appAvailable")} &rarr;
                           </span>
                         </div>
                       </Card>
@@ -379,11 +379,11 @@ export default function HomePage() {
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <FolderOutlined style={{ color: "#F7931E", fontSize: 18 }} />
                   <Title level={4} style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#1F2937" }}>
-                    Recent Projects
+                    {t("dashboard.recentProjects")}
                   </Title>
                 </div>
                 <Button type="text" icon={<RightOutlined />} onClick={() => router.push("/admin/projects")} style={{ color: "#F7931E", fontWeight: 600, padding: 0 }}>
-                  View All Projects
+                  {t("dashboard.viewAllProjects")}
                 </Button>
               </div>
             </motion.div>
@@ -394,9 +394,9 @@ export default function HomePage() {
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                   description={
                     <Space direction="vertical" align="center">
-                      <Text type="secondary" style={{ fontSize: 14 }}>No projects yet</Text>
+                      <Text type="secondary" style={{ fontSize: 14 }}>{t("dashboard.noProjectsYet")}</Text>
                       <Button type="primary" icon={<PlusOutlined />} onClick={() => router.push("/admin/projects/new")} style={{ borderRadius: 8 }}>
-                        Create Project
+                        {t("dashboard.createProject")}
                       </Button>
                     </Space>
                   }
@@ -446,7 +446,7 @@ export default function HomePage() {
                                 {project.description || project.slug}
                               </p>
                               <p style={{ fontSize: 11, color: "#9CA3AF", margin: "4px 0 0 0" }}>
-                                {project.enabledAppCount}/{project.appCount} apps &middot; {project.slug}
+                                {t("dashboard.appsText", { enabled: project.enabledAppCount, total: project.appCount, slug: project.slug })}
                               </p>
                             </div>
                           </div>
@@ -461,7 +461,7 @@ export default function HomePage() {
                                 router.push(`/admin/projects/${project.id}`);
                               }}
                             >
-                              Open Workspace
+                              {t("dashboard.openWorkspace")}
                             </Button>
                           </div>
                         </div>
@@ -489,16 +489,16 @@ export default function HomePage() {
             >
               <div style={{ marginBottom: 18, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Title level={4} style={{ margin: 0, fontSize: 16, fontWeight: 700, color: "#1F2937" }}>
-                  Quick Shortcuts
+                  {t("dashboard.quick.title")}
                 </Title>
                 <ThunderboltOutlined style={{ color: "#F7931E", fontSize: 16 }} />
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {[
-                  { title: "Create New Project", description: "Set up a workspace environment", icon: <PlusOutlined />, href: "/admin/projects/new", color: "#F7931E" },
-                  { title: "Explore App Library", description: "Install pre-built SaaS modules", icon: <AppstoreOutlined />, href: "/admin/app-library", color: "#009FE3" },
-                  { title: "Invite Team Member", description: "Assign roles & permissions", icon: <UserAddOutlined />, href: "/admin/users", color: "#10B981" },
+                  { title: t("dashboard.quick.newProject"), description: t("dashboard.quick.newProjectDesc"), icon: <PlusOutlined />, href: "/admin/projects/new", color: "#F7931E" },
+                  { title: t("dashboard.quick.explore"), description: t("dashboard.quick.exploreDesc"), icon: <AppstoreOutlined />, href: "/admin/app-library", color: "#009FE3" },
+                  { title: t("dashboard.quick.invite"), description: t("dashboard.quick.inviteDesc"), icon: <UserAddOutlined />, href: "/admin/users", color: "#10B981" },
                 ].map((action) => (
                   <div
                     key={action.title}

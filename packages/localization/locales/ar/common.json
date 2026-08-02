@@ -1,0 +1,27 @@
+{
+  "greeting": {
+    "morning": "صباح الخير",
+    "afternoon": "مساء الخير",
+    "evening": "مساء الخير"
+  },
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "projects": "المشاريع",
+    "billing": "الفواتير",
+    "catalog": "الكتالوج",
+    "products": "المنتجات",
+    "categories": "التصنيفات",
+    "brands": "العلامات التجارية",
+    "tags": "الوسوم",
+    "attributes": "الخصائص",
+    "pricing": "التسعير",
+    "priceLists": "قوائم الأسعار",
+    "settings": "الإعدادات"
+  },
+  "sidebar": {
+    "overview": "نظرة عامة",
+    "projects": "المشاريع",
+    "noProjectsYet": "لا توجد مشاريع بعد",
+    "workspace": "مساحة العمل"
+  }
+}
