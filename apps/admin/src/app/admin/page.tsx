@@ -28,7 +28,7 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { StatusPill } from "@repo/ui";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useAuth } from "@repo/auth";
 import { useProjects, useAppCatalog, useCurrentCapabilities } from "@repo/hooks";
 import { useCurrentSubscription, useInvoices } from "@repo/hooks";
@@ -39,7 +39,7 @@ import { useTranslations } from "@repo/localization";
 
 const { Title, Text } = Typography;
 
-const stagger = {
+const stagger: Variants = {
   hidden: { opacity: 0, y: 12 },
   visible: (i: number) => ({
     opacity: 1,

@@ -16,6 +16,8 @@
     "attributes": "Attributes",
     "pricing": "Pricing",
     "priceLists": "Price Lists",
+    "productPrices": "Product Prices",
+    "overview": "Overview",
     "settings": "Settings"
   },
   "sidebar": {
@@ -23,5 +25,38 @@
     "projects": "Projects",
     "noProjectsYet": "No projects yet",
     "workspace": "Workspace"
-  }
+  },
+  "actions": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "saveChanges": "Save changes",
+    "saveAndContinue": "Save & Continue Editing",
+    "delete": "Delete",
+    "edit": "Edit",
+    "manage": "Manage",
+    "yes": "Yes",
+    "no": "No",
+    "allStatuses": "All statuses",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "statusUpdated": "Status updated",
+    "next": "Next"
+  },
+  "fields": {
+    "name": "Name",
+    "slug": "Slug",
+    "description": "Description",
+    "status": "Status",
+    "language": "Language",
+    "selectLanguage": "Select language",
+    "required": "Required",
+    "nameRequired": "Name is required",
+    "keyRequired": "Key is required",
+    "currency": "Currency"
+  },
+  "next": "Next",
+  "back": "Back",
+  "skip": "Skip to Variants",
+  "inherited": "Inherited",
+  "default": "Default"
 }

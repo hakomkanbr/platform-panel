@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Button, Card, Input, InputNumber, Select, Space, Typography } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { useTranslations } from "@repo/localization";
 import { enumOptions } from "../types/enums";
 import type { MediaItem } from "../types/catalog";
 
@@ -15,6 +16,7 @@ export interface MediaFormListProps {
 }
 
 export const MediaFormList: React.FC<MediaFormListProps> = ({ value, onChange, disabled }) => {
+  const t = useTranslations();
   const items = value ?? [];
   const [draftUrl, setDraftUrl] = useState("");
   const [draftType, setDraftType] = useState<number>(1);
@@ -43,7 +45,7 @@ export const MediaFormList: React.FC<MediaFormListProps> = ({ value, onChange, d
               {item.type === 1 || item.type === undefined ? (
                 <img
                   src={item.url}
-                  alt={item.altText || "media"}
+                  alt={item.altText || t("catalog.media.altFallback")}
                   style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover", background: "#f1f5f9" }}
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.visibility = "hidden";
@@ -63,22 +65,22 @@ export const MediaFormList: React.FC<MediaFormListProps> = ({ value, onChange, d
                     fontSize: 20,
                   }}
                 >
-                  {enumOptions("mediaType").find((o) => o.value === item.type)?.label?.slice(0, 2) ?? "MD"}
+                  {enumOptions("mediaType", t).find((o) => o.value === item.type)?.label?.slice(0, 2) ?? "MD"}
                 </div>
               )}
               <Space.Compact style={{ width: "100%" }}>
                 <Input
                   value={item.url}
                   disabled={disabled}
-                  placeholder="https://..."
+                  placeholder={t("catalog.media.placeholderUrl")}
                   onChange={(e) => update(index, { url: e.target.value })}
                 />
                 <Select
                   value={item.type}
                   disabled={disabled}
-                  options={enumOptions("mediaType")}
+                  options={enumOptions("mediaType", t)}
                   style={{ width: 140 }}
-                  onChange={(t) => update(index, { type: t })}
+                  onChange={(type) => update(index, { type })}
                 />
               </Space.Compact>
               <Button
@@ -93,14 +95,14 @@ export const MediaFormList: React.FC<MediaFormListProps> = ({ value, onChange, d
               <Input
                 value={item.altText}
                 disabled={disabled}
-                placeholder="Alt text"
+                placeholder={t("catalog.media.altText")}
                 onChange={(e) => update(index, { altText: e.target.value })}
                 style={{ flex: 1 }}
               />
               <InputNumber
                 value={item.sortOrder}
                 disabled={disabled}
-                placeholder="Order"
+                placeholder={t("catalog.media.order")}
                 style={{ width: 90 }}
                 onChange={(v) => update(index, { sortOrder: v ?? undefined })}
               />
@@ -113,19 +115,19 @@ export const MediaFormList: React.FC<MediaFormListProps> = ({ value, onChange, d
         <Input
           value={draftUrl}
           disabled={disabled}
-          placeholder="Paste media URL..."
+          placeholder={t("catalog.media.pasteUrl")}
           onChange={(e) => setDraftUrl(e.target.value)}
           onPressEnter={add}
           style={{ flex: 1 }}
         />
         <Button icon={<PlusOutlined />} onClick={add} disabled={disabled || !draftUrl.trim()}>
-          Add media
+          {t("catalog.media.addMedia")}
         </Button>
       </div>
 
       {items.length === 0 && (
         <Text type="secondary" style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-          No media yet. Add images by URL to build the product gallery.
+          {t("catalog.media.emptyText")}
         </Text>
       )}
     </Space>

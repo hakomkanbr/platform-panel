@@ -16,24 +16,26 @@ import {
 import type { TableColumnsType } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm } from "@repo/ui";
-import { formatCurrency, formatDateTime } from "@repo/utils";
+import { formatDateTime } from "@repo/utils";
+import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
 import { enumLabel } from "../../../types/enums";
 import { useDeletePriceList, usePriceLists, useSavePriceList } from "../../../hooks/usePriceLists";
 import { getApiErrorMessage } from "../../../api/http";
-import type { PriceList } from "../../../types/pricing";
+import type { PriceListReadModel } from "../../../types/pricing";
 
-type PriceListRow = PriceList & Record<string, unknown>;
+type PriceListRow = PriceListReadModel & Record<string, unknown>;
 
 export function PriceListsPage() {
   const router = useRouter();
+  const t = useTranslations();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [editing, setEditing] = useState<PriceList | null>(null);
+  const [editing, setEditing] = useState<PriceListReadModel | null>(null);
   const [form] = Form.useForm();
 
   const { data, isLoading, isError, error, refetch } = usePriceLists({
@@ -54,16 +56,15 @@ export function PriceListsPage() {
     setDrawerOpen(true);
   };
 
-  const openEdit = (priceList: PriceList) => {
+  const openEdit = (priceList: PriceListReadModel) => {
     setEditing(priceList);
     form.setFieldsValue({
       code: priceList.code,
       name: priceList.name,
       description: priceList.description,
       taxMode: priceList.taxMode,
-      currencyCode: priceList.currencyCode,
+      currencyId: priceList.currencyId,
       priority: priceList.priority,
-      isDefault: priceList.isDefault,
       status: priceList.status,
     });
     setDrawerOpen(true);
@@ -86,7 +87,7 @@ export function PriceListsPage() {
           metadata: (values.metadata as { key: string; value: string }[] | undefined)?.filter((m) => m.key.trim()),
         },
       });
-      message.success(editing ? "Price list updated" : "Price list created");
+      message.success(editing ? t("pricing.priceLists.updated") : t("pricing.priceLists.created"));
       setDrawerOpen(false);
       setEditing(null);
     } catch (e) {
@@ -96,7 +97,7 @@ export function PriceListsPage() {
 
   const columns: TableColumnsType<PriceListRow> = [
     {
-      title: "Price list",
+      title: t("pricing.priceLists.nameColumn"),
       key: "name",
       render: (_, record) => (
         <div>
@@ -106,31 +107,31 @@ export function PriceListsPage() {
       ),
     },
     {
-      title: "Status",
+      title: t("pricing.priceLists.statusColumn"),
       dataIndex: "status",
       width: 120,
       render: (v) => <StatusTag value={v} />,
     },
     {
-      title: "Tax",
+      title: t("pricing.priceLists.taxColumn"),
       dataIndex: "taxMode",
       width: 120,
-      render: (v) => enumLabel("taxMode", v),
+      render: (v) => enumLabel("taxMode", v, t),
     },
     {
-      title: "Priority",
+      title: t("pricing.priceLists.priorityColumn"),
       dataIndex: "priority",
       width: 90,
       render: (v) => v ?? "\u2014",
     },
     {
-      title: "Products",
+      title: t("pricing.priceLists.productsColumn"),
       dataIndex: "productCount",
       width: 100,
       render: (v) => v ?? 0,
     },
     {
-      title: "Updated",
+      title: t("pricing.priceLists.updatedColumn"),
       dataIndex: "updatedAt",
       width: 160,
       render: (v) => <span style={{ color: "var(--text-secondary)" }}>{formatDateTime(v)}</span>,
@@ -142,20 +143,20 @@ export function PriceListsPage() {
       render: (_, record) => (
         <Space>
           <Button type="link" size="small" onClick={() => router.push(`/admin/pricing/price-lists/${record.id}`)}>
-            Manage
+            {t("pricing.priceLists.manage")}
           </Button>
           <Popconfirm
-            title="Delete price list?"
+            title={t("pricing.priceLists.deleteConfirm")}
             onConfirm={async () => {
               try {
                 await remove.mutateAsync(record.id);
-                message.success("Price list deleted");
+                message.success(t("pricing.priceLists.deleted"));
               } catch (e) {
                 message.error(getApiErrorMessage(e));
               }
             }}
           >
-            <Tooltip title="Delete">
+            <Tooltip title={t("common.actions.delete")}>
               <Button type="link" size="small" danger icon={<DeleteOutlined />} />
             </Tooltip>
           </Popconfirm>
@@ -166,12 +167,12 @@ export function PriceListsPage() {
 
   return (
     <CommerceShell
-      title="Price lists"
-      description="Group pricing rules and assign them to channels, customer groups, regions and stores."
-      breadcrumbs={[{ title: "Pricing", href: "/admin/pricing" }, { title: "Price lists" }]}
+      title={t("pricing.priceLists.title")}
+      description={t("pricing.priceLists.description")}
+      breadcrumbs={[{ title: t("pricing.title"), href: "/admin/pricing" }, { title: t("pricing.priceLists.title") }]}
       actions={
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-          New price list
+          {t("pricing.priceLists.new")}
         </Button>
       }
     >
@@ -190,7 +191,7 @@ export function PriceListsPage() {
           setPageSize(ps);
         }}
         searchable
-        searchPlaceholder="Search price lists..."
+        searchPlaceholder={t("pricing.priceLists.searchPlaceholder")}
         onSearch={(term) => {
           setSearch(term);
           setPage(1);
@@ -199,10 +200,10 @@ export function PriceListsPage() {
           <Select
             value={status}
             options={[
-              { value: "", label: "All statuses" },
-              { value: "draft", label: "Draft" },
-              { value: "active", label: "Active" },
-              { value: "inactive", label: "Inactive" },
+              { value: "", label: t("common.actions.allStatuses") },
+              { value: "draft", label: t("catalog.status.draft") },
+              { value: "active", label: t("catalog.status.active") },
+              { value: "inactive", label: t("catalog.status.inactive") },
             ]}
             onChange={(v) => {
               setStatus(v);
@@ -211,54 +212,54 @@ export function PriceListsPage() {
             style={{ width: 160 }}
           />
         }
-        title={`${data?.count ?? 0} price lists`}
+        title={t("pricing.priceLists.count", { count: data?.count ?? 0 })}
         onRowClick={(record) => router.push(`/admin/pricing/price-lists/${record.id}`)}
-        emptyTitle="No price lists"
-        emptyDescription="Create a price list to start controlling product prices."
-        emptyAction={{ label: "New price list", onClick: openCreate }}
+        emptyTitle={t("pricing.priceLists.emptyTitle")}
+        emptyDescription={t("pricing.priceLists.emptyDescription")}
+        emptyAction={{ label: t("pricing.priceLists.new"), onClick: openCreate }}
       />
 
       <DrawerForm
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title={editing ? "Edit price list" : "New price list"}
+        title={editing ? t("pricing.priceLists.drawerEdit") : t("pricing.priceLists.drawerCreate")}
         width={540}
         form={form}
         loading={save.isPending}
         onFinish={onFinish}
-        submitLabel={editing ? "Save changes" : "Create price list"}
+        submitLabel={editing ? t("common.actions.saveChanges") : t("pricing.priceLists.submitCreate")}
       >
         <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item name="name" label="Name" rules={[{ required: true, message: "Name is required" }]}>
-            <Input placeholder="e.g. Wholesale" />
+          <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
+            <Input placeholder={t("pricing.priceLists.placeholderName")} />
           </Form.Item>
-          <Form.Item name="code" label="Code">
-            <Input placeholder="wholesale" />
+          <Form.Item name="code" label={t("catalog.products.create.code")}>
+            <Input placeholder={t("pricing.priceLists.placeholderCode")} />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />
           </Form.Item>
           <Space size={16}>
-            <Form.Item name="taxMode" label="Tax mode">
+            <Form.Item name="taxMode" label={t("pricing.priceLists.taxMode")}>
               <Select
                 style={{ width: 180 }}
                 options={[
-                  { value: 1, label: "Inclusive" },
-                  { value: 2, label: "Exclusive" },
+                  { value: 1, label: t("pricing.priceLists.inclusive") },
+                  { value: 2, label: t("pricing.priceLists.exclusive") },
                 ]}
               />
             </Form.Item>
-            <Form.Item name="priority" label="Priority">
+            <Form.Item name="priority" label={t("pricing.priceLists.priority")}>
               <InputNumber min={0} style={{ width: 140 }} />
             </Form.Item>
           </Space>
           {editing && (
-            <Form.Item name="status" label="Status">
+            <Form.Item name="status" label={t("common.fields.status")}>
               <Select
                 options={[
-                  { value: "draft", label: "Draft" },
-                  { value: "active", label: "Active" },
-                  { value: "inactive", label: "Inactive" },
+                  { value: "draft", label: t("catalog.status.draft") },
+                  { value: "active", label: t("catalog.status.active") },
+                  { value: "inactive", label: t("catalog.status.inactive") },
                 ]}
               />
             </Form.Item>

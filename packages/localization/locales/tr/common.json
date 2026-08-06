@@ -16,6 +16,8 @@
     "attributes": "Özellikler",
     "pricing": "Fiyatlandırma",
     "priceLists": "Fiyat Listeleri",
+    "productPrices": "Ürün Fiyatları",
+    "overview": "Genel Bakış",
     "settings": "Ayarlar"
   },
   "sidebar": {
@@ -23,5 +25,31 @@
     "projects": "Projeler",
     "noProjectsYet": "Henüz proje yok",
     "workspace": "Çalışma Alanı"
+  },
+  "actions": {
+    "back": "Geri",
+    "cancel": "İptal",
+    "saveChanges": "Değişiklikleri kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "manage": "Yönet",
+    "yes": "Evet",
+    "no": "Hayır",
+    "allStatuses": "Tüm durumlar",
+    "deactivate": "Devre dışı bırak",
+    "activate": "Etkinleştir",
+    "statusUpdated": "Durum güncellendi"
+  },
+  "fields": {
+    "name": "Ad",
+    "slug": "Slug",
+    "description": "Açıklama",
+    "status": "Durum",
+    "language": "Dil",
+    "selectLanguage": "Dil seçin",
+    "required": "Zorunlu",
+    "nameRequired": "Ad zorunludur",
+    "keyRequired": "Anahtar zorunludur",
+    "currency": "Para birimi"
   }
 }

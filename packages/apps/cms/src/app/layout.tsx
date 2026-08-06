@@ -17,7 +17,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ar">
       <head>
         <link
           href="https://cdn.syncfusion.com/ej2/26.1.35/material.css"

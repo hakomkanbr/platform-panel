@@ -1,15 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { categoriesApi } from "../api/catalog/categories";
-import type { CategoryFilters } from "../api/catalog/categories";
+
 import { useCommerce } from "../context/CommerceContext";
-import type { Category } from "../types/catalog";
+import type { CategoryReadModel, CategoryFilters } from "../types/catalog";
 import type { PaginatedResult } from "../types/common";
 
 export function useCategories(params?: CategoryFilters) {
   const { projectId } = useCommerce();
   return useQuery({
     queryKey: ["catalog", "categories", projectId, params],
-    queryFn: async (): Promise<PaginatedResult<Category>> => {
+    queryFn: async (): Promise<PaginatedResult<CategoryReadModel>> => {
       const res = await categoriesApi.list(params);
       return Array.isArray(res) ? { count: res.length, data: res } : res;
     },
@@ -38,7 +38,7 @@ export function useCategory(id: string | null) {
 export function useSaveCategory() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id?: string; body: Partial<Category> }) =>
+    mutationFn: ({ id, body }: { id?: string; body: any }) =>
       id ? categoriesApi.update(id, body) : categoriesApi.create(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "categories"] });
@@ -61,7 +61,7 @@ export function useDeleteCategory() {
 export function useSetCategoryStatus() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: number }) => categoriesApi.setStatus(id, status),
+    mutationFn: ({ id, status }: { id: string; status: number }) => categoriesApi.setStatus(id, { status: status as any }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "categories"] });
       queryClient.invalidateQueries({ queryKey: ["catalog", "category-tree"] });

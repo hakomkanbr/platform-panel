@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authApi } from "@repo/auth";
+import { useTranslations } from "@repo/localization";
 
 const { Text } = Typography;
 
@@ -23,21 +24,15 @@ function getPasswordStrength(password: string) {
   if (/[a-z]/.test(password)) score += 15;
   if (/[0-9]/.test(password)) score += 15;
   if (/[^A-Za-z0-9]/.test(password)) score += 15;
-  if (score < 30) return { score, label: "Weak", color: "#ef4444" };
-  if (score < 50) return { score, label: "Fair", color: "#f59e0b" };
-  if (score < 75) return { score, label: "Strong", color: "#22c55e" };
-  return { score, label: "Very Strong", color: "#F7931E" };
+  if (score < 30) return { score, labelKey: "strengthWeak", color: "#ef4444" };
+  if (score < 50) return { score, labelKey: "strengthFair", color: "#f59e0b" };
+  if (score < 75) return { score, labelKey: "strengthStrong", color: "#22c55e" };
+  return { score, labelKey: "strengthVeryStrong", color: "#F7931E" };
 }
-
-const requirements = [
-  { label: "At least 8 characters", test: (p: string) => p.length >= 8 },
-  { label: "Uppercase letter", test: (p: string) => /[A-Z]/.test(p) },
-  { label: "Number", test: (p: string) => /[0-9]/.test(p) },
-  { label: "Special character", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
-];
 
 function ResetPasswordPageContent() {
   const router = useRouter();
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
   const [password, setPassword] = useState("");
@@ -50,11 +45,11 @@ function ResetPasswordPageContent() {
 
   const handleSubmit = useCallback(async () => {
     if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+      setError(t("auth.reset.minChars"));
       return;
     }
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("auth.reset.passwordsDoNotMatch"));
       return;
     }
     setError(null);
@@ -70,15 +65,15 @@ function ResetPasswordPageContent() {
         setTimeout(() => router.push("/auth/login"), 2000);
       } else {
         setError(
-          result.error?.message || "Reset failed. The link may have expired.",
+          result.error?.message || t("auth.reset.resetFailed"),
         );
       }
     } catch {
-      setError("Connection error. Please try again.");
+      setError(t("auth.reset.connectionError"));
     } finally {
       setLoading(false);
     }
-  }, [password, confirmPassword, token, router]);
+  }, [password, confirmPassword, token, router, t]);
 
   if (!token) {
     return (
@@ -118,7 +113,7 @@ function ResetPasswordPageContent() {
             display: "block",
           }}
         >
-          Invalid or expired link
+          {t("auth.reset.invalidOrExpired")}
         </Text>
         <div
           style={{
@@ -129,7 +124,7 @@ function ResetPasswordPageContent() {
             lineHeight: 1.5,
           }}
         >
-          This password reset link is no longer valid.
+          {t("auth.reset.invalidLinkDesc")}
         </div>
         <Link href="/auth/forgot-password">
           <Button
@@ -138,7 +133,7 @@ function ResetPasswordPageContent() {
             className="auth-btn-gradient"
             style={{ width: "auto", paddingInline: 20 }}
           >
-            Request new reset link
+            {t("auth.reset.requestNewLink")}
           </Button>
         </Link>
       </div>
@@ -181,10 +176,10 @@ function ResetPasswordPageContent() {
               display: "block",
             }}
           >
-            Password reset successful!
+            {t("auth.reset.resetSuccessful")}
           </Text>
           <div style={{ color: "#6b7280", fontSize: 13, marginTop: 6 }}>
-            Redirecting to login...
+            {t("auth.reset.redirecting")}
           </div>
         </motion.div>
       ) : (
@@ -198,7 +193,7 @@ function ResetPasswordPageContent() {
                 display: "block",
               }}
             >
-              Reset your password
+              {t("auth.reset.title")}
             </Text>
             <div
               style={{
@@ -208,7 +203,7 @@ function ResetPasswordPageContent() {
                 lineHeight: 1.5,
               }}
             >
-              Choose a new strong password for your account.
+              {t("auth.reset.subtitle")}
             </div>
           </div>
 
@@ -226,10 +221,10 @@ function ResetPasswordPageContent() {
           </AnimatePresence>
 
           <div style={{ marginBottom: 16 }}>
-            <label className="auth-label">New password</label>
+            <label className="auth-label">{t("auth.reset.newPassword")}</label>
             <Input.Password
               size="large"
-              placeholder="Enter new password"
+              placeholder={t("auth.reset.enterNewPassword")}
               className="auth-input-wrapper"
               prefix={
                 <LockOutlined style={{ color: "#9ca3af", fontSize: 16 }} />
@@ -265,17 +260,17 @@ function ResetPasswordPageContent() {
                     fontWeight: 500,
                   }}
                 >
-                  {strength.label}
+                  {t(`auth.reset.${strength.labelKey}`)}
                 </Text>
               </div>
             )}
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label className="auth-label">Confirm password</label>
+            <label className="auth-label">{t("auth.reset.confirmPassword")}</label>
             <Input.Password
               size="large"
-              placeholder="Repeat new password"
+              placeholder={t("auth.reset.repeatNewPassword")}
               className="auth-input-wrapper"
               prefix={
                 <LockOutlined style={{ color: "#9ca3af", fontSize: 16 }} />
@@ -295,7 +290,7 @@ function ResetPasswordPageContent() {
                   display: "block",
                 }}
               >
-                Passwords do not match
+                {t("auth.reset.passwordsDoNotMatch")}
               </Text>
             )}
           </div>
@@ -317,11 +312,16 @@ function ResetPasswordPageContent() {
                 display: "block",
               }}
             >
-              Password requirements
+              {t("auth.reset.requirements")}
             </Text>
-            {requirements.map((req) => (
+            {[
+              { key: "reqChars", test: (p: string) => p.length >= 8 },
+              { key: "reqUppercase", test: (p: string) => /[A-Z]/.test(p) },
+              { key: "reqNumber", test: (p: string) => /[0-9]/.test(p) },
+              { key: "reqSpecial", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
+            ].map((req) => (
               <div
-                key={req.label}
+                key={req.key}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -364,7 +364,7 @@ function ResetPasswordPageContent() {
                     transition: "color 0.2s",
                   }}
                 >
-                  {req.label}
+                  {t(`auth.reset.${req.key}`)}
                 </Text>
               </div>
             ))}
@@ -379,7 +379,7 @@ function ResetPasswordPageContent() {
               disabled={loading}
               className="auth-btn-gradient"
             >
-              Reset password <ArrowRightOutlined />
+              {t("auth.reset.submit")} <ArrowRightOutlined />
             </Button>
           </motion.div>
         </motion.div>

@@ -16,15 +16,19 @@ import type { TableColumnsType } from "antd";
 import { DeleteOutlined, PlusOutlined, TagsOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm } from "@repo/ui";
 import { formatDateTime } from "@repo/utils";
+import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
 import { useDeleteTag, useSaveTag, useSetTagStatus, useTags } from "../../../hooks/useTags";
+import { useCommerce } from "../../../context/CommerceContext";
+import { useProjectLanguages } from "../../../hooks/useLanguages";
 import { getApiErrorMessage } from "../../../api/http";
-import type { Tag } from "../../../types/catalog";
+import type { TagReadModel as Tag } from "../../../types/catalog";
 
 type TagRow = Tag & Record<string, unknown>;
 
 export function TagsPage() {
+  const t = useTranslations();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
@@ -32,6 +36,10 @@ export function TagsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<Tag | null>(null);
   const [form] = Form.useForm();
+  
+  const { projectId } = useCommerce();
+  const { data: languages } = useProjectLanguages(projectId);
+  const defaultLanguage = languages?.find((l) => l.isDefault) ?? languages?.[0];
 
   const { data, isLoading, isError, error, refetch } = useTags({
     page,
@@ -48,27 +56,40 @@ export function TagsPage() {
   const openCreate = () => {
     setEditing(null);
     form.resetFields();
+    if (defaultLanguage) {
+      form.setFieldValue("languageId", defaultLanguage.id);
+    }
     setDrawerOpen(true);
   };
 
   const openEdit = (tag: Tag) => {
     setEditing(tag);
-    form.setFieldsValue({ name: tag.name, slug: tag.slug, description: tag.description, status: tag.status });
+    form.setFieldsValue({ 
+      name: tag.name, 
+      slug: tag.slug, 
+      status: tag.status,
+      // @ts-ignore
+      languageId: tag.languageId ?? defaultLanguage?.id,
+    });
     setDrawerOpen(true);
   };
 
   const onFinish = async (values: Record<string, unknown>) => {
     try {
+      const selectedLanguageId = (values.languageId as string) || defaultLanguage?.id;
+      const selectedCulture = languages?.find((l) => l.id === selectedLanguageId)?.code ?? "en-US";
+
       await save.mutateAsync({
         id: editing?.id,
         body: {
           name: values.name as string,
           slug: values.slug as string | undefined,
-          description: values.description as string | undefined,
           status: (values.status as number) ?? 1,
-        },
+          languageId: selectedLanguageId,
+          cultureCode: selectedCulture,
+        } as Partial<Tag> & { languageId?: string; cultureCode?: string },
       });
-      message.success(editing ? "Tag updated" : "Tag created");
+      message.success(editing ? t("catalog.tags.updated") : t("catalog.tags.created"));
       setDrawerOpen(false);
       setEditing(null);
     } catch (e) {
@@ -78,7 +99,7 @@ export function TagsPage() {
 
   const columns: TableColumnsType<TagRow> = [
     {
-      title: "Tag",
+      title: t("catalog.tags.title"),
       key: "name",
       render: (_, record) => (
         <Space>
@@ -102,10 +123,10 @@ export function TagsPage() {
         </Space>
       ),
     },
-    { title: "Products", dataIndex: "productCount", width: 110, render: (v) => v ?? 0 },
-    { title: "Status", dataIndex: "status", width: 120, render: (v) => <StatusTag value={v} /> },
+    { title: t("catalog.brands.productsColumn"), dataIndex: "productCount", width: 110, render: (v) => v ?? 0 },
+    { title: t("common.fields.status"), dataIndex: "status", width: 120, render: (v) => <StatusTag value={v} /> },
     {
-      title: "Updated",
+      title: t("catalog.products.list.updatedColumn"),
       dataIndex: "updatedAt",
       width: 160,
       render: (v) => <span style={{ color: "var(--text-secondary)" }}>{formatDateTime(v)}</span>,
@@ -117,23 +138,23 @@ export function TagsPage() {
       render: (_, record) => (
         <Space>
           <Button type="link" size="small" onClick={() => openEdit(record)}>
-            Edit
+            {t("common.actions.edit")}
           </Button>
           <Button type="link" size="small" onClick={() => setStatusMutation.mutateAsync({ id: record.id, status: record.status === 1 ? 2 : 1 })}>
-            {record.status === 1 ? "Deactivate" : "Activate"}
+            {record.status === 1 ? t("common.actions.deactivate") : t("common.actions.activate")}
           </Button>
           <Popconfirm
-            title="Delete tag?"
+            title={t("catalog.tags.deleteConfirm")}
             onConfirm={async () => {
               try {
                 await remove.mutateAsync(record.id);
-                message.success("Tag deleted");
+                message.success(t("catalog.tags.deleted"));
               } catch (e) {
                 message.error(getApiErrorMessage(e));
               }
             }}
           >
-            <Tooltip title="Delete">
+            <Tooltip title={t("common.actions.delete")}>
               <Button type="link" size="small" danger icon={<DeleteOutlined />} />
             </Tooltip>
           </Popconfirm>
@@ -144,12 +165,12 @@ export function TagsPage() {
 
   return (
     <CommerceShell
-      title="Tags"
-      description="Label products with lightweight, flexible tags."
-      breadcrumbs={[{ title: "Catalog", href: "/admin/catalog" }, { title: "Tags" }]}
+      title={t("catalog.tags.title")}
+      description={t("catalog.tags.description")}
+      breadcrumbs={[{ title: t("catalog.title"), href: "/admin/catalog" }, { title: t("catalog.tags.title") }]}
       actions={
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-          New tag
+          {t("catalog.tags.new")}
         </Button>
       }
     >
@@ -168,7 +189,7 @@ export function TagsPage() {
           setPageSize(ps);
         }}
         searchable
-        searchPlaceholder="Search tags..."
+        searchPlaceholder={t("catalog.tags.searchPlaceholder")}
         onSearch={(term) => {
           setSearch(term);
           setPage(1);
@@ -177,9 +198,9 @@ export function TagsPage() {
           <Select
             value={status}
             options={[
-              { value: "", label: "All statuses" },
-              { value: "1", label: "Active" },
-              { value: "2", label: "Inactive" },
+              { value: "", label: t("common.actions.allStatuses") },
+              { value: "1", label: t("catalog.status.active") },
+              { value: "2", label: t("catalog.status.inactive") },
             ]}
             onChange={(v) => {
               setStatus(v);
@@ -188,38 +209,48 @@ export function TagsPage() {
             style={{ width: 160 }}
           />
         }
-        title={`${data?.count ?? 0} tags`}
-        emptyTitle="No tags yet"
-        emptyDescription="Create tags to label products."
-        emptyAction={{ label: "New tag", onClick: openCreate }}
+        title={t("catalog.tags.count", { count: data?.count ?? 0 })}
+        emptyTitle={t("catalog.tags.emptyTitle")}
+        emptyDescription={t("catalog.tags.emptyDescription")}
+        emptyAction={{ label: t("catalog.tags.new"), onClick: openCreate }}
       />
 
       <DrawerForm
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title={editing ? "Edit tag" : "New tag"}
+        title={editing ? t("catalog.tags.drawerEdit") : t("catalog.tags.drawerCreate")}
         width={480}
         form={form}
         loading={save.isPending}
         onFinish={onFinish}
-        submitLabel={editing ? "Save changes" : "Create tag"}
+        submitLabel={editing ? t("common.actions.saveChanges") : t("catalog.tags.submitCreate")}
       >
         <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item name="name" label="Name" rules={[{ required: true, message: "Name is required" }]}>
-            <Input placeholder="e.g. Sale" />
+          <Form.Item name="languageId" label={t("common.fields.language")} rules={[{ required: true }]}>
+            <Select
+              loading={!languages && projectId ? true : undefined}
+              placeholder={t("common.fields.selectLanguage")}
+              options={(languages ?? []).map((l) => ({
+                value: l.id,
+                label: `${l.flag ?? ""} ${l.nativeName || l.name} (${l.code})`,
+              }))}
+            />
           </Form.Item>
-          <Form.Item name="slug" label="Slug">
-            <Input placeholder="sale" />
+          <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
+            <Input placeholder={t("catalog.tags.placeholderName")} />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="slug" label={t("common.fields.slug")}>
+            <Input placeholder={t("catalog.tags.placeholderSlug")} />
+          </Form.Item>
+          <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />
           </Form.Item>
           {editing && (
-            <Form.Item name="status" label="Status">
+            <Form.Item name="status" label={t("common.fields.status")}>
               <Select
                 options={[
-                  { value: 1, label: "Active" },
-                  { value: 2, label: "Inactive" },
+                  { value: 1, label: t("catalog.status.active") },
+                  { value: 2, label: t("catalog.status.inactive") },
                 ]}
               />
             </Form.Item>

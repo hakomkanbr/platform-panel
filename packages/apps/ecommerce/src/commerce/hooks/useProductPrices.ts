@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productPricesApi } from "../api/pricing/product-prices";
-import type { ProductPriceFilters } from "../api/pricing/product-prices";
+
 import { useCommerce } from "../context/CommerceContext";
-import type { ProductPriceReadModel } from "../types/pricing";
+import type { ProductPriceReadModel, ProductPriceFilters } from "../types/pricing";
 import type { PaginatedResult } from "../types/common";
 
 export function useProductPrices(params?: ProductPriceFilters) {
@@ -29,7 +29,7 @@ export function useProductPrice(id: string | null) {
 export function useSaveProductPrice() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id?: string; body: unknown }) =>
+    mutationFn: ({ id, body }: { id?: string; body: any }) =>
       id ? productPricesApi.update(id, body) : productPricesApi.create(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pricing", "product-prices"] });
@@ -50,7 +50,7 @@ export function useDeleteProductPrice() {
 export function useSavePriceTier(priceId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id?: string; body: unknown }) =>
+    mutationFn: ({ id, body }: { id?: string; body: any }) =>
       id
         ? productPricesApi.updateTier(priceId as string, id, body)
         : productPricesApi.addTier(priceId as string, body),
@@ -73,7 +73,7 @@ export function useDeletePriceTier(priceId: string | null) {
 export function useSavePriceConstraint(priceId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id?: string; body: unknown }) =>
+    mutationFn: ({ id, body }: { id?: string; body: any }) =>
       id
         ? productPricesApi.updateConstraint(priceId as string, id, body)
         : productPricesApi.addConstraint(priceId as string, body),

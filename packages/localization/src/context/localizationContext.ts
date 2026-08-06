@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext } from "react";
 import { DEFAULT_LOCALE, getDirection } from "../constants/languages";
 import type { Locale, LocaleDirection, Messages } from "../types";

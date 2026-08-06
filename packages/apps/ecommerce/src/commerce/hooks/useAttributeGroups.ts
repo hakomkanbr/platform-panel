@@ -1,15 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { attributeGroupsApi } from "../api/catalog/attribute-groups";
-import type { AttributeGroupFilters } from "../api/catalog/attribute-groups";
+import type { AttributeGroupFilters } from "../types/catalog";
 import { useCommerce } from "../context/CommerceContext";
-import type { AttributeDefinition, AttributeGroup } from "../types/catalog";
+import type { AttributeGroupReadModel } from "../types/catalog";
 import type { PaginatedResult } from "../types/common";
 
 export function useAttributeGroups(params?: AttributeGroupFilters) {
   const { projectId } = useCommerce();
   return useQuery({
     queryKey: ["catalog", "attribute-groups", projectId, params],
-    queryFn: async (): Promise<PaginatedResult<AttributeGroup>> => {
+    queryFn: async (): Promise<PaginatedResult<AttributeGroupReadModel>> => {
       const res = await attributeGroupsApi.list(params);
       return Array.isArray(res) ? { count: res.length, data: res } : res;
     },
@@ -29,7 +29,7 @@ export function useAttributeGroup(id: string | null) {
 export function useSaveAttributeGroup() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id?: string; body: Partial<AttributeGroup> }) =>
+    mutationFn: ({ id, body }: { id?: string; body: any }) =>
       id ? attributeGroupsApi.update(id, body) : attributeGroupsApi.create(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "attribute-groups"] });
@@ -50,7 +50,7 @@ export function useDeleteAttributeGroup() {
 export function useSaveAttributeDefinition(groupId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: unknown) =>
+    mutationFn: (body: any) =>
       attributeGroupsApi.addDefinition(groupId as string, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "attribute-groups"] });

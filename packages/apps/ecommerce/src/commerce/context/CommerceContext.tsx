@@ -1,10 +1,11 @@
 "use client";
 
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { EmptyState } from "@repo/ui";
-import { getCurrentProjectId } from "../../lib/api/project-storage";
+import { useTranslations } from "@repo/localization";
+import { getCurrentProjectId, STORAGE_KEY } from "../../lib/api/project-storage";
 
 export interface CommerceContextValue {
   projectId: string | null;
@@ -27,6 +28,7 @@ export function CommerceProvider({
   children: React.ReactNode;
   projectId?: string | null;
 }) {
+  const t = useTranslations();
   const params = useParams<{ projectId?: string }>();
   const routeProjectId = params?.projectId ?? null;
   const projectId =
@@ -45,16 +47,30 @@ export function CommerceProvider({
       }),
   );
 
+  // Sync the resolved projectId into sessionStorage so that the axios interceptor
+  // in http.ts can read it via getCurrentProjectId() and inject X-Project-Id on
+  // every Catalog and Pricing API request — without any per-request manual work.
+  useEffect(() => {
+    if (typeof window === "undefined" || !projectId) return;
+    try {
+      const existingRaw = sessionStorage.getItem(STORAGE_KEY);
+      const existing = existingRaw ? JSON.parse(existingRaw) : {};
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...existing, projectId }));
+    } catch {
+      // sessionStorage may be unavailable in some iframe/privacy contexts — ignore
+    }
+  }, [projectId]);
+
   const value = useMemo(() => ({ projectId }), [projectId]);
 
   if (!projectId) {
     return (
       <div style={{ padding: 48 }}>
         <EmptyState
-          title="Select a project"
-          description="Pick a project to manage its catalog and pricing."
+          title={t("catalog.project.title")}
+          description={t("catalog.project.description")}
           action={{
-            label: "Go to projects",
+            label: t("catalog.project.goToProjects"),
             onClick: () => {
               window.location.href = "/admin/projects";
             },

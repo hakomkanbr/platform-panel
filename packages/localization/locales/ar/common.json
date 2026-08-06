@@ -16,6 +16,8 @@
     "attributes": "الخصائص",
     "pricing": "التسعير",
     "priceLists": "قوائم الأسعار",
+    "productPrices": "أسعار المنتجات",
+    "overview": "نظرة عامة",
     "settings": "الإعدادات"
   },
   "sidebar": {
@@ -23,5 +25,38 @@
     "projects": "المشاريع",
     "noProjectsYet": "لا توجد مشاريع بعد",
     "workspace": "مساحة العمل"
-  }
+  },
+  "actions": {
+    "back": "رجوع",
+    "cancel": "إلغاء",
+    "saveChanges": "حفظ التغييرات",
+    "saveAndContinue": "حفظ ومتابعة التعديل",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "manage": "إدارة",
+    "yes": "نعم",
+    "no": "لا",
+    "allStatuses": "جميع الحالات",
+    "deactivate": "إلغاء التفعيل",
+    "activate": "تفعيل",
+    "statusUpdated": "تم تحديث الحالة",
+    "next": "التالي"
+  },
+  "fields": {
+    "name": "الاسم",
+    "slug": "المعرّف",
+    "description": "الوصف",
+    "status": "الحالة",
+    "language": "اللغة",
+    "selectLanguage": "اختر اللغة",
+    "required": "مطلوب",
+    "nameRequired": "الاسم مطلوب",
+    "keyRequired": "المفتاح مطلوب",
+    "currency": "العملة"
+  },
+  "next": "التالي",
+  "back": "رجوع",
+  "skip": "تخطي",
+  "inherited": "موروث",
+  "default": "افتراضي"
 }

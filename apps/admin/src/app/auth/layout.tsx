@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "@repo/localization";
 import {
   LayoutOutlined,
   CheckCircleOutlined,
@@ -14,6 +15,7 @@ import {
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const t = useTranslations();
   const isRegister = pathname === "/auth/register";
   return (
     <div
@@ -87,10 +89,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </div>
           <div>
             <span style={{ fontSize: 20, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.03em" }}>
-              Share2Sells
+              {t("auth.layout.brand")}
             </span>
             <span style={{ fontSize: 11, color: "#009FE3", display: "block", fontWeight: 600 }}>
-              ENTERPRISE PLATFORM
+              {t("auth.layout.tagline")}
             </span>
           </div>
         </div>
@@ -117,7 +119,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               marginBottom: 20,
             }}
           >
-            <ThunderboltOutlined /> Share2Sells Platform OS v2.0
+            <ThunderboltOutlined /> {t("auth.layout.badge")}
           </div>
 
           <h1
@@ -130,11 +132,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               marginBottom: 16,
             }}
           >
-            The Operating System for Modern <span style={{ color: "#F7931E" }}>Digital Products</span>.
+            {t("auth.layout.headline")} <span style={{ color: "#F7931E" }}>{t("auth.layout.headlineHighlight")}</span>{t("auth.layout.headlineSuffix")}
           </h1>
 
           <p style={{ fontSize: 16, color: "#9CA3AF", lineHeight: 1.6, marginBottom: 32 }}>
-            Manage CMS, Ecommerce, CRM, Form Builder, and Analytics from a single unified operating space built for performance and enterprise reliability.
+            {t("auth.layout.description")}
           </p>
 
           {/* Interactive Stats Showcase Card */}
@@ -152,19 +154,19 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           >
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#009FE3", fontSize: 13, marginBottom: 4 }}>
-                <CloudServerOutlined /> <span>Applications</span>
+                <CloudServerOutlined /> <span>{t("auth.layout.applications")}</span>
               </div>
-              <span style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>6+ Apps</span>
+              <span style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>{t("auth.layout.appsCount")}</span>
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#10B981", fontSize: 13, marginBottom: 4 }}>
-                <CheckCircleOutlined /> <span>Uptime</span>
+                <CheckCircleOutlined /> <span>{t("auth.layout.uptime")}</span>
               </div>
               <span style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>99.99%</span>
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#F7931E", fontSize: 13, marginBottom: 4 }}>
-                <GlobalOutlined /> <span>Architecture</span>
+                <GlobalOutlined /> <span>{t("auth.layout.architecture")}</span>
               </div>
               <span style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>Turborepo</span>
             </div>
@@ -174,7 +176,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Footer Security Note */}
         <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: 12, color: "#6B7280", fontSize: 13 }}>
           <SafetyCertificateOutlined style={{ color: "#10B981", fontSize: 18 }} />
-          <span>Bank-grade 256-bit encryption &amp; Single Sign-On enabled.</span>
+          <span>{t("auth.layout.security")}</span>
         </div>
       </div>
 

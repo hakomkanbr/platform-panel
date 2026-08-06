@@ -17,5 +17,5 @@ export interface LanguageFormData {
   name: string;
   nativeName: string;
   flag: string;
-  rtl: 0;
+  rtl: boolean;
 }

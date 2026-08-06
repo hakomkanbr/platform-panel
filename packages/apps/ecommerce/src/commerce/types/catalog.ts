@@ -26,10 +26,14 @@ export interface ProductSummaryReadModel {
   status: ProductStatus;
   visibility: ProductVisibility;
   brandId?: Id | null;
+  brandName?: string | null;
   displayOrder: number;
   publishedAt?: string | null;
   name: string;
   slug: string;
+  sku?: string | null;
+  price?: number | null;
+  currencyId?: Id | null;
   primaryMediaUrl?: string | null;
   hasOptions: boolean;
   variantCount: number;
@@ -85,6 +89,105 @@ export interface ProductUpsertBody {
   externalProvider?: string | null;
   externalUrl?: string | null;
   externalId?: string | null;
+  price?: number | null;
+  compareAtPrice?: number | null;
+  cost?: number | null;
+  currencyId?: string | null;
+  currency?: string | null;
+}
+
+export interface ProductWorkspaceBody {
+  name: string;
+  code: string;
+  slug: string;
+  type: ProductType;
+  structure: ProductStructure;
+  languageId: string;
+  cultureCode: string;
+  shortDescription?: string | null;
+  description?: string | null;
+  brandId?: Id | null;
+  isVisible?: boolean;
+  isFeatured?: boolean;
+  status?: number | null;
+  price?: number | null;
+  compareAtPrice?: number | null;
+  cost?: number | null;
+  currencyId?: string | null;
+  isTrackStock?: boolean;
+  stock?: number | null;
+  sku?: string | null;
+  barcode?: string | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  categoryIds?: Id[];
+  tagIds?: Id[];
+  metadata?: Record<string, string>;
+}
+
+/* ---------------------------------- Pricing (current price from Pricing module) ---------------------------------- */
+
+export interface ProductPricingReadModel {
+  priceId: Id;
+  productId: Id;
+  variantId?: Id | null;
+  currencyId: Id;
+  price: number;
+  compareAtPrice?: number | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  costPrice?: number | null;
+  isActive: boolean;
+  isPublished: boolean;
+  isEffective: boolean;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  publishedAt?: string | null;
+}
+
+/* ---------------------------------- Product Detail (ui-shape) ---------------------------------- */
+
+export interface ProductDetail extends ProductReadModel {
+  brandName?: string | null;
+  sku?: string | null;
+  name: string;
+  slug: string;
+  description?: string | null;
+  shortDescription?: string | null;
+  barcode?: string | null;
+  price?: number | null;
+  compareAtPrice?: number | null;
+  cost?: number | null;
+  currency?: string | null;
+  stock?: number | null;
+  isTrackStock?: boolean;
+  isVisible?: boolean;
+  isFeatured?: boolean;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  pricing?: ProductPricingReadModel | null;
+}
+
+/* ---------------------------------- Product List Item (ui-shape) ---------------------------------- */
+
+export interface ProductListItem {
+  id: Id;
+  code: string;
+  type: ProductType;
+  structure: ProductStructure;
+  status: ProductStatus;
+  visibility: ProductVisibility;
+  name: string;
+  slug: string;
+  brandId?: Id | null;
+  brandName?: string | null;
+  sku?: string | null;
+  price?: number | null;
+  currencyId?: Id | null;
+  stock?: number | null;
+  primaryMediaUrl?: string | null;
+  updatedAt?: string | null;
+  publishedAt?: string | null;
 }
 
 /* ---------------------------------- Product Detail (ui-shape) ---------------------------------- */
@@ -428,7 +531,14 @@ export interface CategoryReadModel {
   parentId?: Id | null;
   path: string;
   level: number;
+  name?: string;
+  slug?: string;
+  description?: string;
+  sortOrder?: number;
+  imageUrl?: string;
+  productCount?: number;
   translations: CategoryTranslationReadModel[];
+  children?: CategoryReadModel[];
 }
 
 export interface CategoryTranslationReadModel {
@@ -488,6 +598,9 @@ export interface BrandReadModel {
   status: BrandStatus;
   logoUrl?: string | null;
   websiteUrl?: string | null;
+  name?: string;
+  slug?: string;
+  description?: string;
   translations: BrandTranslationReadModel[];
 }
 
@@ -552,6 +665,8 @@ export interface BrandFilters {
 export interface TagReadModel {
   id: Id;
   status: TagStatus;
+  name?: string;
+  slug?: string;
   translations: TagTranslationReadModel[];
 }
 
@@ -609,6 +724,8 @@ export interface TagFilters {
 export interface AttributeGroupReadModel {
   id: Id;
   key: string;
+  name?: string;
+  description?: string;
   displayOrder: number;
   translations: AttributeGroupTranslationReadModel[];
   definitions: AttributeDefinitionReadModel[];
@@ -624,12 +741,14 @@ export interface AttributeDefinitionReadModel {
   id: Id;
   attributeGroupId: Id;
   key: string;
+  name?: string;
   valueType: AttributeValueType;
   isRequired: boolean;
   isSearchable: boolean;
   isFilterable: boolean;
   isVisibleOnStorefront: boolean;
   unit?: string | null;
+  displayOrder?: number;
   translations: AttributeDefinitionTranslationReadModel[];
   values: AttributeDefinitionValueReadModel[];
 }

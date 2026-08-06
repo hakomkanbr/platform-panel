@@ -10,7 +10,7 @@ export const SUPPORTED_LOCALES = ["en", "ar", "tr"] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 /** The fallback used when no other source can determine a locale. */
-export const DEFAULT_LOCALE: Locale = "en";
+export const DEFAULT_LOCALE: Locale = "ar";
 
 /** Name of the cookie used to persist the active UI locale. */
 export const LOCALE_COOKIE_NAME = "locale" as const;
@@ -35,7 +35,7 @@ export function isRTL(locale: Locale): boolean {
 
 /** Resolve the text direction for a given locale. */
 export function getDirection(locale: Locale): LocaleDirection {
-  return LOCALE_DIRECTION[locale] ?? "ltr";
+  return LOCALE_DIRECTION[locale] ?? "rtl";
 }
 
 /** Whether a value corresponds to a supported locale. */

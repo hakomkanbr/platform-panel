@@ -11,11 +11,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authApi } from "@repo/auth";
+import { useTranslations } from "@repo/localization";
 
 const { Text } = Typography;
 
 function VerifyEmailPageContent() {
   const router = useRouter();
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "your email";
   const [verified, setVerified] = useState(false);
@@ -96,10 +98,10 @@ function VerifyEmailPageContent() {
               display: "block",
             }}
           >
-            Email verified!
+            {t("auth.verify.emailVerified")}
           </Text>
           <div style={{ color: "#6b7280", fontSize: 13, marginTop: 6 }}>
-            Redirecting to your dashboard...
+            {t("auth.verify.redirectingDashboard")}
           </div>
         </motion.div>
       ) : (
@@ -135,7 +137,7 @@ function VerifyEmailPageContent() {
               display: "block",
             }}
           >
-            Check your inbox
+            {t("auth.verify.checkInbox")}
           </Text>
           <div
             style={{
@@ -145,7 +147,7 @@ function VerifyEmailPageContent() {
               lineHeight: 1.5,
             }}
           >
-            We sent a verification link to{" "}
+            {t("auth.verify.sentTo")}{" "}
             <Text style={{ color: "#374151", fontWeight: 600 }}>{email}</Text>
           </div>
 
@@ -160,8 +162,7 @@ function VerifyEmailPageContent() {
               lineHeight: 1.5,
             }}
           >
-            Didn&apos;t receive the email? Check your spam folder or request a
-            new one below.
+            {t("auth.verify.noEmail")}
           </div>
 
           <Button
@@ -186,8 +187,8 @@ function VerifyEmailPageContent() {
             }}
           >
             {countdown > 0
-              ? `Resend in ${countdown}s`
-              : "Resend verification email"}
+              ? t("auth.verify.resendIn", { seconds: countdown })
+              : t("auth.verify.resendVerification")}
           </Button>
 
           <div style={{ marginTop: 14 }}>
@@ -197,7 +198,7 @@ function VerifyEmailPageContent() {
               style={{ fontSize: 13, fontWeight: 400 }}
             >
               <ArrowRightOutlined style={{ marginRight: 4 }} />
-              Back to login
+              {t("auth.verify.backToLogin")}
             </Link>
           </div>
         </motion.div>

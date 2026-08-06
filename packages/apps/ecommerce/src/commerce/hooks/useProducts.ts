@@ -1,8 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productsApi } from "../api/catalog/products";
-import type { ProductFilters, ProductUpsertBody } from "../api/catalog/products";
+import type { ProductFilters, ProductUpsertBody, ProductWorkspaceBody } from "../types/catalog";
 import { useCommerce } from "../context/CommerceContext";
-import type { ProductDetail, ProductListItem, AddProductOptionValueBody } from "../types/catalog";
+import type { 
+  ProductDetail, 
+  ProductListItem, 
+  AddProductOptionValueBody, 
+  AddProductRelationBody,
+  UpdateProductTranslationBody,
+  AddProductCategoryBody,
+  AddProductTagBody,
+  UpsertProductMetadataBody
+} from "../types/catalog";
 import type { PaginatedResult } from "../types/common";
 
 export function useProducts(params: ProductFilters) {
@@ -40,7 +49,7 @@ export function useCreateProduct() {
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id: string; body: Partial<ProductUpsertBody> }) =>
+    mutationFn: ({ id, body }: { id: string; body: any }) =>
       productsApi.update(id, body),
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "products"] });
@@ -49,10 +58,38 @@ export function useUpdateProduct() {
   });
 }
 
+export function useSaveProductWorkspace() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, body }: { id: string | null; body: ProductWorkspaceBody }) => {
+      if (id) {
+        return productsApi.updateWorkspace(id, body);
+      }
+      return productsApi.createWorkspace(body);
+    },
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "products"] });
+      if (id) {
+        queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, id] });
+      }
+    },
+  });
+}
+
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => productsApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "products"] });
+    },
+  });
+}
+
+export function useBulkDeleteProducts() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) => productsApi.bulkDelete(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "products"] });
     },
@@ -71,6 +108,21 @@ export function useSetProductStatus() {
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "products"] });
       queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, id] });
+    },
+  });
+}
+
+export function useBulkSetProductStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ ids, action }: { ids: string[]; action: "publish" | "unpublish" | "archive" | "restore" }) => {
+      if (action === "publish") return productsApi.bulkPublish(ids);
+      if (action === "unpublish") return productsApi.bulkUnpublish(ids);
+      if (action === "archive") return productsApi.bulkArchive(ids);
+      return productsApi.bulkRestore(ids);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "products"] });
     },
   });
 }
@@ -115,14 +167,17 @@ export function useSaveProductDetail<K extends "options" | "variants" | "media">
   kind: K,
   productId: string | null,
 ) {
+  const { projectId } = useCommerce();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
       entityId,
       body,
+      valuesToRestore,
     }: {
       entityId?: string;
       body: unknown;
+      valuesToRestore?: { languageId: string; cultureCode: string; value: string; name?: string | null; displayOrder: number }[];
     }): Promise<unknown> => {
       if (!productId) throw new Error("Product not selected");
       if (kind === "options") {
@@ -137,8 +192,8 @@ export function useSaveProductDetail<K extends "options" | "variants" | "media">
       return productsApi.addMedia(productId, body as never);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["catalog", "product", kind, undefined, productId] });
-      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", kind] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", projectId, productId] });
     },
   });
 }
@@ -147,6 +202,7 @@ export function useDeleteProductDetail<K extends "options" | "variants" | "media
   kind: K,
   productId: string | null,
 ) {
+  const { projectId } = useCommerce();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (entityId: string) => {
@@ -157,8 +213,23 @@ export function useDeleteProductDetail<K extends "options" | "variants" | "media
       return productsApi.deleteRelation(productId, entityId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["catalog", "product", kind, undefined, productId] });
-      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", kind] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", projectId, productId] });
+    },
+  });
+}
+
+export function useGenerateProductVariants(productId: string | null) {
+  const { projectId } = useCommerce();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+      if (!productId) throw new Error("Product not selected");
+      return productsApi.generateVariants(productId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", "variants"] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", projectId, productId] });
     },
   });
 }
@@ -166,7 +237,7 @@ export function useDeleteProductDetail<K extends "options" | "variants" | "media
 export function useAddProductRelation(productId: string | null) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: { productId: string; relationType?: number }) =>
+    mutationFn: (body: AddProductRelationBody) =>
       productsApi.addRelation(productId as string, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "product", "relations", undefined, productId] });
@@ -175,13 +246,27 @@ export function useAddProductRelation(productId: string | null) {
 }
 
 export function useAddProductOptionValue(productId: string | null) {
+  const { projectId } = useCommerce();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ optionId, body }: { optionId: string; body: AddProductOptionValueBody }) =>
       productsApi.addOptionValue(productId as string, optionId, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["catalog", "product", "options", undefined, productId] });
-      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", "options"] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", projectId, productId] });
+    },
+  });
+}
+
+export function useDeleteProductOptionValue(productId: string | null) {
+  const { projectId } = useCommerce();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ optionId, valueId }: { optionId: string; valueId: string }) =>
+      productsApi.removeOptionValue(productId as string, optionId, valueId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", "options"] });
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", projectId, productId] });
     },
   });
 }
@@ -194,5 +279,77 @@ export function useDeleteProductRelation(productId: string | null) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "product", "relations", undefined, productId] });
     },
+  });
+}
+
+// Orchestrator Hooks for Independent Sections
+
+export function useUpdateProductTranslation(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: UpdateProductTranslationBody) => productsApi.updateTranslation(productId as string, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useAddProductCategory(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: AddProductCategoryBody) => productsApi.addCategory(productId as string, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useRemoveProductCategory(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (categoryId: string) => productsApi.removeCategory(productId as string, categoryId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useAddProductTag(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: AddProductTagBody) => productsApi.addTag(productId as string, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useRemoveProductTag(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (tagId: string) => productsApi.removeTag(productId as string, tagId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useUpsertProductMetadata(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: UpsertProductMetadataBody) => productsApi.upsertMetadata(productId as string, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useRemoveProductMetadata(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (key: string) => productsApi.removeMetadata(productId as string, key),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
   });
 }

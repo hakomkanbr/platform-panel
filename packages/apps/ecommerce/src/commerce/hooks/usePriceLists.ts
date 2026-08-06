@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { priceListsApi } from "../api/pricing/price-lists";
-import type { PriceListFilters, PriceListUpsertBody } from "../api/pricing/price-lists";
+
 import { useCommerce } from "../context/CommerceContext";
-import type { PriceListReadModel } from "../types/pricing";
+import type { PriceListReadModel, PriceListFilters } from "../types/pricing";
 import type { PaginatedResult } from "../types/common";
 
 export function usePriceLists(params?: PriceListFilters) {
@@ -29,7 +29,7 @@ export function usePriceList(id: string | null) {
 export function useSavePriceList() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, body }: { id?: string; body: PriceListUpsertBody }) =>
+    mutationFn: ({ id, body }: { id?: string; body: any }) =>
       id ? priceListsApi.update(id, body) : priceListsApi.create(body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pricing", "price-lists"] });

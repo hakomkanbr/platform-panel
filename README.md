@@ -157,3 +157,19 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.dev/docs/reference/configuration)
 - [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+
+اريد عمل متجر الكتروني بحيث يكون هناك قوالب ممكن ان يختارها المستخدم لكن بالبداية سوف اضع قالب واحد فقط وايضا سوف يكون بالشكل التالي
+
+share2sells.com => Home Page (Multi Marchant)
+    - Navbar
+    - Categories
+    - Products
+    - Footer
+share2sells.com/Templates => System Templates
+share2sells.com/Marchant => Marchant
+share2sells.com/store/[store-slug] => Marchant Store
+    logo , brand , colors , categories , products , openin times , review (later)
+share2sells.com/categories => Category Detail Page
+share2sells.com/product-detail => Product Detail Page
+
+قما هيا افضل التقنيات لهذا

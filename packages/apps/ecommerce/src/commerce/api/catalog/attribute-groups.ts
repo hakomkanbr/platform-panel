@@ -4,7 +4,7 @@ import type { AttributeGroupReadModel, AttributeGroupFilters, CreateAttributeGro
 
 export const attributeGroupsApi = {
   list: (params?: AttributeGroupFilters) =>
-    http.get<PaginatedResult<AttributeGroupReadModel>>("/Admin/AttributeGroups", params),
+    http.get<PaginatedResult<AttributeGroupReadModel>>("/Admin/AttributeGroups", params as Record<string, unknown>),
 
   getById: (id: string) => http.get<AttributeGroupReadModel>(`/Admin/AttributeGroups/${id}`),
 

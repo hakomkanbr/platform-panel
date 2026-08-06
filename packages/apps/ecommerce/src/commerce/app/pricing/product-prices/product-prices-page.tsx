@@ -22,15 +22,20 @@ import type { TableColumnsType } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm, EmptyState } from "@repo/ui";
 import { formatCurrency, formatDateTime } from "@repo/utils";
+import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
 import { enumLabel, enumOptions } from "../../../types/enums";
-import type { ProductPriceReadModel, PriceStatus, PriceTier, PriceConstraint } from "../../../types/pricing";
+import type { ProductPriceReadModel, PricingStatus, PriceTierReadModel, PriceConstraintReadModel } from "../../../types/pricing";
 import {
   useDeleteProductPrice,
   useProductPrice,
   useProductPrices,
   useSaveProductPrice,
+  useSavePriceTier,
+  useDeletePriceTier,
+  useSavePriceConstraint,
+  useDeletePriceConstraint,
 } from "../../../hooks/useProductPrices";
 import { usePriceLists } from "../../../hooks/usePriceLists";
 import { useProducts } from "../../../hooks/useProducts";
@@ -41,6 +46,7 @@ const { Text } = Typography;
 type PriceRow = ProductPriceReadModel & Record<string, unknown>;
 
 export function ProductPricesPage() {
+  const t = useTranslations();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
@@ -82,12 +88,12 @@ export function ProductPricesPage() {
           minAmount: values.minAmount as number | undefined,
           maxAmount: values.maxAmount as number | undefined,
           costAmount: values.costAmount as number | undefined,
-          status: ((values.status as PriceStatus) ?? "draft"),
+          status: ((values.status as PricingStatus) ?? 1),
           effectiveFrom: values.effectiveFrom as string | undefined,
           effectiveTo: values.effectiveTo as string | undefined,
         },
       });
-      message.success("Product price created");
+      message.success(t("pricing.productPrices.created"));
       setDrawerOpen(false);
     } catch (e) {
       message.error(getApiErrorMessage(e));
@@ -96,25 +102,25 @@ export function ProductPricesPage() {
 
   const columns: TableColumnsType<PriceRow> = [
     {
-      title: "Product",
+      title: t("pricing.productPrices.productColumn"),
       dataIndex: "productId",
       render: (v) => <Text strong>{v ?? "\u2014"}</Text>,
     },
-    { title: "Price list", dataIndex: "priceListId", render: (v) => v ?? "\u2014" },
-    { title: "Currency", dataIndex: "currencyId", render: (v) => v ?? "\u2014" },
+    { title: t("pricing.productPrices.priceListColumn"), dataIndex: "priceListId", render: (v) => v ?? "\u2014" },
+    { title: t("pricing.productPrices.currencyColumn"), dataIndex: "currencyId", render: (v) => v ?? "\u2014" },
     {
-      title: "Base price",
+      title: t("pricing.productPrices.basePriceColumn"),
       dataIndex: "basePrice",
       render: (v, r) => <Text strong>{formatCurrency(v, r.currencyId)}</Text>,
     },
     {
-      title: "Compare-at",
+      title: t("pricing.productPrices.compareAtColumn"),
       dataIndex: "compareAtPrice",
       render: (v, r) => formatCurrency(v, r.currencyId),
     },
-    { title: "Status", dataIndex: "status", width: 110, render: (v) => <StatusTag value={v} /> },
+    { title: t("pricing.productPrices.statusColumn"), dataIndex: "status", width: 110, render: (v) => <StatusTag value={v} /> },
     {
-      title: "Updated",
+      title: t("pricing.productPrices.updatedColumn"),
       dataIndex: "updatedAt",
       width: 150,
       render: (v) => <span style={{ color: "var(--text-secondary)" }}>{formatDateTime(v)}</span>,
@@ -123,12 +129,12 @@ export function ProductPricesPage() {
 
   return (
     <CommerceShell
-      title="Product prices"
-      description="Set explicit prices per product and price list, with tiers and constraints."
-      breadcrumbs={[{ title: "Pricing", href: "/admin/pricing" }, { title: "Product prices" }]}
+      title={t("pricing.productPrices.title")}
+      description={t("pricing.productPrices.description")}
+      breadcrumbs={[{ title: t("pricing.title"), href: "/admin/pricing" }, { title: t("pricing.productPrices.title") }]}
       actions={
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
-          New price
+          {t("pricing.productPrices.new")}
         </Button>
       }
     >
@@ -147,7 +153,7 @@ export function ProductPricesPage() {
           setPageSize(ps);
         }}
         searchable
-        searchPlaceholder="Search by product or price list..."
+        searchPlaceholder={t("pricing.productPrices.searchPlaceholder")}
         onSearch={(term) => {
           setSearch(term);
           setPage(1);
@@ -157,10 +163,10 @@ export function ProductPricesPage() {
             <Select
               value={status}
               options={[
-                { value: "", label: "All statuses" },
-                { value: "draft", label: "Draft" },
-                { value: "active", label: "Active" },
-                { value: "inactive", label: "Inactive" },
+                { value: "", label: t("common.actions.allStatuses") },
+                { value: "draft", label: t("catalog.status.draft") },
+                { value: "active", label: t("catalog.status.active") },
+                { value: "inactive", label: t("catalog.status.inactive") },
               ]}
               onChange={(v) => {
                 setStatus(v);
@@ -171,7 +177,7 @@ export function ProductPricesPage() {
             <Select
               value={priceListId}
               allowClear
-              placeholder="Price list"
+              placeholder={t("pricing.productPrices.priceListPlaceholder")}
               loading={priceLists.isLoading}
               options={(priceLists.data?.data ?? []).map((p) => ({ value: p.id, label: p.name }))}
               onChange={(v) => {
@@ -182,25 +188,25 @@ export function ProductPricesPage() {
             />
           </Space>
         }
-        title={`${data?.count ?? 0} prices`}
+        title={t("pricing.productPrices.count", { count: data?.count ?? 0 })}
         onRowClick={(record) => {
           setDetailId(record.id);
           setDetailOpen(true);
         }}
-        emptyTitle="No product prices"
-        emptyDescription="Add a price for a product within a price list."
-        emptyAction={{ label: "New price", onClick: openCreate }}
+        emptyTitle={t("pricing.productPrices.emptyTitle")}
+        emptyDescription={t("pricing.productPrices.emptyDescription")}
+        emptyAction={{ label: t("pricing.productPrices.new"), onClick: openCreate }}
       />
 
       <DrawerForm
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title="New product price"
+        title={t("pricing.productPrices.drawerCreateTitle")}
         width={600}
         form={form}
         loading={save.isPending}
         onFinish={onFinish}
-        submitLabel="Create price"
+        submitLabel={t("pricing.productPrices.submitCreate")}
       >
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <PriceFormFields
@@ -229,6 +235,7 @@ function PriceFormFields({
   priceLists: { id: string; name: string }[];
   isCreate?: boolean;
 }) {
+  const t = useTranslations();
   const [productSearch, setProductSearch] = useState("");
   const products = useProducts({ page: 1, pageSize: 50, search: productSearch || undefined });
   const priceListId = Form.useWatch("priceListId", form);
@@ -236,21 +243,21 @@ function PriceFormFields({
   return (
     <Row gutter={16}>
       <Col span={12}>
-        <Form.Item name="priceListId" label="Price list" rules={[{ required: true, message: "Required" }]}>
+        <Form.Item name="priceListId" label={t("pricing.productPrices.priceListHint")} rules={[{ required: true, message: t("common.fields.required") }]}>
           <Select
             showSearch
             optionFilterProp="label"
-            placeholder="Select price list"
+            placeholder={t("pricing.productPrices.selectPriceList")}
             options={priceLists.map((p) => ({ value: p.id, label: p.name }))}
           />
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="productId" label="Product">
+        <Form.Item name="productId" label={t("pricing.productPrices.detail.product")}>
           <Select
             showSearch
             allowClear
-            placeholder="Search product"
+            placeholder={t("pricing.productPrices.selectProduct")}
             onSearch={setProductSearch}
             optionFilterProp="label"
             loading={products.isLoading}
@@ -260,7 +267,7 @@ function PriceFormFields({
       </Col>
       {isCreate && (
         <Col span={12}>
-          <Form.Item name="currencyId" label="Currency code">
+          <Form.Item name="currencyId" label={t("pricing.productPrices.currencyCode")}>
             <Select
               allowClear
               placeholder="USD"
@@ -270,53 +277,53 @@ function PriceFormFields({
         </Col>
       )}
       <Col span={12}>
-        <Form.Item name="status" label="Status" initialValue="draft">
+        <Form.Item name="status" label={t("common.fields.status")} initialValue="draft">
           <Select
             options={[
-              { value: "draft", label: "Draft" },
-              { value: "active", label: "Active" },
-              { value: "inactive", label: "Inactive" },
+              { value: "draft", label: t("catalog.status.draft") },
+              { value: "active", label: t("catalog.status.active") },
+              { value: "inactive", label: t("catalog.status.inactive") },
             ]}
           />
         </Form.Item>
       </Col>
       <Col span={8}>
-        <Form.Item name="baseAmount" label="Base price" rules={[{ required: true, message: "Required" }]}>
+        <Form.Item name="baseAmount" label={t("pricing.productPrices.basePrice")} rules={[{ required: true, message: t("common.fields.required") }]}>
           <InputNumber min={0} style={{ width: "100%" }} />
         </Form.Item>
       </Col>
       <Col span={8}>
-        <Form.Item name="compareAtAmount" label="Compare-at">
+        <Form.Item name="compareAtAmount" label={t("pricing.productPrices.compareAt")}>
           <InputNumber min={0} style={{ width: "100%" }} />
         </Form.Item>
       </Col>
       <Col span={8}>
-        <Form.Item name="costAmount" label="Cost">
+        <Form.Item name="costAmount" label={t("pricing.productPrices.cost")}>
           <InputNumber min={0} style={{ width: "100%" }} />
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="minAmount" label="Min price">
+        <Form.Item name="minAmount" label={t("pricing.productPrices.minPrice")}>
           <InputNumber min={0} style={{ width: "100%" }} />
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="maxAmount" label="Max price">
+        <Form.Item name="maxAmount" label={t("pricing.productPrices.maxPrice")}>
           <InputNumber min={0} style={{ width: "100%" }} />
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="effectiveFrom" label="Effective from">
+        <Form.Item name="effectiveFrom" label={t("pricing.productPrices.effectiveFrom")}>
           <DatePicker showTime style={{ width: "100%" }} />
         </Form.Item>
       </Col>
       <Col span={12}>
-        <Form.Item name="effectiveTo" label="Effective to">
+        <Form.Item name="effectiveTo" label={t("pricing.productPrices.effectiveTo")}>
           <DatePicker showTime style={{ width: "100%" }} />
         </Form.Item>
       </Col>
       <Text type="secondary" style={{ fontSize: 12, padding: "0 8px" }}>
-        Price list: {priceListId ? (priceLists.find((p) => p.id === priceListId)?.name ?? priceListId) : "not selected"}
+        {t("pricing.productPrices.priceListHint")}: {priceListId ? (priceLists.find((p) => p.id === priceListId)?.name ?? priceListId) : t("pricing.productPrices.priceListNotSelected")}
       </Text>
     </Row>
   );
@@ -331,6 +338,7 @@ function PriceDetailDrawer({
   onClose: () => void;
   priceId: string | null;
 }) {
+  const t = useTranslations();
   const { data: price, isLoading, error } = useProductPrice(priceId);
   const saveTier = useSavePriceTier(priceId);
   const removeTier = useDeletePriceTier(priceId);
@@ -345,7 +353,7 @@ function PriceDetailDrawer({
     if (!priceId) return;
     try {
       await removeMutation.mutateAsync(priceId);
-      message.success("Price deleted");
+      message.success(t("pricing.productPrices.deleted"));
       setRemoveOpen(false);
       onClose();
     } catch (e) {
@@ -353,21 +361,21 @@ function PriceDetailDrawer({
     }
   };
 
-  const tierColumns: TableColumnsType<PriceTier> = [
-    { title: "Min qty", dataIndex: "minQuantity" },
-    { title: "Max qty", dataIndex: "maxQuantity", render: (v) => v ?? "\u221E" },
-    { title: "Price", dataIndex: "price", render: (v) => formatCurrency(v, price?.currencyId) },
+  const tierColumns: TableColumnsType<PriceTierReadModel> = [
+    { title: t("pricing.productPrices.detail.minQty"), dataIndex: "minQuantity" },
+    { title: t("pricing.productPrices.detail.maxQty"), dataIndex: "maxQuantity", render: (v) => v ?? "\u221E" },
+    { title: t("pricing.productPrices.detail.price"), dataIndex: "price", render: (v) => formatCurrency(v, price?.currencyId) },
     {
       title: "",
       key: "actions",
       width: 80,
       render: (_, record) => (
         <Popconfirm
-          title="Delete tier?"
+          title={t("pricing.productPrices.detail.deleteTierConfirm")}
           onConfirm={async () => {
             try {
               await removeTier.mutateAsync(record.id as string);
-              message.success("Tier deleted");
+              message.success(t("pricing.productPrices.detail.tierDeleted"));
             } catch (e) {
               message.error(getApiErrorMessage(e));
             }
@@ -379,25 +387,25 @@ function PriceDetailDrawer({
     },
   ];
 
-  const constraintColumns: TableColumnsType<PriceConstraint> = [
+  const constraintColumns: TableColumnsType<PriceConstraintReadModel> = [
     {
-      title: "Type",
+      title: t("pricing.productPrices.detail.type"),
       dataIndex: "type",
-      render: (v) => enumLabel("priceConstraintType", v),
+      render: (v) => enumLabel("priceConstraintType", v, t),
     },
-    { title: "Value", dataIndex: "value" },
-    { title: "Message", dataIndex: "message", render: (v) => v ?? "\u2014" },
+    { title: t("pricing.productPrices.detail.value"), dataIndex: "value" },
+    { title: t("pricing.productPrices.detail.message"), dataIndex: "message", render: (v) => v ?? "\u2014" },
     {
       title: "",
       key: "actions",
       width: 80,
       render: (_, record) => (
         <Popconfirm
-          title="Delete constraint?"
+          title={t("pricing.productPrices.detail.deleteConstraintConfirm")}
           onConfirm={async () => {
             try {
               await removeConstraint.mutateAsync(record.id as string);
-              message.success("Constraint deleted");
+              message.success(t("pricing.productPrices.detail.constraintDeleted"));
             } catch (e) {
               message.error(getApiErrorMessage(e));
             }
@@ -413,41 +421,41 @@ function PriceDetailDrawer({
     <DrawerForm
       open={open}
       onClose={onClose}
-      title="Product price"
+      title={t("pricing.productPrices.detail.title")}
       description={price?.productId}
       width={680}
       footer={
         <Space>
           <Button danger icon={<DeleteOutlined />} onClick={openRemove}>
-            Delete
+            {t("pricing.productPrices.detail.delete")}
           </Button>
           <Button type="primary" onClick={onClose}>
-            Close
+            {t("pricing.productPrices.detail.close")}
           </Button>
         </Space>
       }
     >
-      {isLoading && <Text type="secondary">Loading...</Text>}
+      {isLoading && <Text type="secondary">{t("pricing.productPrices.detail.loading")}</Text>}
       {error && <Text type="danger">{getApiErrorMessage(error)}</Text>}
       {price && (
         <Space direction="vertical" size={24} style={{ width: "100%" }}>
           <Descriptions column={2} size="small">
-            <Descriptions.Item label="Product">{price.productId}</Descriptions.Item>
-            <Descriptions.Item label="Price list">{price.priceListId ?? "\u2014"}</Descriptions.Item>
-            <Descriptions.Item label="Base price">
+            <Descriptions.Item label={t("pricing.productPrices.detail.product")}>{price.productId}</Descriptions.Item>
+            <Descriptions.Item label={t("pricing.productPrices.detail.priceList")}>{price.priceListId ?? "\u2014"}</Descriptions.Item>
+            <Descriptions.Item label={t("pricing.productPrices.detail.basePrice")}>
               <Text strong>{formatCurrency(price.basePrice, price.currencyId)}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="Status">
+            <Descriptions.Item label={t("pricing.productPrices.detail.status")}>
               <StatusTag value={price.status} />
             </Descriptions.Item>
-            <Descriptions.Item label="Approval">{enumLabel("approvalStatus", price.approvalStatus)}</Descriptions.Item>
-            <Descriptions.Item label="Active">{price.isActive ? "Yes" : "No"}</Descriptions.Item>
+            <Descriptions.Item label={t("pricing.productPrices.detail.approval")}>{enumLabel("approvalStatus", price.approvalStatus, t)}</Descriptions.Item>
+            <Descriptions.Item label={t("pricing.productPrices.detail.active")}>{price.isActive ? t("common.actions.yes") : t("common.actions.no")}</Descriptions.Item>
           </Descriptions>
 
           <AddListSection
-            title={`Tiers (${price.tiers.length})`}
-            addLabel="Add tier"
-            emptyTitle="No tiers"
+            title={t("pricing.productPrices.detail.tiersTitle", { count: price.tiers.length })}
+            addLabel={t("pricing.productPrices.detail.addTier")}
+            emptyTitle={t("pricing.productPrices.detail.noTiers")}
             loading={saveTier.isPending}
             onSubmit={async (values) => {
               try {
@@ -458,72 +466,72 @@ function PriceDetailDrawer({
                     maxQuantity: values.maxQuantity,
                   },
                 });
-                message.success("Tier added");
+                message.success(t("pricing.productPrices.detail.tierAdded"));
               } catch (e) {
                 message.error(getApiErrorMessage(e));
               }
             }}
             formFields={
               <>
-                <Form.Item name="minQuantity" label="Min qty" rules={[{ required: true }]}>
+                <Form.Item name="minQuantity" label={t("pricing.productPrices.detail.minQty")} rules={[{ required: true }]}>
                   <InputNumber min={0} style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item name="maxQuantity" label="Max qty">
+                <Form.Item name="maxQuantity" label={t("pricing.productPrices.detail.maxQty")}>
                   <InputNumber min={0} style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+                <Form.Item name="price" label={t("pricing.productPrices.detail.price")} rules={[{ required: true }]}>
                   <InputNumber min={0} style={{ width: "100%" }} />
                 </Form.Item>
               </>
             }
             renderTable={
-              <Table<PriceTier>
+              <Table<PriceTierReadModel>
                 rowKey={(r) => r.id ?? Math.random().toString(36)}
                 columns={tierColumns}
                 dataSource={price.tiers}
                 pagination={false}
                 size="small"
-                locale={{ emptyText: <EmptyState title="No tiers" /> }}
+                locale={{ emptyText: <EmptyState title={t("pricing.productPrices.detail.noTiers")} /> }}
               />
             }
           />
 
           <AddListSection
-            title={`Constraints (${price.constraints.length})`}
-            addLabel="Add constraint"
-            emptyTitle="No constraints"
+            title={t("pricing.productPrices.detail.constraintsTitle", { count: price.constraints.length })}
+            addLabel={t("pricing.productPrices.detail.addConstraint")}
+            emptyTitle={t("pricing.productPrices.detail.noConstraints")}
             loading={saveConstraint.isPending}
             onSubmit={async (values) => {
               try {
                 await saveConstraint.mutateAsync({
                   body: { type: values.type, value: values.value, message: values.message },
                 });
-                message.success("Constraint added");
+                message.success(t("pricing.productPrices.detail.constraintAdded"));
               } catch (e) {
                 message.error(getApiErrorMessage(e));
               }
             }}
             formFields={
               <>
-                <Form.Item name="type" label="Type" initialValue={1}>
-                  <Select options={enumOptions("priceConstraintType")} />
+                <Form.Item name="type" label={t("pricing.productPrices.detail.type")} initialValue={1}>
+                  <Select options={enumOptions("priceConstraintType", t)} />
                 </Form.Item>
-                <Form.Item name="value" label="Value" rules={[{ required: true }]}>
+                <Form.Item name="value" label={t("pricing.productPrices.detail.value")} rules={[{ required: true }]}>
                   <InputNumber style={{ width: "100%" }} />
                 </Form.Item>
-                <Form.Item name="message" label="Message">
-                  <Input placeholder="Note" />
+                <Form.Item name="message" label={t("pricing.productPrices.detail.message")}>
+                  <Input placeholder={t("pricing.productPrices.detail.notePlaceholder")} />
                 </Form.Item>
               </>
             }
             renderTable={
-              <Table<PriceConstraint>
+              <Table<PriceConstraintReadModel>
                 rowKey={(r) => r.id ?? Math.random().toString(36)}
                 columns={constraintColumns}
                 dataSource={price.constraints}
                 pagination={false}
                 size="small"
-                locale={{ emptyText: <EmptyState title="No constraints" /> }}
+                locale={{ emptyText: <EmptyState title={t("pricing.productPrices.detail.noConstraints")} /> }}
               />
             }
           />
@@ -532,14 +540,14 @@ function PriceDetailDrawer({
 
       <Modal
         open={removeOpen}
-        title="Delete price"
-        okText="Delete"
+        title={t("pricing.productPrices.deleteTitle")}
+        okText={t("pricing.productPrices.detail.delete")}
         okButtonProps={{ danger: true }}
         onCancel={() => setRemoveOpen(false)}
         onOk={onRemove}
         confirmLoading={removeMutation.isPending}
       >
-        <Text>This will permanently delete the price. This action cannot be undone.</Text>
+        <Text>{t("pricing.productPrices.deleteContent")}</Text>
       </Modal>
     </DrawerForm>
   );
@@ -562,6 +570,7 @@ function AddListSection({
   formFields: React.ReactNode;
   renderTable: React.ReactNode;
 }) {
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
 
@@ -587,7 +596,7 @@ function AddListSection({
         title={addLabel}
         onCancel={() => setOpen(false)}
         onOk={() => form.submit()}
-        okText="Save"
+        okText={t("common.actions.saveChanges")}
         destroyOnClose
       >
         <Form

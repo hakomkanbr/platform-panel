@@ -21,12 +21,12 @@ export async function resolveServerLocale(
   options: { defaultLocale?: Locale } = {},
 ): Promise<Locale> {
   const cookies = new Map<string, string>();
-  for (const cookie of request.cookies ?? []) {
+  for (const cookie of (request.cookies ?? []) as any) {
     cookies.set(cookie.name, cookie.value);
   }
 
   let browserLang: string | undefined;
-  for (const header of request.headers ?? []) {
+  for (const header of (request.headers ?? []) as any) {
     if (header.name.toLowerCase() === "accept-language") {
       browserLang = header.value.split(",")[0]?.trim();
       break;

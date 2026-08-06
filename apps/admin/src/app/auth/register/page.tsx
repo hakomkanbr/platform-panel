@@ -27,12 +27,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authApi } from "@repo/auth";
+import { useTranslations } from "@repo/localization";
 
 const { Text, Title } = Typography;
 
 const INDUSTRIES = [
-  "Technology", "Healthcare", "Finance", "Education", "E-commerce",
-  "Real Estate", "Media & Entertainment", "Consulting", "Manufacturing", "Other",
+  { key: "technology", value: "Technology" },
+  { key: "healthcare", value: "Healthcare" },
+  { key: "finance", value: "Finance" },
+  { key: "education", value: "Education" },
+  { key: "ecommerce", value: "E-commerce" },
+  { key: "realEstate", value: "Real Estate" },
+  { key: "mediaEntertainment", value: "Media & Entertainment" },
+  { key: "consulting", value: "Consulting" },
+  { key: "manufacturing", value: "Manufacturing" },
+  { key: "other", value: "Other" },
 ];
 
 function getPasswordStrength(password: string) {
@@ -43,20 +52,21 @@ function getPasswordStrength(password: string) {
   if (/[a-z]/.test(password)) score += 15;
   if (/[0-9]/.test(password)) score += 15;
   if (/[^A-Za-z0-9]/.test(password)) score += 15;
-  if (score < 30) return { score, label: "Weak", color: "#ef4444" };
-  if (score < 50) return { score, label: "Fair", color: "#f59e0b" };
-  if (score < 75) return { score, label: "Strong", color: "#22c55e" };
-  return { score, label: "Very Strong", color: "#F7931E" };
+  if (score < 30) return { score, labelKey: "strengthWeak", color: "#ef4444" };
+  if (score < 50) return { score, labelKey: "strengthFair", color: "#f59e0b" };
+  if (score < 75) return { score, labelKey: "strengthStrong", color: "#22c55e" };
+  return { score, labelKey: "strengthVeryStrong", color: "#F7931E" };
 }
-
-const stepConfigs = [
-  { id: 0, label: "Account", icon: <UserOutlined />, title: "Create your account", desc: "Fill in your personal details" },
-  { id: 1, label: "Company", icon: <BankOutlined />, title: "Company details", desc: "Tell us about your business" },
-  { id: 2, label: "Review", icon: <CheckCircleFilled />, title: "Almost done!", desc: "Review and confirm your information" },
-];
 
 export default function RegisterPage() {
   const router = useRouter();
+  const t = useTranslations();
+
+  const stepConfigs = [
+    { id: 0, label: t("auth.register.stepAccount"), icon: <UserOutlined />, title: t("auth.register.createAccountTitle"), desc: t("auth.register.createAccountDesc") },
+    { id: 1, label: t("auth.register.stepCompany"), icon: <BankOutlined />, title: t("auth.register.companyDetailsTitle"), desc: t("auth.register.companyDetailsDesc") },
+    { id: 2, label: t("auth.register.stepReview"), icon: <CheckCircleFilled />, title: t("auth.register.almostDoneTitle"), desc: t("auth.register.almostDoneDesc") },
+  ];
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,11 +83,11 @@ export default function RegisterPage() {
   const strength = useMemo(() => getPasswordStrength(form.password), [form.password]);
 
   const checkStep1 = () => {
-    if (!form.firstName.trim()) { setError("First name is required"); return false; }
-    if (!form.lastName.trim()) { setError("Last name is required"); return false; }
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) { setError("Valid email is required"); return false; }
-    if (form.password.length < 8) { setError("Password must be at least 8 characters"); return false; }
-    if (form.password !== form.confirmPassword) { setError("Passwords do not match"); return false; }
+    if (!form.firstName.trim()) { setError(t("auth.register.firstNameRequired")); return false; }
+    if (!form.lastName.trim()) { setError(t("auth.register.lastNameRequired")); return false; }
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) { setError(t("auth.register.validEmailRequired")); return false; }
+    if (form.password.length < 8) { setError(t("auth.register.passwordMinChars")); return false; }
+    if (form.password !== form.confirmPassword) { setError(t("auth.register.passwordsDoNotMatch")); return false; }
     return true;
   };
 
@@ -85,10 +95,10 @@ export default function RegisterPage() {
     setError(null);
     if (step === 0 && checkStep1()) setStep(1);
     else if (step === 1) {
-      if (!form.companyName.trim()) { setError("Company name is required"); return; }
+      if (!form.companyName.trim()) { setError(t("auth.register.companyNameRequired")); return; }
       setStep(2);
     }
-  }, [step, form]);
+  }, [step, form, t]);
 
   const handleBack = useCallback(() => {
     setError(null);
@@ -96,7 +106,7 @@ export default function RegisterPage() {
   }, [step]);
 
   const handleRegister = useCallback(async () => {
-    if (!acceptedTerms) { setError("Please accept the terms of service"); return; }
+    if (!acceptedTerms) { setError(t("auth.register.acceptTerms")); return; }
     setError(null);
     setLoading(true);
     try {
@@ -110,17 +120,17 @@ export default function RegisterPage() {
         teamSize: form.teamSize || undefined,
       });
       if (result.success) {
-        message.success("Account created successfully!");
+        message.success(t("auth.register.accountCreated"));
         router.push(`/auth/verify-email?email=${encodeURIComponent(form.email)}`);
       } else {
-        setError(result.error?.message || "Registration failed");
+        setError(result.error?.message || t("auth.register.registrationFailed"));
       }
     } catch {
-      setError("Connection error. Please try again.");
+      setError(t("auth.register.connectionError"));
     } finally {
       setLoading(false);
     }
-  }, [form, acceptedTerms, router]);
+  }, [form, acceptedTerms, router, t]);
 
   return (
     <>
@@ -234,9 +244,9 @@ export default function RegisterPage() {
             <div style={{ border: "1px solid #f0f0f0", borderRadius: 10, padding: 16, marginBottom: 14 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
                 <div>
-                  <label className="auth-label">First name</label>
+                  <label className="auth-label">{t("auth.register.firstName")}</label>
                   <Input
-                    size="large" placeholder="John"
+                    size="large" placeholder={t("auth.register.firstNamePlaceholder")}
                     className="auth-input-wrapper"
                     prefix={<UserOutlined style={{ color: "#9ca3af", fontSize: 15 }} />}
                     value={form.firstName}
@@ -244,9 +254,9 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="auth-label">Last name</label>
+                  <label className="auth-label">{t("auth.register.lastName")}</label>
                   <Input
-                    size="large" placeholder="Doe"
+                    size="large" placeholder={t("auth.register.lastNamePlaceholder")}
                     className="auth-input-wrapper"
                     prefix={<UserOutlined style={{ color: "#9ca3af", fontSize: 15 }} />}
                     value={form.lastName}
@@ -257,9 +267,9 @@ export default function RegisterPage() {
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
                 <div>
-                  <label className="auth-label">Email</label>
+                  <label className="auth-label">{t("auth.register.email")}</label>
                   <Input
-                    size="large" placeholder="you@company.com"
+                    size="large" placeholder={t("auth.register.emailPlaceholder")}
                     className="auth-input-wrapper"
                     prefix={<MailOutlined style={{ color: "#9ca3af", fontSize: 15 }} />}
                     value={form.email}
@@ -267,9 +277,9 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="auth-label">Password</label>
+                  <label className="auth-label">{t("auth.register.password")}</label>
                   <Input.Password
-                    size="large" placeholder="Create a password"
+                    size="large" placeholder={t("auth.register.createPasswordPlaceholder")}
                     className="auth-input-wrapper"
                     prefix={<LockOutlined style={{ color: "#9ca3af", fontSize: 15 }} />}
                     value={form.password}
@@ -285,14 +295,14 @@ export default function RegisterPage() {
                       <motion.div key={i} animate={{ flex: 1, height: 3, borderRadius: 2, background: strength.score / 25 >= i ? strength.color : "#e5e7eb" }} />
                     ))}
                   </div>
-                  <Text style={{ color: strength.color, fontSize: 11, fontWeight: 500 }}>{strength.label}</Text>
+                  <Text style={{ color: strength.color, fontSize: 11, fontWeight: 500 }}>{t(`auth.register.${strength.labelKey}`)}</Text>
                 </div>
               )}
 
               <div>
-                <label className="auth-label">Confirm password</label>
+                <label className="auth-label">{t("auth.register.confirmPassword")}</label>
                 <Input.Password
-                  size="large" placeholder="Repeat your password"
+                  size="large" placeholder={t("auth.register.repeatPasswordPlaceholder")}
                   className="auth-input-wrapper"
                   prefix={<LockOutlined style={{ color: "#9ca3af", fontSize: 15 }} />}
                   value={form.confirmPassword}
@@ -300,14 +310,14 @@ export default function RegisterPage() {
                   iconRender={(visible) => visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
                 />
                 {form.confirmPassword && form.password !== form.confirmPassword && (
-                  <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 4, display: "block" }}>Passwords do not match</Text>
+                  <Text style={{ color: "#ef4444", fontSize: 11, marginTop: 4, display: "block" }}>{t("auth.register.passwordsDoNotMatch")}</Text>
                 )}
               </div>
             </div>
 
             <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
               <Button type="primary" size="large" onClick={handleNext} className="auth-btn-gradient">
-                <Space>Continue <ArrowRightOutlined /></Space>
+                <Space>{t("auth.register.continue")} <ArrowRightOutlined /></Space>
               </Button>
             </motion.div>
           </motion.div>
@@ -324,9 +334,9 @@ export default function RegisterPage() {
             <div style={{ border: "1px solid #f0f0f0", borderRadius: 10, padding: 16, marginBottom: 14 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
                 <div>
-                  <label className="auth-label">Company name</label>
+                  <label className="auth-label">{t("auth.register.companyName")}</label>
                   <Input
-                    size="large" placeholder="Acme Inc."
+                    size="large" placeholder={t("auth.register.companyPlaceholder")}
                     className="auth-input-wrapper"
                     prefix={<BankOutlined style={{ color: "#9ca3af", fontSize: 15 }} />}
                     value={form.companyName}
@@ -334,26 +344,26 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="auth-label">Industry</label>
+                  <label className="auth-label">{t("auth.register.industry")}</label>
                   <Select
-                    size="large" placeholder="Select your industry"
+                    size="large" placeholder={t("auth.register.selectIndustry")}
                     value={form.industry || undefined}
                     onChange={(v) => updateForm("industry", v)}
                     style={{ width: "100%" }}
-                    options={INDUSTRIES.map((i) => ({ label: i, value: i }))}
+                    options={INDUSTRIES.map((ind) => ({ label: t(`auth.register.industries.${ind.key}`), value: ind.value }))}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="auth-label">Team size</label>
+                <label className="auth-label">{t("auth.register.teamSize")}</label>
                 <Select
-                  size="large" placeholder="How many people?"
+                  size="large" placeholder={t("auth.register.howManyPeople")}
                   value={form.teamSize || undefined}
                   onChange={(v) => updateForm("teamSize", v)}
                   style={{ width: "100%" }}
                   options={[
-                    { label: "Just me", value: 1 },
+                    { label: t("auth.register.teamJustMe"), value: 1 },
                     { label: "2-10", value: 5 },
                     { label: "11-50", value: 25 },
                     { label: "51-200", value: 100 },
@@ -366,12 +376,12 @@ export default function RegisterPage() {
             <Space style={{ width: "100%" }} size={10}>
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} style={{ flex: 1 }}>
                 <Button size="large" icon={<ArrowLeftOutlined />} onClick={handleBack} className="auth-btn-outline">
-                  Back
+                  {t("auth.register.back")}
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} style={{ flex: 1 }}>
                 <Button type="primary" size="large" onClick={handleNext} className="auth-btn-gradient">
-                  <Space>Continue <ArrowRightOutlined /></Space>
+                  <Space>{t("auth.register.continue")} <ArrowRightOutlined /></Space>
                 </Button>
               </motion.div>
             </Space>
@@ -400,17 +410,17 @@ export default function RegisterPage() {
               >
                 <CheckCircleFilled style={{ fontSize: 28, color: "#22c55e" }} />
               </motion.div>
-              <Text style={{ color: "#374151", fontSize: 15, fontWeight: 600, display: "block" }}>Review your information</Text>
-              <div style={{ color: "#6b7280", fontSize: 13, marginTop: 2 }}>Please review before creating your account</div>
+              <Text style={{ color: "#374151", fontSize: 15, fontWeight: 600, display: "block" }}>{t("auth.register.reviewInformation")}</Text>
+              <div style={{ color: "#6b7280", fontSize: 13, marginTop: 2 }}>{t("auth.register.reviewBeforeCreate")}</div>
             </div>
 
             <div style={{ border: "1px solid #f0f0f0", borderRadius: 10, padding: 16, marginBottom: 16 }}>
               {[
-                { label: "Name", value: `${form.firstName} ${form.lastName}`, icon: <UserOutlined style={{ fontSize: 14 }} /> },
-                { label: "Email", value: form.email, icon: <MailOutlined style={{ fontSize: 14 }} /> },
-                { label: "Company", value: form.companyName, icon: <BankOutlined style={{ fontSize: 14 }} /> },
-                { label: "Industry", value: form.industry || "Not specified", icon: <GlobalOutlined style={{ fontSize: 14 }} /> },
-                { label: "Team size", value: form.teamSize ? `${form.teamSize} people` : "Not specified", icon: <TeamOutlined style={{ fontSize: 14 }} /> },
+                { label: t("auth.register.name"), value: `${form.firstName} ${form.lastName}`, icon: <UserOutlined style={{ fontSize: 14 }} /> },
+                { label: t("auth.register.email"), value: form.email, icon: <MailOutlined style={{ fontSize: 14 }} /> },
+                { label: t("auth.register.company"), value: form.companyName, icon: <BankOutlined style={{ fontSize: 14 }} /> },
+                { label: t("auth.register.industry"), value: form.industry || t("auth.register.notSpecified"), icon: <GlobalOutlined style={{ fontSize: 14 }} /> },
+                { label: t("auth.register.teamSize"), value: form.teamSize ? t("auth.register.teamSizePeople", { count: form.teamSize }) : t("auth.register.notSpecified"), icon: <TeamOutlined style={{ fontSize: 14 }} /> },
               ].map((item, i) => (
                 <motion.div
                   key={item.label}
@@ -430,17 +440,17 @@ export default function RegisterPage() {
 
             <div style={{ marginBottom: 16 }}>
               <Checkbox checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)} style={{ color: "#6b7280", fontSize: 12 }}>
-                I agree to the{" "}
-                <Link href="/terms" className="auth-link" style={{ fontSize: 12 }}>Terms of Service</Link>{" "}
-                and{" "}
-                <Link href="/privacy" className="auth-link" style={{ fontSize: 12 }}>Privacy Policy</Link>
+                {t("auth.register.agreeTo")}{" "}
+                <Link href="/terms" className="auth-link" style={{ fontSize: 12 }}>{t("auth.register.termsOfService")}</Link>{" "}
+                {t("auth.register.and")}{" "}
+                <Link href="/privacy" className="auth-link" style={{ fontSize: 12 }}>{t("auth.register.privacyPolicy")}</Link>
               </Checkbox>
             </div>
 
             <Space style={{ width: "100%" }} size={10}>
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} style={{ flex: 1 }}>
                 <Button size="large" icon={<ArrowLeftOutlined />} onClick={handleBack} className="auth-btn-outline">
-                  Back
+                  {t("auth.register.back")}
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} style={{ flex: 1 }}>
@@ -450,7 +460,7 @@ export default function RegisterPage() {
                   disabled={loading || !acceptedTerms}
                   className="auth-btn-gradient"
                 >
-                  <Space>Create Account <ArrowRightOutlined /></Space>
+                  <Space>{t("auth.register.createAccount")} <ArrowRightOutlined /></Space>
                 </Button>
               </motion.div>
             </Space>
@@ -460,9 +470,9 @@ export default function RegisterPage() {
 
       <div style={{ textAlign: "center", marginTop: 18 }}>
         <Text style={{ color: "#6b7280", fontSize: 13 }}>
-          Already have an account?{" "}
+          {t("auth.register.alreadyHaveAccount")}{" "}
           <Link href="/auth/login" className="auth-link">
-            Sign in
+            {t("auth.register.signIn")}
           </Link>
         </Text>
       </div>

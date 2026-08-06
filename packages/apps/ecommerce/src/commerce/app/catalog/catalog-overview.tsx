@@ -10,6 +10,7 @@ import {
   TagsOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
+import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../components/CommerceShell";
 import { StatSkeleton } from "@repo/ui";
 import { useProducts } from "../../hooks/useProducts";
@@ -19,14 +20,8 @@ import { useTags } from "../../hooks/useTags";
 
 const { Title, Text } = Typography;
 
-const quickActions = [
-  { label: "New product", icon: <ProductOutlined />, path: "/products/new" },
-  { label: "Add category", icon: <UnorderedListOutlined />, path: "/categories" },
-  { label: "Add brand", icon: <CrownOutlined />, path: "/brands" },
-  { label: "Add tag", icon: <TagsOutlined />, path: "/tags" },
-];
-
 export function CatalogOverviewPage() {
+  const t = useTranslations();
   const router = useRouter();
   const products = useProducts({ page: 1, pageSize: 1 });
   const categories = useCategories({ page: 1, pageSize: 1 });
@@ -36,17 +31,17 @@ export function CatalogOverviewPage() {
   const loading =
     products.isLoading || categories.isLoading || brands.isLoading || tags.isLoading;
 
-  const published = products.data?.data.filter((p) => p.status === "published").length ?? 0;
-  const draft = products.data?.data.filter((p) => p.status === "draft").length ?? 0;
+  const published = products.data?.data.filter((p) => p.status === 2).length ?? 0;
+  const draft = products.data?.data.filter((p) => p.status === 1).length ?? 0;
 
   return (
     <CommerceShell
-      title="Catalog"
-      description="Manage the products, categories, brands, tags and attributes that make up your storefront."
-      breadcrumbs={[{ title: "Catalog" }]}
+      title={t("catalog.title")}
+      description={t("catalog.description")}
+      breadcrumbs={[{ title: t("catalog.title") }]}
       actions={
         <Button type="primary" icon={<PlusOutlined />} onClick={() => router.push("/admin/catalog/products/new")}>
-          New product
+          {t("catalog.overview.newProduct")}
         </Button>
       }
     >
@@ -62,18 +57,18 @@ export function CatalogOverviewPage() {
         <Row gutter={[24, 24]}>
           <Col xs={24} sm={12} lg={6}>
             <KPICardValue
-              label="Products"
+              label={t("catalog.overview.kpi.products")}
               value={products.data?.count ?? 0}
-              sub="Published"
+              sub={t("catalog.overview.kpi.published")}
               subValue={published}
               onClick={() => router.push("/admin/catalog/products")}
             />
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <KPICardValue
-              label="Categories"
+              label={t("catalog.overview.kpi.categories")}
               value={categories.data?.count ?? 0}
-              sub="In your tree"
+              sub={t("catalog.overview.kpi.inYourTree")}
               subValue={draft}
               hideSub
               onClick={() => router.push("/admin/catalog/categories")}
@@ -81,9 +76,9 @@ export function CatalogOverviewPage() {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <KPICardValue
-              label="Brands"
+              label={t("catalog.overview.kpi.brands")}
               value={brands.data?.count ?? 0}
-              sub="Draft"
+              sub={t("catalog.overview.kpi.draft")}
               subValue={draft}
               hideSub
               onClick={() => router.push("/admin/catalog/brands")}
@@ -91,9 +86,9 @@ export function CatalogOverviewPage() {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <KPICardValue
-              label="Tags"
+              label={t("catalog.overview.kpi.tags")}
               value={tags.data?.count ?? 0}
-              sub="Active"
+              sub={t("catalog.overview.kpi.active")}
               subValue={draft}
               hideSub
               onClick={() => router.push("/admin/catalog/tags")}
@@ -104,31 +99,37 @@ export function CatalogOverviewPage() {
 
       <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={16}>
-          <Card title="Start building" style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
+          <Card title={t("catalog.overview.startBuilding")} style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
             <Space direction="vertical" size={12} style={{ width: "100%" }}>
               <Text type="secondary" style={{ color: "var(--text-secondary)" }}>
-                A complete catalog drives discoverability, SEO and conversions. Begin by creating products and organizing
-                them with categories and attributes.
+                {t("catalog.overview.startBuildingText")}
               </Text>
               <Space wrap>
-                {quickActions.map((a) => (
-                  <Button key={a.label} icon={a.icon} onClick={() => router.push(`/admin/catalog${a.path}`)}>
-                    {a.label}
-                  </Button>
-                ))}
+                <Button icon={<ProductOutlined />} onClick={() => router.push("/admin/catalog/products/new")}>
+                  {t("catalog.overview.newProduct")}
+                </Button>
+                <Button icon={<UnorderedListOutlined />} onClick={() => router.push("/admin/catalog/categories")}>
+                  {t("catalog.overview.quick.addCategory")}
+                </Button>
+                <Button icon={<CrownOutlined />} onClick={() => router.push("/admin/catalog/brands")}>
+                  {t("catalog.overview.quick.addBrand")}
+                </Button>
+                <Button icon={<TagsOutlined />} onClick={() => router.push("/admin/catalog/tags")}>
+                  {t("catalog.overview.quick.addTag")}
+                </Button>
               </Space>
             </Space>
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="Catalog health" style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
+          <Card title={t("catalog.overview.health")} style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
             <Space direction="vertical" size={8} style={{ width: "100%" }}>
               <Text>
-                Draft products:{" "}
+                {t("catalog.overview.draftProducts")}{" "}
                 <Text strong>{draft}</Text>
               </Text>
               <Text>
-                Published products:{" "}
+                {t("catalog.overview.publishedProducts")}{" "}
                 <Text strong>{published}</Text>
               </Text>
             </Space>

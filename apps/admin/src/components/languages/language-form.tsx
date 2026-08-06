@@ -34,7 +34,7 @@ export default function LanguageForm({ formData, onChange, editMode }: LanguageF
       onChange("name", lang.name);
       onChange("nativeName", lang.nativeName);
       onChange("flag", LANGUAGE_FLAGS[code] || "🏳️");
-      onChange("rtl", lang.rtl);
+      onChange("rtl", lang.rtl === 1);
     }
   };
 

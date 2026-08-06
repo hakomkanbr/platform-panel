@@ -3,11 +3,12 @@ import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import HundleFullPage from "@/helper/get-page-url";
 import { S2SProvider } from "@repo/providers";
-// Subpath imports keep client-only context modules out of the Server Component.
-import { LocalizationProvider } from "@repo/localization/provider/LocalizationProvider";
-import { GLOBAL_DICTIONARIES } from "@repo/localization/dictionary/globalDictionary";
-import { LOCALE_COOKIE_NAME } from "@repo/localization/constants/languages";
-import { safeLocale } from "@repo/localization/server/locale";
+import { 
+  LocalizationProvider,
+  GLOBAL_DICTIONARIES,
+  LOCALE_COOKIE_NAME,
+  safeLocale 
+} from "@repo/localization";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,7 @@ export default async function RootLayout({
   const initialLocale = safeLocale(cookieLocale);
 
   return (
-    <html lang="en">
+    <html lang="ar">
       <head>
         <link
           href="https://cdn.syncfusion.com/ej2/26.1.35/material.css"

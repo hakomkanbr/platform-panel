@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Layout } from "antd";
+import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { NavigationProvider } from "@repo/navigation";
 import { ShellProvider, useShell } from "../context/ShellContext";
@@ -88,6 +89,15 @@ const AdminShellInner: React.FC<{
           id: String(currentProject.id),
           name: currentProject.name,
         });
+      } else {
+        const storedId = Cookies.get("ProjectId");
+        const storedName = Cookies.get("ProjectName");
+        if (storedId && storedName) {
+          setCurrentProject({
+            id: storedId,
+            name: storedName,
+          });
+        }
       }
     }, [currentProject, setCurrentProject]);
 

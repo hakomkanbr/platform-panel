@@ -4,9 +4,13 @@ import { ConfigProvider, App, theme } from "antd";
 import { AuthProvider } from "@/contexts/AuthContext";
 import "../globals.css";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
+    <html lang="ar">
       <body style={{ margin: 0 }}>
         <ConfigProvider
           theme={{
@@ -14,11 +18,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             token: {
               colorPrimary: "#f97316",
               borderRadius: 8,
-              fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+              fontFamily:
+                "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
             },
           }}
         >
-          <App><AuthProvider>{children}</AuthProvider></App>
+          <App>
+            <AuthProvider>{children}</AuthProvider>
+          </App>
         </ConfigProvider>
       </body>
     </html>

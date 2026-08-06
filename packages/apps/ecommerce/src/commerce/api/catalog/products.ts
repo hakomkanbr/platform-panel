@@ -3,8 +3,10 @@ import type { PaginatedResult, ListParams } from "../../types/common";
 import type {
   ProductFilters,
   ProductUpsertBody,
+  ProductWorkspaceBody,
   ProductReadModel,
   ProductSummaryReadModel,
+  ProductDetail,
   AddProductTranslationBody,
   UpdateProductTranslationBody,
   AddProductMediaBody,
@@ -20,21 +22,33 @@ import type {
   SetAttributeValuesBody,
   MediaItem,
   ProductOption,
+  ProductOptionReadModel,
   Relation,
   Variant,
 } from "../../types/catalog";
 
+// Re-export types that other modules import from this file
+export type { ProductFilters, ProductUpsertBody, ProductWorkspaceBody };
+
 export const productsApi = {
   list: (params?: ProductFilters) =>
-    http.get<PaginatedResult<ProductSummaryReadModel>>("/Admin/Products", params),
+    http.get<PaginatedResult<ProductSummaryReadModel>>(
+      "/Admin/Products",
+      params as Record<string, unknown> | undefined,
+    ),
 
   getById: (id: string, languageId?: string) =>
-    http.get<ProductReadModel>(`/Admin/Products/${id}`, languageId ? { languageId } : undefined),
+    http.get<ProductDetail>(`/Admin/Products/${id}`, languageId ? { languageId } : undefined),
 
   create: (body: ProductUpsertBody) => http.post<ProductReadModel>("/Admin/Products", body),
 
+  createWorkspace: (body: ProductWorkspaceBody) => http.post<ProductReadModel>("/Admin/Products/workspace", body),
+
   update: (id: string, body: Partial<ProductUpsertBody>) =>
     http.put<ProductReadModel>(`/Admin/Products/${id}`, body),
+
+  updateWorkspace: (id: string, body: ProductWorkspaceBody) =>
+    http.put<ProductReadModel>(`/Admin/Products/${id}/workspace`, body),
 
   delete: (id: string) => http.del<void>(`/Admin/Products/${id}`),
 
@@ -45,6 +59,16 @@ export const productsApi = {
   archive: (id: string) => http.put<void>(`/Admin/Products/${id}/archive`),
 
   restore: (id: string) => http.put<void>(`/Admin/Products/${id}/restore`),
+
+  bulkPublish: (ids: string[]) => http.put<void>(`/Admin/Products/bulk-publish`, { ids }),
+
+  bulkUnpublish: (ids: string[]) => http.put<void>(`/Admin/Products/bulk-unpublish`, { ids }),
+
+  bulkArchive: (ids: string[]) => http.put<void>(`/Admin/Products/bulk-archive`, { ids }),
+
+  bulkRestore: (ids: string[]) => http.put<void>(`/Admin/Products/bulk-restore`, { ids }),
+
+  bulkDelete: (ids: string[]) => http.del<void>(`/Admin/Products/bulk`, { data: { ids } }),
 
   addTranslation: (id: string, body: AddProductTranslationBody) =>
     http.post<ProductReadModel>(`/Admin/Products/${id}/translations`, body),
@@ -66,6 +90,9 @@ export const productsApi = {
 
   addVariant: (id: string, body: AddProductVariantBody) =>
     http.post<ProductReadModel>(`/Admin/Products/${id}/variants`, body),
+
+  generateVariants: (id: string) =>
+    http.post<void>(`/Admin/Products/${id}/variants/generate`),
 
   removeVariant: (id: string, variantId: string) =>
     http.del<void>(`/Admin/Products/${id}/variants/${variantId}`),
@@ -112,10 +139,10 @@ export const productsApi = {
   removeRelation: (id: string, relatedProductId: string, relationType: number) =>
     http.del<void>(`/Admin/Products/${id}/relations/${relatedProductId}/${relationType}`),
 
-  getOptions: (id: string) => http.get<ProductOption[]>(`/Admin/Products/${id}/options`),
-
-  updateOption: (id: string, optionId: string, body: Partial<ProductOption>) =>
-    http.put<ProductOption>(`/Admin/Products/${id}/options/${optionId}`, body),
+  getOptions: (id: string) => http.get<ProductOptionReadModel[]>(`/Admin/Products/${id}/options`),
+  
+  updateOption: (id: string, optionId: string, body: AddProductOptionBody) =>
+    http.put<void>(`/Admin/Products/${id}/options/${optionId}`, body),
 
   deleteOption: (id: string, optionId: string) =>
     http.del<void>(`/Admin/Products/${id}/options/${optionId}`),

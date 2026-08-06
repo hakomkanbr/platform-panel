@@ -5,6 +5,8 @@ import enValidation from "../../locales/en/validation.json";
 import enAuth from "../../locales/en/auth.json";
 import enErrors from "../../locales/en/errors.json";
 import enDashboard from "../../locales/en/dashboard.json";
+import enCatalog from "../../locales/en/catalog.json";
+import enPricing from "../../locales/en/pricing.json";
 
 import arCommon from "../../locales/ar/common.json";
 import arNavigation from "../../locales/ar/navigation.json";
@@ -12,6 +14,8 @@ import arValidation from "../../locales/ar/validation.json";
 import arAuth from "../../locales/ar/auth.json";
 import arErrors from "../../locales/ar/errors.json";
 import arDashboard from "../../locales/ar/dashboard.json";
+import arCatalog from "../../locales/ar/catalog.json";
+import arPricing from "../../locales/ar/pricing.json";
 
 import trCommon from "../../locales/tr/common.json";
 import trNavigation from "../../locales/tr/navigation.json";
@@ -19,6 +23,8 @@ import trValidation from "../../locales/tr/validation.json";
 import trAuth from "../../locales/tr/auth.json";
 import trErrors from "../../locales/tr/errors.json";
 import trDashboard from "../../locales/tr/dashboard.json";
+import trCatalog from "../../locales/tr/catalog.json";
+import trPricing from "../../locales/tr/pricing.json";
 
 function asMessages(source: unknown): Messages {
   if (typeof source === "object" && source !== null) {
@@ -40,6 +46,8 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     auth: asMessages(enAuth),
     errors: asMessages(enErrors),
     dashboard: asMessages(enDashboard),
+    catalog: asMessages(enCatalog),
+    pricing: asMessages(enPricing),
   },
   ar: {
     common: asMessages(arCommon),
@@ -48,6 +56,8 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     auth: asMessages(arAuth),
     errors: asMessages(arErrors),
     dashboard: asMessages(arDashboard),
+    catalog: asMessages(arCatalog),
+    pricing: asMessages(arPricing),
   },
   tr: {
     common: asMessages(trCommon),
@@ -56,6 +66,8 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     auth: asMessages(trAuth),
     errors: asMessages(trErrors),
     dashboard: asMessages(trDashboard),
+    catalog: asMessages(trCatalog),
+    pricing: asMessages(trPricing),
   },
 };
 

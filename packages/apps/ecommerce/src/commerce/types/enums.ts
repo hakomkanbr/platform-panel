@@ -4,6 +4,8 @@
  * backend wire format; labels are a friendly display mapping.
  */
 
+export type EnumTranslator = (key: string) => string;
+
 export const enumLabels: Record<string, Record<number, string>> = {
   productType: {
     1: "Physical",
@@ -139,16 +141,27 @@ export const enumLabels: Record<string, Record<number, string>> = {
   },
 };
 
-export function enumLabel(map: string, value: number | string | null | undefined): string {
+export function enumLabel(
+  map: string,
+  value: number | string | null | undefined,
+  t?: EnumTranslator,
+): string {
   if (value === null || value === undefined || value === "") return "\u2014";
   const n = Number(value);
   const label = enumLabels[map]?.[n];
+  if (t) {
+    const key = `catalog.enums.${map}.${n}`;
+    if (label && t(key) !== key) return t(key);
+  }
   return label ?? String(value);
 }
 
-export function enumOptions(map: string): Array<{ value: number; label: string }> {
+export function enumOptions(
+  map: string,
+  t?: EnumTranslator,
+): Array<{ value: number; label: string }> {
   return Object.entries(enumLabels[map] ?? {}).map(([value, label]) => ({
     value: Number(value),
-    label,
+    label: t ? t(`catalog.enums.${map}.${value}`) : label,
   }));
 }

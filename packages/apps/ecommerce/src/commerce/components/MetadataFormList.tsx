@@ -3,6 +3,7 @@
 import React from "react";
 import { Button, Input, Space, Typography } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { useTranslations } from "@repo/localization";
 import type { KeyValue } from "../types/common";
 
 const { Text } = Typography;
@@ -14,6 +15,7 @@ export interface MetadataFormListProps {
 }
 
 export const MetadataFormList: React.FC<MetadataFormListProps> = ({ value, onChange, disabled }) => {
+  const t = useTranslations();
   const items = value ?? [];
 
   const update = (index: number, patch: Partial<KeyValue>) => {
@@ -35,14 +37,14 @@ export const MetadataFormList: React.FC<MetadataFormListProps> = ({ value, onCha
           <Input
             value={item.key}
             disabled={disabled}
-            placeholder="Key"
+            placeholder={t("catalog.metadata.key")}
             style={{ width: "30%" }}
             onChange={(e) => update(index, { key: e.target.value })}
           />
           <Input
             value={item.value}
             disabled={disabled}
-            placeholder="Value"
+            placeholder={t("catalog.metadata.value")}
             onChange={(e) => update(index, { value: e.target.value })}
           />
           <Button
@@ -55,11 +57,11 @@ export const MetadataFormList: React.FC<MetadataFormListProps> = ({ value, onCha
         </Space.Compact>
       ))}
       <Button icon={<PlusOutlined />} onClick={add} disabled={disabled}>
-        Add field
+        {t("catalog.metadata.addField")}
       </Button>
       {items.length === 0 && (
         <Text type="secondary" style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-          No custom fields yet.
+          {t("catalog.metadata.emptyText")}
         </Text>
       )}
     </Space>

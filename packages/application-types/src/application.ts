@@ -23,6 +23,8 @@ export interface AppNavigationItem {
   description?: string;
   disabled?: boolean;
   roles?: string[];
+  /** Localization key (e.g. `common.nav.catalog`). Rendered when present. */
+  labelKey?: string;
   children?: AppNavigationItem[];
 }
 

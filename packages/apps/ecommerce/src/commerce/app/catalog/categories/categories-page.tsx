@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Button,
   Card,
@@ -9,7 +9,6 @@ import {
   Input,
   InputNumber,
   message,
-  Modal,
   Popconfirm,
   Row,
   Select,
@@ -17,9 +16,10 @@ import {
   Tree,
   Typography,
 } from "antd";
-import type { DataNode } from "antd/es/tree";
+import type { DataNode, TreeProps } from "antd/es/tree";
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { AsyncBoundary, DrawerForm } from "@repo/ui";
+import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
 import {
@@ -31,29 +31,12 @@ import {
 import { useCommerce } from "../../../context/CommerceContext";
 import { useProjectLanguages } from "../../../hooks/useLanguages";
 import { getApiErrorMessage } from "../../../api/http";
-import type { Category } from "../../../types/catalog";
+import type { CategoryReadModel as Category } from "../../../types/catalog";
 
 const { Text } = Typography;
 
-function buildTree(categories: Category[]): DataNode[] {
-  return (categories ?? []).map((c) => ({
-    key: c.id,
-    title: (
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span>{c.name}</span>
-        <StatusTag value={c.status} />
-        {c.productCount ? (
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            ({c.productCount})
-          </Text>
-        ) : null}
-      </div>
-    ),
-    children: c.children && c.children.length ? buildTree(c.children) : undefined,
-  }));
-}
-
 export function CategoriesPage() {
+  const t = useTranslations();
   const tree = useCategoryTree();
   const save = useSaveCategory();
   const remove = useDeleteCategory();
@@ -69,6 +52,13 @@ export function CategoriesPage() {
   const [editing, setEditing] = useState<Category | null>(null);
   const [parentId, setParentId] = useState<string | undefined>(undefined);
   const [languageInitialized, setLanguageInitialized] = useState(false);
+  const [treeLanguageId, setTreeLanguageId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (defaultLanguage && !treeLanguageId) {
+      setTreeLanguageId(defaultLanguage.id);
+    }
+  }, [defaultLanguage, treeLanguageId]);
 
   const selected = tree.data?.find((c) => c.id === selectedId) ?? null;
 
@@ -92,14 +82,16 @@ export function CategoriesPage() {
         description: selected.description,
         sortOrder: selected.sortOrder,
         imageUrl: selected.imageUrl,
+        languageId: treeLanguageId || defaultLanguage?.id,
       });
     }
-  }, [selected, drawerOpen, form]);
+  }, [selected, drawerOpen, form, treeLanguageId, defaultLanguage]);
 
   const openCreate = (parent?: string) => {
     setEditing(null);
     setParentId(parent);
     form.resetFields();
+    form.setFieldValue("languageId", treeLanguageId || defaultLanguage?.id);
     setDrawerOpen(true);
   };
 
@@ -113,6 +105,7 @@ export function CategoriesPage() {
       sortOrder: category.sortOrder,
       imageUrl: category.imageUrl,
       status: category.status,
+      languageId: treeLanguageId || defaultLanguage?.id,
     });
     setDrawerOpen(true);
   };
@@ -138,7 +131,7 @@ export function CategoriesPage() {
           parentId: editing ? undefined : parentId,
         },
       });
-      message.success(editing ? "Category updated" : "Category created");
+      message.success(editing ? t("catalog.categories.updated") : t("catalog.categories.created"));
       setDrawerOpen(false);
       setEditing(null);
     } catch (e) {
@@ -150,21 +143,105 @@ export function CategoriesPage() {
     const next = category.status === 1 ? 2 : 1;
     try {
       await setStatus.mutateAsync({ id: category.id, status: next });
-      message.success("Status updated");
+      message.success(t("catalog.categories.statusUpdated"));
     } catch (e) {
       message.error(getApiErrorMessage(e));
     }
   };
 
+  const onDrop: TreeProps['onDrop'] = async (info) => {
+    const dropKey = info.node.key as string;
+    const dragKey = info.dragNode.key as string;
+    const dropPos = info.node.pos.split('-');
+    const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
+
+    const dragCategory = all.find(c => c.id === dragKey);
+    if (!dragCategory) return;
+
+    let newParentId: string | undefined = undefined;
+    let newSortOrder = dragCategory.sortOrder;
+
+    if (!info.dropToGap) {
+      newParentId = dropKey;
+      newSortOrder = 1; // Put at the top of children
+    } else {
+      const dropCategory = all.find(c => c.id === dropKey);
+      if (dropCategory) {
+        newParentId = dropCategory.parentId ?? undefined;
+        newSortOrder = (dropCategory.sortOrder || 0) + (dropPosition > 0 ? 1 : -1);
+      }
+    }
+
+    try {
+      const defaultLang = dragCategory.translations?.[0]?.languageId || defaultLanguage?.id;
+      const cultureCode = languages?.find(l => l.id === defaultLang)?.code || "en-US";
+      
+      await save.mutateAsync({
+        id: dragKey,
+        body: {
+          name: dragCategory.name,
+          slug: dragCategory.slug,
+          description: dragCategory.description,
+          sortOrder: newSortOrder,
+          imageUrl: dragCategory.imageUrl,
+          status: dragCategory.status,
+          parentId: newParentId,
+          languageId: defaultLang,
+          cultureCode: cultureCode,
+        }
+      });
+      message.success(t("catalog.categories.updated"));
+    } catch (e) {
+      message.error(getApiErrorMessage(e));
+    }
+  };
+
+  const getLocalizedName = (c: any) => {
+    if (!treeLanguageId) return c.name;
+    const translation = c.translations?.find((tr: any) => tr.languageId === treeLanguageId);
+    return translation?.name || c.name;
+  };
+
+  const buildTreeData = (categories: Category[]): DataNode[] => {
+    return (categories ?? []).map((c) => ({
+      key: c.id,
+      title: (
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span>{getLocalizedName(c)}</span>
+          <StatusTag value={c.status} />
+          {c.productCount ? (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              ({c.productCount})
+            </Text>
+          ) : null}
+        </div>
+      ),
+      children: c.children && c.children.length ? buildTreeData(c.children) : undefined,
+    }));
+  };
+
   return (
     <CommerceShell
-      title="Categories"
-      description="Organize products into a hierarchy that guides navigation and merchandising."
-      breadcrumbs={[{ title: "Catalog", href: "/admin/catalog" }, { title: "Categories" }]}
+      title={t("catalog.categories.title")}
+      description={t("catalog.categories.description")}
+      breadcrumbs={[{ title: t("catalog.title"), href: "/admin/catalog" }, { title: t("catalog.categories.title") }]}
       actions={
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openCreate(undefined)}>
-          New category
-        </Button>
+        <Space>
+          <Select
+            value={treeLanguageId}
+            onChange={setTreeLanguageId}
+            loading={!languages && projectId ? true : undefined}
+            placeholder={t("common.fields.selectLanguage")}
+            style={{ width: 200 }}
+            options={(languages ?? []).map((l) => ({
+              value: l.id,
+              label: `${l.flag ?? ""} ${l.nativeName || l.name} (${l.code})`,
+            }))}
+          />
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => openCreate(undefined)}>
+            {t("catalog.categories.new")}
+          </Button>
+        </Space>
       }
     >
       <AsyncBoundary
@@ -175,7 +252,7 @@ export function CategoriesPage() {
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={10}>
             <Card
-              title="Category tree"
+              title={t("catalog.categories.tree")}
               extra={
                 <Button icon={<ReloadOutlined />} size="small" onClick={() => tree.refetch()} />
               }
@@ -183,30 +260,33 @@ export function CategoriesPage() {
             >
               <Tree
                 showLine
+                draggable
+                blockNode
+                onDrop={onDrop}
                 defaultExpandAll
-                treeData={buildTree(tree.data ?? [])}
+                treeData={buildTreeData(tree.data ?? [])}
                 selectedKeys={selectedId ? [selectedId] : []}
                 onSelect={(keys) => setSelectedId(keys.length ? String(keys[0]) : null)}
               />
               {(all.length === 0) && (
-                <Text type="secondary">No categories yet.</Text>
+                <Text type="secondary">{t("catalog.categories.noCategories")}</Text>
               )}
             </Card>
           </Col>
           <Col xs={24} lg={14}>
-            <Card title={selected ? "Category details" : "Select a category"} style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
+            <Card title={selected ? t("catalog.categories.details") : t("catalog.categories.select")} style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
               {!selected ? (
                 <Text type="secondary" style={{ color: "var(--text-secondary)" }}>
-                  Select a category from the tree to edit it, or create a new one.
+                  {t("catalog.categories.selectHint")}
                 </Text>
               ) : (
                 <Form form={form} layout="vertical" onFinish={onFinish}>
                   <Row gutter={16}>
                     <Col xs={24}>
-                      <Form.Item name="languageId" label="Language">
+                      <Form.Item name="languageId" label={t("common.fields.language")}>
                         <Select
                           loading={!languages && projectId ? true : undefined}
-                          placeholder="Select language"
+                          placeholder={t("common.fields.selectLanguage")}
                           options={(languages ?? []).map((l) => ({
                             value: l.id,
                             label: `${l.flag ?? ""} ${l.nativeName || l.name} (${l.code})`,
@@ -215,61 +295,61 @@ export function CategoriesPage() {
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                      <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                      <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true }]}>
                         <Input />
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                      <Form.Item name="slug" label="Slug">
+                      <Form.Item name="slug" label={t("common.fields.slug")}>
                         <Input />
                       </Form.Item>
                     </Col>
                     <Col xs={24}>
-                      <Form.Item name="description" label="Description">
+                      <Form.Item name="description" label={t("common.fields.description")}>
                         <Input.TextArea rows={2} />
                       </Form.Item>
                     </Col>
                     <Col xs={12} sm={6}>
-                      <Form.Item name="sortOrder" label="Sort order">
+                      <Form.Item name="sortOrder" label={t("catalog.categories.sortOrder")}>
                         <InputNumber style={{ width: "100%" }} />
                       </Form.Item>
                     </Col>
                     <Col xs={12} sm={6}>
-                      <Form.Item name="status" label="Status">
+                      <Form.Item name="status" label={t("common.fields.status")}>
                         <Select
                           options={[
-                            { value: 1, label: "Active" },
-                            { value: 2, label: "Inactive" },
+                            { value: 1, label: t("catalog.status.active") },
+                            { value: 2, label: t("catalog.status.inactive") },
                           ]}
                         />
                       </Form.Item>
                     </Col>
                     <Col xs={24}>
-                      <Form.Item name="imageUrl" label="Image URL">
-                        <Input placeholder="https://..." />
+                      <Form.Item name="imageUrl" label={t("catalog.categories.imageUrl")}>
+                        <Input placeholder={t("catalog.categories.placeholderUrl")} />
                       </Form.Item>
                     </Col>
                   </Row>
                   <Space>
                     <Button type="primary" htmlType="submit" loading={save.isPending}>
-                      Save changes
+                      {t("common.actions.saveChanges")}
                     </Button>
                     <Button icon={<PlusOutlined />} onClick={() => openCreate(selected.id)}>
-                      Add child
+                      {t("catalog.categories.addChild")}
                     </Button>
                     <Button icon={<EditOutlined />} onClick={() => openEdit(selected)}>
-                      Edit
+                      {t("common.actions.edit")}
                     </Button>
                     <Button onClick={() => toggleStatus(selected)}>
-                      {selected.status === 1 ? "Deactivate" : "Activate"}
+                      {selected.status === 1 ? t("common.actions.deactivate") : t("common.actions.activate")}
                     </Button>
                     <Popconfirm
-                      title="Delete category?"
+                      title={t("catalog.categories.deleteConfirm")}
                       onConfirm={async () => {
                         try {
                           await remove.mutateAsync(selected.id);
                           setSelectedId(null);
-                          message.success("Category deleted");
+                          message.success(t("catalog.categories.deleted"));
                         } catch (e) {
                           message.error(getApiErrorMessage(e));
                         }
@@ -288,33 +368,43 @@ export function CategoriesPage() {
       <DrawerForm
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        title={editing ? "Edit category" : "New category"}
+        title={editing ? t("catalog.categories.drawerEdit") : t("catalog.categories.drawerCreate")}
         width={520}
         form={form}
         loading={save.isPending}
         onFinish={onFinish}
-        submitLabel={editing ? "Save changes" : "Create category"}
+        submitLabel={editing ? t("common.actions.saveChanges") : t("catalog.categories.submitCreate")}
       >
         <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form.Item name="languageId" label={t("common.fields.language")}>
+            <Select
+              loading={!languages && projectId ? true : undefined}
+              placeholder={t("common.fields.selectLanguage")}
+              options={(languages ?? []).map((l) => ({
+                value: l.id,
+                label: `${l.flag ?? ""} ${l.nativeName || l.name} (${l.code})`,
+              }))}
+            />
+          </Form.Item>
           {!editing && (
-            <Form.Item label="Parent category" name="parentId" initialValue={parentId}>
+            <Form.Item label={t("catalog.categories.parentCategory")} name="parentId" initialValue={parentId}>
               <Select
                 allowClear
-                placeholder="No parent (top level)"
-                options={all.map((c) => ({ value: c.id, label: c.name }))}
+                placeholder={t("catalog.categories.noParent")}
+                options={all.map((c) => ({ value: c.id, label: getLocalizedName(c) }))}
               />
             </Form.Item>
           )}
-          <Form.Item name="name" label="Name" rules={[{ required: true, message: "Name is required" }]}>
-            <Input placeholder="e.g. Apparel" />
+          <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
+            <Input placeholder={t("catalog.categories.placeholderName")} />
           </Form.Item>
-          <Form.Item name="slug" label="Slug">
-            <Input placeholder="apparel" />
+          <Form.Item name="slug" label={t("common.fields.slug")}>
+            <Input placeholder={t("catalog.categories.placeholderSlug")} />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />
           </Form.Item>
-          <Form.Item name="sortOrder" label="Sort order">
+          <Form.Item name="sortOrder" label={t("catalog.categories.sortOrder")}>
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Form>
@@ -322,3 +412,4 @@ export function CategoriesPage() {
     </CommerceShell>
   );
 }
+

@@ -53,7 +53,7 @@ function unwrap<T>(res: { status: number; data: unknown }): T {
   return body as T;
 }
 
-export async function get<T>(url: string, params?: Record<string, unknown>, config?: AxiosRequestConfig): Promise<T> {
+export async function get<T>(url: string, params?: any, config?: AxiosRequestConfig): Promise<T> {
   const res = await client.get(url, { params, ...config });
   return unwrap<T>(res);
 }
@@ -73,8 +73,36 @@ export async function del<T>(url: string, config?: AxiosRequestConfig): Promise<
   return unwrap<T>(res);
 }
 
+export async function patch<T>(url: string, body?: unknown, config?: AxiosRequestConfig): Promise<T> {
+  const res = await client.patch(url, body, config);
+  return unwrap<T>(res);
+}
+
 export function getApiErrorMessage(error: unknown): string {
   if (error instanceof ApiError) return error.message;
+  
+  if (axios.isAxiosError(error) && error.response?.data) {
+    const data = error.response.data as any;
+    
+    // Check if it's our standard ApiResponse wrapper
+    if (data.succeeded === false) {
+      if (Array.isArray(data.errors) && data.errors.length > 0) return data.errors.join(", ");
+      if (data.error) return data.error;
+      if (data.message) return data.message;
+    }
+    
+    // Check for standard RFC 7807 ProblemDetails (common in .NET APIs)
+    if (data.title && data.errors && typeof data.errors === 'object') {
+      const messages = Object.values(data.errors).flat();
+      if (messages.length > 0) return messages.join(", ");
+      return data.title;
+    }
+    
+    if (data.detail) return data.detail;
+    if (data.title) return data.title;
+    if (typeof data === "string") return data;
+  }
+  
   if (error instanceof Error) return error.message;
   return "Something went wrong";
 }

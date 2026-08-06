@@ -19,6 +19,7 @@ import {
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "@repo/localization";
 import { authApi, useAuth } from "@repo/auth";
 
 const { Text, Title } = Typography;
@@ -28,6 +29,7 @@ const GATEWAY_URL =
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations();
   const redirectUrl = searchParams.get("redirect");
   const { login } = useAuth();
   const [email, setEmail] = useState("");
@@ -40,11 +42,11 @@ function LoginPageContent() {
 
   const handleLogin = useCallback(async () => {
     if (!email.trim()) {
-      setError("Please enter your email address");
+      setError(t("auth.login.emailRequired"));
       return;
     }
     if (!password) {
-      setError("Please enter your password");
+      setError(t("auth.login.passwordRequired"));
       return;
     }
     setError(null);
@@ -61,7 +63,9 @@ function LoginPageContent() {
           tenantId: result.data.user.tenantId ?? undefined,
         });
         message.success(
-          `Welcome back${result.data.user.firstName ? `, ${result.data.user.firstName}` : ""}!`,
+          t("auth.login.welcomeBackMessage", {
+            name: result.data.user.firstName ? `, ${result.data.user.firstName}` : "",
+          }),
         );
         if (redirectUrl) {
           const res = await fetch(
@@ -86,16 +90,16 @@ function LoginPageContent() {
           router.push("/admin");
         }
       } else {
-        setError(result.error?.message || "Invalid email or password");
+        setError(result.error?.message || t("auth.login.invalidCredentials"));
         setShakeKey((k) => k + 1);
       }
     } catch {
-      setError("Connection error. Please check your credentials.");
+      setError(t("auth.login.connectionError"));
       setShakeKey((k) => k + 1);
     } finally {
       setLoading(false);
     }
-  }, [email, password, router, redirectUrl]);
+  }, [email, password, router, redirectUrl, t]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleLogin();
@@ -115,11 +119,16 @@ function LoginPageContent() {
       }}
     >
       <div style={{ marginBottom: 28, textAlign: "left" }}>
+        <img
+          src="/assets/images/logo-png.png"
+          alt="Logo"
+          style={{ height: 48, marginBottom: 24, objectFit: "contain" }}
+        />
         <Title level={2} style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#1F2937", letterSpacing: "-0.03em" }}>
-          Welcome back
+          {t("auth.login.welcomeBack")}
         </Title>
         <Text style={{ fontSize: 14, color: "#6B7280", marginTop: 4, display: "block" }}>
-          Sign in to access your Share2Sells workspace
+          {t("auth.login.subtitle")}
         </Text>
       </div>
 
@@ -148,11 +157,11 @@ function LoginPageContent() {
       {/* Email Input */}
       <div style={{ marginBottom: 18 }}>
         <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
-          Work Email
+          {t("auth.login.emailLabel")}
         </label>
         <Input
           size="large"
-          placeholder="name@company.com"
+          placeholder={t("auth.login.emailPlaceholder")}
           prefix={<MailOutlined style={{ color: "#9CA3AF", fontSize: 16 }} />}
           value={email}
           onChange={(e) => {
@@ -173,13 +182,13 @@ function LoginPageContent() {
       <div style={{ marginBottom: 18 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
           <label style={{ fontSize: 13, fontWeight: 600, color: "#374151", margin: 0 }}>
-            Password
+            {t("auth.login.passwordLabel")}
           </label>
           <Link
             href="/auth/forgot-password"
             style={{ color: "#F7931E", fontSize: 12, fontWeight: 600, textDecoration: "none" }}
           >
-            Forgot password?
+            {t("auth.login.forgotPassword")}
           </Link>
         </div>
         <Input
@@ -217,7 +226,7 @@ function LoginPageContent() {
           onChange={(e) => setRemember(e.target.checked)}
           style={{ color: "#4B5563", fontSize: 13 }}
         >
-          Remember this device for 30 days
+          {t("auth.login.rememberMe")}
         </Checkbox>
       </div>
 
@@ -248,11 +257,11 @@ function LoginPageContent() {
         {loading ? (
           <>
             <Spin size="small" style={{ color: "#fff" }} />
-            <span>Authenticating...</span>
+            <span>{t("auth.login.authenticating")}</span>
           </>
         ) : (
           <>
-            <span>Sign in to Platform</span>
+            <span>{t("auth.login.signIn")}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
@@ -271,7 +280,7 @@ function LoginPageContent() {
         }}
       >
         <div style={{ flex: 1, height: 1, background: "#E5E7EB" }} />
-        <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>or sign in with</span>
+        <span style={{ fontSize: 12, color: "#9CA3AF", fontWeight: 500 }}>{t("auth.login.or")}</span>
         <div style={{ flex: 1, height: 1, background: "#E5E7EB" }} />
       </div>
 
@@ -297,7 +306,7 @@ function LoginPageContent() {
           }}
         >
           <GoogleOutlined style={{ fontSize: 16, color: "#EA4335" }} />
-          Google
+          {t("auth.login.google")}
         </button>
         <button
           type="button"
@@ -319,16 +328,16 @@ function LoginPageContent() {
           }}
         >
           <WindowsOutlined style={{ fontSize: 16, color: "#00A4EF" }} />
-          Microsoft
+          {t("auth.login.microsoft")}
         </button>
       </div>
 
       {/* Register Footer */}
       <div style={{ textAlign: "center", marginTop: 24 }}>
         <Text style={{ color: "#6B7280", fontSize: 13 }}>
-          Need a new workspace?{" "}
+          {t("auth.login.needWorkspace")}{" "}
           <Link href="/auth/register" style={{ color: "#F7931E", fontWeight: 600, textDecoration: "none" }}>
-            Create an account
+            {t("auth.login.createAccount")}
           </Link>
         </Text>
       </div>

@@ -131,9 +131,7 @@ export function GlobalHeader({
             >
               {user?.username || "User"}
             </Text>
-            <Text
-              style={{ fontSize: 12, color: "#9CA3AF", display: "block" }}
-            >
+            <Text style={{ fontSize: 12, color: "#9CA3AF", display: "block" }}>
               {user?.email || ""}
             </Text>
           </div>
@@ -196,9 +194,7 @@ export function GlobalHeader({
           {isMobile && (
             <Button
               type="text"
-              icon={
-                collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
-              }
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
               style={{
                 fontSize: 18,
@@ -224,10 +220,10 @@ export function GlobalHeader({
             onProjectChange={onProjectChange}
           />
 
-          {applications && <ApplicationSelector applications={applications} />}
+          {/* {applications && <ApplicationSelector applications={applications} />} */}
         </div>
 
-        {/* Center Section: Global Search */}
+        {/* Center Section: Global Search
         <div
           style={{
             display: "flex",
@@ -299,7 +295,7 @@ export function GlobalHeader({
               </kbd>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Right Section: Actions */}
         <div
@@ -315,9 +311,7 @@ export function GlobalHeader({
           <Tooltip title="Toggle Fullscreen">
             <Button
               type="text"
-              icon={
-                isFullscreen ? <CompressOutlined /> : <ExpandOutlined />
-              }
+              icon={isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
               onClick={toggleFullscreen}
               style={{
                 width: 36,
@@ -333,9 +327,7 @@ export function GlobalHeader({
           <Tooltip title="Toggle theme">
             <Button
               type="text"
-              icon={
-                theme.mode === "dark" ? <SunOutlined /> : <MoonOutlined />
-              }
+              icon={theme.mode === "dark" ? <SunOutlined /> : <MoonOutlined />}
               onClick={theme.toggle}
               style={{
                 width: 36,
@@ -354,9 +346,7 @@ export function GlobalHeader({
               <Button
                 type="text"
                 icon={
-                  <BellOutlined
-                    style={{ fontSize: 16, color: "#6B7280" }}
-                  />
+                  <BellOutlined style={{ fontSize: 16, color: "#6B7280" }} />
                 }
                 style={{
                   width: 36,

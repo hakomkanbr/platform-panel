@@ -8,10 +8,12 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { authApi } from "@repo/auth";
+import { useTranslations } from "@repo/localization";
 
 const { Text } = Typography;
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -20,14 +22,14 @@ export default function ForgotPasswordPage() {
 
   useEffect(() => {
     if (countdown > 0) {
-      const t = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(t);
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
     }
   }, [countdown]);
 
   const handleSubmit = useCallback(async () => {
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address");
+      setError(t("auth.forgot.emailInvalid"));
       return;
     }
     setError(null);
@@ -37,11 +39,11 @@ export default function ForgotPasswordPage() {
       setSent(true);
       setCountdown(10);
     } catch {
-      setError("Failed to send reset email. Please try again.");
+      setError(t("auth.forgot.sendFailed"));
     } finally {
       setLoading(false);
     }
-  }, [email]);
+  }, [email, t]);
 
   return (
     <AnimatePresence mode="wait">
@@ -80,7 +82,7 @@ export default function ForgotPasswordPage() {
               display: "block",
             }}
           >
-            Check your inbox
+            {t("auth.forgot.checkInbox")}
           </Text>
           <div
             style={{
@@ -90,11 +92,11 @@ export default function ForgotPasswordPage() {
               lineHeight: 1.5,
             }}
           >
-            We sent a password reset link to{" "}
+            {t("auth.forgot.sentTo")}{" "}
             <Text style={{ color: "#374151", fontWeight: 600 }}>{email}</Text>
           </div>
           <div style={{ color: "#9ca3af", fontSize: 12, marginTop: 16 }}>
-            Redirecting to login in {countdown}s...
+            {t("auth.forgot.redirecting", { seconds: countdown })}
           </div>
         </motion.div>
       ) : (
@@ -108,7 +110,7 @@ export default function ForgotPasswordPage() {
                 display: "block",
               }}
             >
-              Forgot password?
+              {t("auth.forgot.title")}
             </Text>
             <div
               style={{
@@ -118,7 +120,7 @@ export default function ForgotPasswordPage() {
                 lineHeight: 1.5,
               }}
             >
-              Enter your email and we&apos;ll send you a reset link.
+              {t("auth.forgot.subtitle")}
             </div>
           </div>
 
@@ -136,10 +138,10 @@ export default function ForgotPasswordPage() {
           </AnimatePresence>
 
           <div style={{ marginBottom: 20 }}>
-            <label className="auth-label">Email Address</label>
+            <label className="auth-label">{t("auth.forgot.emailLabel")}</label>
             <Input
               size="large"
-              placeholder="Enter your email"
+              placeholder={t("auth.forgot.emailPlaceholder")}
               className="auth-input-wrapper"
               prefix={
                 <MailOutlined style={{ color: "#9ca3af", fontSize: 16 }} />
@@ -162,7 +164,7 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="auth-btn-gradient"
             >
-              Send reset link <ArrowRightOutlined />
+              {t("auth.forgot.sendResetLink")} <ArrowRightOutlined />
             </Button>
           </motion.div>
 
@@ -173,7 +175,7 @@ export default function ForgotPasswordPage() {
               style={{ fontSize: 13, fontWeight: 400 }}
             >
               <ArrowLeftOutlined style={{ marginRight: 4 }} />
-              Back to login
+              {t("auth.forgot.backToLogin")}
             </Link>
           </div>
         </motion.div>
