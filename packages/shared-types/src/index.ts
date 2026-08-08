@@ -154,6 +154,9 @@ export type {
   ApiKeyStatus,
   ApiKeyExpiration,
   ApiKeyPermission,
+  ApiKeyType,
+  ApiKeyAccessLevel,
+  ApiKeyScope,
   ApiKeyDto,
   CreateApiKeyRequest,
   UpdateApiKeyRequest,
@@ -163,7 +166,9 @@ export type {
 
 export {
   API_KEY_PERMISSIONS,
+  API_KEY_READ_PERMISSIONS,
 } from './api-key';
+export type { ApiKeyPermissionGroup } from './api-key';
 
 export type {
   ProjectId,

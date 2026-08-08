@@ -18,6 +18,7 @@ import {
   Col,
   Descriptions,
   Popconfirm,
+  Switch,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -30,6 +31,7 @@ import {
   KeyOutlined,
   ApiOutlined,
   SettingOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -40,6 +42,7 @@ import {
   useCurrentCapabilities,
   useUpdateProject,
   useDeleteProject,
+  useSetMarketplaceMember,
 } from "@repo/hooks";
 import AppLauncher from "@/components/apps/AppLauncher";
 import ProjectSettingsTabs from "@/components/projects/project-settings-tabs";
@@ -106,6 +109,19 @@ export default function ProjectDetailPage() {
 
   const updateProject = useUpdateProject();
   const deleteProject = useDeleteProject();
+  const setMarketplaceMember = useSetMarketplaceMember();
+
+  const handleToggleMarketplace = async (enabled: boolean) => {
+    try {
+      await setMarketplaceMember.mutateAsync({
+        projectId,
+        tenantId: tid || undefined,
+        enabled,
+      });
+    } catch {
+      // error handled in hook
+    }
+  };
 
   const handleUpdateProject = async (values: any) => {
     try {
@@ -328,7 +344,39 @@ export default function ProjectDetailPage() {
         />
       </AnimatedCard>
 
-      <div style={{ marginTop: 32 }}>
+      <AnimatedCard
+        title={
+          <Space>
+            <ShopOutlined style={{ color: "var(--primary)" }} />
+            <span>Marketplace</span>
+          </Space>
+        }
+        style={{ marginBottom: 24 }}
+      >
+        <Space style={{ width: "100%", justifyContent: "space-between" }}>
+          <Space direction="vertical" size={2}>
+            <Text strong>Join the marketplace</Text>
+            <Text type="secondary">
+              When enabled, this store joins the marketplace and becomes readable
+              by company/marketplace API keys.
+            </Text>
+          </Space>
+          <Space>
+            {project.marketplaceMember && (
+              <Tag color="purple" style={{ borderRadius: 6 }}>
+                Subscribed
+              </Tag>
+            )}
+            <Switch
+              checked={project.marketplaceMember}
+              onChange={handleToggleMarketplace}
+              loading={setMarketplaceMember.isPending}
+            />
+          </Space>
+        </Space>
+      </AnimatedCard>
+
+      <div style={{ marginTop: 0 }}>
         <Title level={4} style={{ marginBottom: 16 }}>
           <SettingOutlined style={{ marginRight: 8, color: "var(--primary)" }} />
           Project Settings

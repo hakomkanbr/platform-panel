@@ -1,5 +1,6 @@
 import { getGatewayClient } from "@repo/api-client";
 import api_points from "@/api/points";
+import { resolveAccessLevel } from "./access-levels";
 import type {
   ApiKeyDto,
   CreateApiKeyRequest,
@@ -19,7 +20,7 @@ interface BackendApiKeyDto {
   prefix: string;
   lastFourChars: string;
   environment: string;
-  status: string;
+  isActive: boolean;
   scopes: string[];
   allowedIPs: string | null;
   allowedDomains: string | null;
@@ -48,7 +49,10 @@ interface BackendApiKeyGeneratedResponse {
 function mapScopesToPermissions(scopes: string[]): ApiKeyPermission[] {
   const map = new Map<string, Set<string>>();
   for (const scope of scopes) {
-    const [resource, action] = scope.split(":");
+    const idx = scope.lastIndexOf(":");
+    if (idx <= 0 || idx === scope.length - 1) continue;
+    const resource = scope.slice(0, idx);
+    const action = scope.slice(idx + 1);
     if (resource && action) {
       if (!map.has(resource)) map.set(resource, new Set());
       map.get(resource)!.add(action);
@@ -82,6 +86,9 @@ function calcExpiration(expiresAt: string | null): ApiKeyExpiration {
 }
 
 function mapBackendToFrontend(b: BackendApiKeyDto): ApiKeyDto {
+  const rawScopes = b.scopes ?? [];
+  const isMarketplace = rawScopes.includes("marketplace");
+  const permissions = mapScopesToPermissions(rawScopes);
   return {
     id: b.id,
     projectId: b.projectId,
@@ -89,12 +96,14 @@ function mapBackendToFrontend(b: BackendApiKeyDto): ApiKeyDto {
     description: b.description ?? undefined,
     prefix: b.prefix,
     environment: b.environment as ApiKeyDto["environment"],
-    permissions: mapScopesToPermissions(b.scopes),
+    permissions,
+    scope: isMarketplace ? "marketplace_projects" : "current_project",
+    accessLevel: resolveAccessLevel(permissions),
     lastUsed: b.lastUsedAt,
     createdAt: b.createdAt,
     expiresAt: b.expiresAt,
     expiration: calcExpiration(b.expiresAt),
-    status: b.status as ApiKeyDto["status"],
+    status: b.isActive === false ? "disabled" : "active",
     createdBy: b.createdBy,
     usageCount: b.usageCount,
     ipRestrictions: b.allowedIPs ? b.allowedIPs.split(",").map((s) => s.trim()).filter(Boolean) : [],
@@ -114,11 +123,17 @@ function resolveExpiresAt(expiration: string, customDate?: string | null): strin
 }
 
 function mapCreateToBackend(f: CreateApiKeyRequest) {
+  const scopes = mapPermissionsToScopes(f.permissions);
+  const isMarketplace =
+    f.scope === "marketplace_projects" || f.keyType === "marketplace";
+  if (isMarketplace && !scopes.includes("marketplace")) {
+    scopes.push("marketplace");
+  }
   return {
     name: f.name,
     description: f.description ?? null,
     environment: f.environment,
-    scopes: mapPermissionsToScopes(f.permissions),
+    scopes,
     allowedIPs: f.ipRestrictions?.join(",") ?? null,
     allowedDomains: f.allowedDomains?.join(",") ?? null,
     rateLimit: f.rateLimit ?? null,

@@ -138,6 +138,34 @@ export function useDisableApp() {
   });
 }
 
+export function useMarketplaceStores() {
+  return useQuery<ProjectDto[], Error>({
+    queryKey: ["marketplace-stores"],
+    queryFn: () => appsApi.getMarketplaceStores(),
+    retry: 2,
+  });
+}
+
+export function useSetMarketplaceMember() {
+  const queryClient = useQueryClient();
+  return useMutation<
+    void,
+    Error,
+    { projectId: string; enabled: boolean; tenantId?: string }
+  >({
+    mutationFn: ({ projectId, enabled, tenantId }) =>
+      appsApi.setMarketplaceMember(projectId, enabled, tenantId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["project"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["marketplace-stores"] });
+    },
+    onError: (error) => {
+      message.error(`Failed to update marketplace membership: ${error.message}`);
+    },
+  });
+}
+
 export function useCurrentCapabilities(tenantId?: string) {
   return useQuery<Record<string, PlanCapability>, Error>({
     queryKey: ["current-capabilities", tenantId],

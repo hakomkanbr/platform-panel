@@ -31,21 +31,32 @@ function GeneralSettings({ project }: { project: ProjectDetailDto }) {
         }
         style={{ borderRadius: 8, marginBottom: 16 }}
       >
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}
+        >
           <div>
-            <Text type="secondary" style={{ display: "block", marginBottom: 4 }}>
+            <Text
+              type="secondary"
+              style={{ display: "block", marginBottom: 4 }}
+            >
               Project Name
             </Text>
             <Text strong>{project.name}</Text>
           </div>
           <div>
-            <Text type="secondary" style={{ display: "block", marginBottom: 4 }}>
+            <Text
+              type="secondary"
+              style={{ display: "block", marginBottom: 4 }}
+            >
               Slug
             </Text>
             <Text code>{project.slug}</Text>
           </div>
           <div>
-            <Text type="secondary" style={{ display: "block", marginBottom: 4 }}>
+            <Text
+              type="secondary"
+              style={{ display: "block", marginBottom: 4 }}
+            >
               Description
             </Text>
             <Text>{project.description || "No description"}</Text>
@@ -72,7 +83,9 @@ function MembersSettings() {
         description={
           <Space direction="vertical" size={8}>
             <Text strong>Team Members</Text>
-            <Text type="secondary">Invite team members to collaborate on this project.</Text>
+            <Text type="secondary">
+              Invite team members to collaborate on this project.
+            </Text>
           </Space>
         }
       >
@@ -100,7 +113,9 @@ function DomainsSettings() {
         description={
           <Space direction="vertical" size={8}>
             <Text strong>Custom Domains</Text>
-            <Text type="secondary">Configure custom domains for your project applications.</Text>
+            <Text type="secondary">
+              Configure custom domains for your project applications.
+            </Text>
           </Space>
         }
       >
@@ -112,7 +127,9 @@ function DomainsSettings() {
   );
 }
 
-export default function ProjectSettingsTabs({ project }: ProjectSettingsTabsProps) {
+export default function ProjectSettingsTabs({
+  project,
+}: ProjectSettingsTabsProps) {
   const items = [
     {
       key: "general",
@@ -124,26 +141,26 @@ export default function ProjectSettingsTabs({ project }: ProjectSettingsTabsProp
       ),
       children: <GeneralSettings project={project} />,
     },
-    {
-      key: "members",
-      label: (
-        <Space>
-          <TeamOutlined />
-          Members
-        </Space>
-      ),
-      children: <MembersSettings />,
-    },
-    {
-      key: "domains",
-      label: (
-        <Space>
-          <GlobalOutlined />
-          Domains
-        </Space>
-      ),
-      children: <DomainsSettings />,
-    },
+    // {
+    //   key: "members",
+    //   label: (
+    //     <Space>
+    //       <TeamOutlined />
+    //       Members
+    //     </Space>
+    //   ),
+    //   children: <MembersSettings />,
+    // },
+    // {
+    //   key: "domains",
+    //   label: (
+    //     <Space>
+    //       <GlobalOutlined />
+    //       Domains
+    //     </Space>
+    //   ),
+    //   children: <DomainsSettings />,
+    // },
     {
       key: "api-keys",
       label: (
@@ -152,7 +169,7 @@ export default function ProjectSettingsTabs({ project }: ProjectSettingsTabsProp
           API Keys
         </Space>
       ),
-      children: <ApiKeyTable projectId={project.id} />,
+      children: <ApiKeyTable projectId={project.id} projectName={project.name} />,
     },
     {
       key: "languages",

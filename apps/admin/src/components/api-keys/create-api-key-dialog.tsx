@@ -1,21 +1,27 @@
-import { Modal, Steps, Button, Form, Input, Select, DatePicker, Space, Typography, Card, Tag, Descriptions, message } from "antd";
+import { Modal, Steps, Button, Space, Typography, Card, DatePicker, Descriptions, message, Radio, Alert, Input, Tag, Select } from "antd";
 import {
   KeyOutlined,
-  EnvironmentOutlined,
+  GlobalOutlined,
   ClockCircleOutlined,
-  SafetyOutlined,
   EyeOutlined,
   CheckOutlined,
   RightOutlined,
   LeftOutlined,
+  LockOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import dayjs from "dayjs";
-import EnvironmentSelector from "./environment-selector";
-import PermissionSelector from "./permission-selector";
+import AccessSelector from "./access-selector";
+import ScopeSummary from "./scope-summary";
 import RevealSecret from "./reveal-secret";
 import { apiKeyService } from "./service";
-import type { ApiKeyFormData, CreateApiKeyResponse, ApiKeyEnvironment, ApiKeyExpiration, ApiKeyPermission } from "./types";
+import { accessLevelLabel, presetPermissions, scopeLabel } from "./access-levels";
+import type {
+  ApiKeyFormData,
+  CreateApiKeyResponse,
+  ApiKeyAccessLevel,
+  ApiKeyScope,
+} from "./types";
 
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -25,17 +31,21 @@ interface CreateApiKeyDialogProps {
   onClose: () => void;
   projectId: string;
   onSuccess: () => void;
+  projectName?: string;
+  defaultScope?: ApiKeyScope;
+  defaultAccessLevel?: ApiKeyAccessLevel;
+  title?: string;
 }
 
 const steps = [
   { title: "General", icon: <KeyOutlined /> },
-  { title: "Environment", icon: <EnvironmentOutlined /> },
+  { title: "Access", icon: <LockOutlined /> },
+  { title: "Scope", icon: <GlobalOutlined /> },
   { title: "Expiration", icon: <ClockCircleOutlined /> },
-  { title: "Permissions", icon: <SafetyOutlined /> },
   { title: "Review", icon: <EyeOutlined /> },
 ];
 
-const expirationOptions: { value: ApiKeyExpiration; label: string }[] = [
+const expirationOptions: { value: ApiKeyFormData["expiration"]; label: string }[] = [
   { value: "never", label: "Never" },
   { value: "30days", label: "30 Days" },
   { value: "90days", label: "90 Days" },
@@ -43,34 +53,81 @@ const expirationOptions: { value: ApiKeyExpiration; label: string }[] = [
   { value: "custom", label: "Custom Date" },
 ];
 
-function getExpirationLabel(value: ApiKeyExpiration): string {
+function getExpirationLabel(value: string): string {
   return expirationOptions.find((o) => o.value === value)?.label || value;
 }
 
-export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess }: CreateApiKeyDialogProps) {
+const accessLevelColors: Record<ApiKeyAccessLevel, string> = {
+  read_only: "green",
+  standard_read: "blue",
+  custom_read: "purple",
+};
+
+export default function CreateApiKeyDialog({
+  open,
+  onClose,
+  projectId,
+  onSuccess,
+  projectName,
+  defaultScope = "current_project",
+  defaultAccessLevel = "read_only",
+  title = "Create API Key",
+}: CreateApiKeyDialogProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CreateApiKeyResponse | null>(null);
-  const [formData, setFormData] = useState<ApiKeyFormData>({
+  const [formData, setFormData] = useState<ApiKeyFormData>(() => ({
     name: "",
     description: "",
+    accessLevel: defaultAccessLevel,
+    scope: defaultScope,
     environment: "development",
     expiration: "never",
     customExpirationDate: undefined,
-    permissions: [],
+    permissions: presetPermissions(defaultAccessLevel),
     ipRestrictions: "",
     allowedDomains: "",
     rateLimit: undefined,
     metadata: "",
-  });
+  }));
 
-  const updateField = <K extends keyof ApiKeyFormData>(key: K, value: ApiKeyFormData[K]) => {
+  const updateField = <K extends keyof ApiKeyFormData>(
+    key: K,
+    value: ApiKeyFormData[K],
+  ) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const resetForm = () => {
+    setCurrentStep(0);
+    setResult(null);
+    setFormData({
+      name: "",
+      description: "",
+      accessLevel: defaultAccessLevel,
+      scope: defaultScope,
+      environment: "development",
+      expiration: "never",
+      customExpirationDate: undefined,
+      permissions: presetPermissions(defaultAccessLevel),
+      ipRestrictions: "",
+      allowedDomains: "",
+      rateLimit: undefined,
+      metadata: "",
+    });
   };
 
   const handleNext = () => {
     if (currentStep === 0 && !formData.name.trim()) {
       message.warning("Please enter a key name");
+      return;
+    }
+    if (
+      currentStep === 1 &&
+      formData.accessLevel === "custom_read" &&
+      formData.permissions.length === 0
+    ) {
+      message.warning("Select at least one permission");
       return;
     }
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -80,19 +137,35 @@ export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   const handleCreate = async () => {
     setLoading(true);
     try {
-      const permissions: ApiKeyPermission[] = formData.permissions;
+      const permissions =
+        formData.accessLevel === "custom_read"
+          ? formData.permissions
+          : presetPermissions(formData.accessLevel);
       const res = await apiKeyService.create(projectId, {
         name: formData.name,
         description: formData.description || undefined,
+        keyType:
+          formData.scope === "marketplace_projects" ? "marketplace" : "developer",
+        scope: formData.scope,
         environment: formData.environment,
         expiration: formData.expiration,
-        customExpirationDate: formData.expiration === "custom" ? formData.customExpirationDate : null,
+        customExpirationDate:
+          formData.expiration === "custom" ? formData.customExpirationDate : null,
         permissions,
-        ipRestrictions: formData.ipRestrictions ? formData.ipRestrictions.split(",").map((s) => s.trim()).filter(Boolean) : [],
-        allowedDomains: formData.allowedDomains ? formData.allowedDomains.split(",").map((s) => s.trim()).filter(Boolean) : [],
+        ipRestrictions: formData.ipRestrictions
+          ? formData.ipRestrictions.split(",").map((s) => s.trim()).filter(Boolean)
+          : [],
+        allowedDomains: formData.allowedDomains
+          ? formData.allowedDomains.split(",").map((s) => s.trim()).filter(Boolean)
+          : [],
         rateLimit: formData.rateLimit,
         metadata: formData.metadata ? JSON.parse(formData.metadata) : undefined,
       });
@@ -106,24 +179,6 @@ export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess
     }
   };
 
-  const handleClose = () => {
-    setCurrentStep(0);
-    setResult(null);
-    setFormData({
-      name: "",
-      description: "",
-      environment: "development",
-      expiration: "never",
-      customExpirationDate: undefined,
-      permissions: [],
-      ipRestrictions: "",
-      allowedDomains: "",
-      rateLimit: undefined,
-      metadata: "",
-    });
-    onClose();
-  };
-
   const renderStep = () => {
     switch (currentStep) {
       case 0:
@@ -134,7 +189,7 @@ export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess
                 Key Name <span style={{ color: "#ff4d4f" }}>*</span>
               </Text>
               <Input
-                placeholder="e.g., Production API Key"
+                placeholder="e.g., My Mobile App"
                 value={formData.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 size="large"
@@ -153,23 +208,47 @@ export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess
                 style={{ borderRadius: 6 }}
               />
             </div>
+            <div>
+              <Text strong style={{ display: "block", marginBottom: 4 }}>
+                Environment
+              </Text>
+              <Radio.Group
+                value={formData.environment}
+                onChange={(e) => updateField("environment", e.target.value)}
+              >
+                <Space direction="vertical" style={{ width: "100%" }}>
+                  <Radio value="development">Development</Radio>
+                  <Radio value="staging">Staging</Radio>
+                  <Radio value="production">Production</Radio>
+                </Space>
+              </Radio.Group>
+            </div>
           </Space>
         );
 
       case 1:
         return (
-          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
-              Choose the environment for this API key.
-            </Text>
-            <EnvironmentSelector
-              value={formData.environment}
-              onChange={(val) => updateField("environment", val)}
-            />
-          </Space>
+          <AccessSelector
+            accessLevel={formData.accessLevel}
+            permissions={formData.permissions}
+            onChange={(level, permissions) => {
+              updateField("accessLevel", level);
+              updateField("permissions", permissions);
+            }}
+          />
         );
 
       case 2:
+        return (
+          <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+            <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
+              This is the data this API key can access.
+            </Text>
+            <ScopeSummary scope={formData.scope} projectName={projectName} />
+          </Space>
+        );
+
+      case 3:
         return (
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
@@ -188,39 +267,68 @@ export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess
                   Expiration Date
                 </Text>
                 <DatePicker
-                  value={formData.customExpirationDate ? dayjs(formData.customExpirationDate) : null}
-                  onChange={(date) => updateField("customExpirationDate", date?.toISOString())}
+                  value={
+                    formData.customExpirationDate
+                      ? dayjs(formData.customExpirationDate)
+                      : null
+                  }
+                  onChange={(date) =>
+                    updateField("customExpirationDate", date?.toISOString())
+                  }
                   style={{ width: "100%" }}
                   size="large"
                 />
               </div>
             )}
-            {formData.expiration !== "never" && formData.expiration !== "custom" && (
-              <Tag color="blue" style={{ marginTop: 8 }}>
-                Expires in {formData.expiration}
-              </Tag>
-            )}
+            {formData.expiration !== "never" &&
+              formData.expiration !== "custom" && (
+                <Tag color="blue" style={{ marginTop: 8 }}>
+                  Expires in {formData.expiration}
+                </Tag>
+              )}
           </Space>
-        );
-
-      case 3:
-        return (
-          <PermissionSelector
-            value={formData.permissions}
-            onChange={(val) => updateField("permissions", val)}
-          />
         );
 
       case 4:
         return (
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <Title level={5}>Review API Key</Title>
+            <Alert
+              type="warning"
+              showIcon
+              icon={<LockOutlined />}
+              message="This API key is read-only"
+              description="It can read data but cannot create, update, or delete anything."
+            />
             <Card style={{ borderRadius: 8 }}>
               <Descriptions column={1} size="small">
-                <Descriptions.Item label="Name">{formData.name}</Descriptions.Item>
+                <Descriptions.Item label="Name">
+                  {formData.name}
+                </Descriptions.Item>
                 {formData.description && (
-                  <Descriptions.Item label="Description">{formData.description}</Descriptions.Item>
+                  <Descriptions.Item label="Description">
+                    {formData.description}
+                  </Descriptions.Item>
                 )}
+                <Descriptions.Item label="Access">
+                  <Tag color={accessLevelColors[formData.accessLevel]}>
+                    {accessLevelLabel(formData.accessLevel)}
+                  </Tag>
+                  <Tag color="green">
+                    <LockOutlined /> Read only
+                  </Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="Scope">
+                  <Tag
+                    color={
+                      formData.scope === "marketplace_projects"
+                        ? "purple"
+                        : "green"
+                    }
+                  >
+                    {scopeLabel(formData.scope)}
+                  </Tag>
+                </Descriptions.Item>
                 <Descriptions.Item label="Environment">
                   <Tag
                     color={
@@ -236,7 +344,8 @@ export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess
                 </Descriptions.Item>
                 <Descriptions.Item label="Expiration">
                   {getExpirationLabel(formData.expiration)}
-                  {formData.customExpirationDate && ` - ${dayjs(formData.customExpirationDate).format("MMM DD, YYYY")}`}
+                  {formData.customExpirationDate &&
+                    ` - ${dayjs(formData.customExpirationDate).format("MMM DD, YYYY")}`}
                 </Descriptions.Item>
                 <Descriptions.Item label="Permissions">
                   {formData.permissions.length === 0 ? (
@@ -271,7 +380,7 @@ export default function CreateApiKeyDialog({ open, onClose, projectId, onSuccess
       title={
         <Space>
           <KeyOutlined style={{ color: "#F7931E" }} />
-          {result ? "API Key Created" : "Create API Key"}
+          {result ? "API Key Created" : title}
         </Space>
       }
       open={open}

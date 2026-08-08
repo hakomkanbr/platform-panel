@@ -1,11 +1,17 @@
 export function getAccessToken() {
   if (typeof window === "undefined") return null;
 
-  return (
+  const readCookie = (name: string) =>
     document.cookie
       .split("; ")
-      .find((c) => c.startsWith("access_token="))
-      ?.split("=")[1] ?? null
+      .find((c) => c.startsWith(`${name}=`))
+      ?.split("=")[1] ?? null;
+
+  return (
+    readCookie("access_token") ||
+    readCookie("kcToken") ||
+    readCookie("AuthToken") ||
+    null
   );
 }
 

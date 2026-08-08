@@ -1,8 +1,14 @@
 export type ApiKeyEnvironment = "development" | "staging" | "production";
 
+export type ApiKeyType = "developer" | "marketplace";
+
 export type ApiKeyStatus = "active" | "disabled" | "revoked";
 
 export type ApiKeyExpiration = "never" | "30days" | "90days" | "1year" | "custom";
+
+export type ApiKeyAccessLevel = "read_only" | "standard_read" | "custom_read";
+
+export type ApiKeyScope = "current_project" | "marketplace_projects";
 
 export interface ApiKeyPermission {
   resource: string;
@@ -17,6 +23,8 @@ export interface ApiKeyDto {
   prefix: string;
   environment: ApiKeyEnvironment;
   permissions: ApiKeyPermission[];
+  scope?: ApiKeyScope;
+  accessLevel?: ApiKeyAccessLevel;
   lastUsed: string | null;
   createdAt: string;
   expiresAt: string | null;
@@ -37,10 +45,12 @@ export interface ApiKeyDto {
 export interface CreateApiKeyRequest {
   name: string;
   description?: string;
+  keyType?: ApiKeyType;
   environment: ApiKeyEnvironment;
   expiration: ApiKeyExpiration;
   customExpirationDate?: string | null;
   permissions: ApiKeyPermission[];
+  scope?: ApiKeyScope;
   ipRestrictions?: string[];
   allowedDomains?: string[];
   rateLimit?: number;
@@ -141,3 +151,85 @@ export const API_KEY_PERMISSIONS = [
     ],
   },
 ] as const;
+
+export interface ApiKeyPermissionGroup {
+  resource: string;
+  module: string;
+  label: string;
+  actions: readonly { value: string; label: string }[];
+}
+
+export const API_KEY_READ_PERMISSIONS: readonly ApiKeyPermissionGroup[] = [
+  {
+    resource: "catalog:products",
+    module: "Catalog",
+    label: "Products",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "catalog:categories",
+    module: "Catalog",
+    label: "Categories",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "catalog:brands",
+    module: "Catalog",
+    label: "Brands",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "orders",
+    module: "Orders",
+    label: "Orders",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "customers",
+    module: "Customers",
+    label: "Customers",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "inventory",
+    module: "Inventory",
+    label: "Inventory",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "pricing",
+    module: "Pricing",
+    label: "Prices",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "marketing:promotions",
+    module: "Marketing",
+    label: "Promotions",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "reviews",
+    module: "Reviews",
+    label: "Reviews",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "analytics",
+    module: "Analytics",
+    label: "Analytics",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "payments",
+    module: "Payments",
+    label: "Payments",
+    actions: [{ value: "read", label: "Read" }],
+  },
+  {
+    resource: "shipping",
+    module: "Shipping",
+    label: "Shipping",
+    actions: [{ value: "read", label: "Read" }],
+  },
+];

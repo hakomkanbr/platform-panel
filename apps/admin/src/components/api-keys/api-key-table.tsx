@@ -3,7 +3,6 @@
 import { Table, Button, Space, Typography, Tag, Tooltip, Input, message } from "antd";
 import {
   PlusOutlined,
-  CopyOutlined,
   ReloadOutlined,
   StopOutlined,
   CheckCircleOutlined,
@@ -11,6 +10,9 @@ import {
   EditOutlined,
   SearchOutlined,
   KeyOutlined,
+  LockOutlined,
+  GlobalOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import dayjs from "dayjs";
@@ -20,6 +22,7 @@ import CreateApiKeyDialog from "./create-api-key-dialog";
 import RotateDialog from "./rotate-dialog";
 import DeleteDialog from "./delete-dialog";
 import { apiKeyService } from "./service";
+import { accessLevelLabel, resolveAccessLevel } from "./access-levels";
 import type { ApiKeyDto, CreateApiKeyResponse } from "./types";
 
 dayjs.extend(relativeTime);
@@ -28,9 +31,16 @@ const { Text } = Typography;
 
 interface ApiKeyTableProps {
   projectId: string;
+  projectName?: string;
 }
 
-export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
+const accessLevelColors: Record<string, string> = {
+  read_only: "green",
+  standard_read: "blue",
+  custom_read: "purple",
+};
+
+export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps) {
   const [keys, setKeys] = useState<ApiKeyDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -62,14 +72,9 @@ export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
       (k) =>
         k.name.toLowerCase().includes(q) ||
         k.prefix.toLowerCase().includes(q) ||
-        k.environment.toLowerCase().includes(q)
+        k.environment.toLowerCase().includes(q),
     );
   }, [keys, search]);
-
-  const handleCopyPrefix = (prefix: string) => {
-    navigator.clipboard.writeText(prefix);
-    message.success("Prefix copied");
-  };
 
   const handleToggleStatus = async (key: ApiKeyDto) => {
     try {
@@ -91,7 +96,7 @@ export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 200,
+      width: 220,
       render: (_: string, record: ApiKeyDto) => (
         <Space>
           <KeyOutlined style={{ color: "#F7931E" }} />
@@ -107,25 +112,35 @@ export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
       ),
     },
     {
-      title: "Prefix",
-      dataIndex: "prefix",
-      key: "prefix",
-      width: 180,
-      render: (prefix: string) => (
-        <Space>
-          <Text code style={{ fontSize: 12 }}>
-            {prefix}...
-          </Text>
-          <Tooltip title="Copy prefix">
-            <Button
-              type="text"
-              size="small"
-              icon={<CopyOutlined />}
-              onClick={() => handleCopyPrefix(prefix)}
-            />
-          </Tooltip>
-        </Space>
-      ),
+      title: "Access",
+      key: "access",
+      width: 140,
+      render: (_: unknown, record: ApiKeyDto) => {
+        const level = record.accessLevel ?? resolveAccessLevel(record.permissions);
+        return (
+          <Space size={4}>
+            <LockOutlined style={{ color: "#10b981", fontSize: 12 }} />
+            <Tag color={accessLevelColors[level]} style={{ marginInlineEnd: 0 }}>
+              {accessLevelLabel(level)}
+            </Tag>
+          </Space>
+        );
+      },
+    },
+    {
+      title: "Scope",
+      key: "scope",
+      width: 130,
+      render: (_: unknown, record: ApiKeyDto) =>
+        record.scope === "marketplace_projects" ? (
+          <Tag icon={<GlobalOutlined />} color="purple">
+            Marketplace
+          </Tag>
+        ) : (
+          <Tag icon={<ShopOutlined />} color="green">
+            This store
+          </Tag>
+        ),
     },
     {
       title: "Environment",
@@ -143,51 +158,10 @@ export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
       ),
     },
     {
-      title: "Permissions",
-      dataIndex: "permissions",
-      key: "permissions",
-      width: 160,
-      render: (permissions: ApiKeyDto["permissions"]) => (
-        <Space wrap size={[4, 4]}>
-          {permissions.slice(0, 2).map((p) => (
-            <Tag key={p.resource} color="blue" style={{ fontSize: 11 }}>
-              {p.resource}
-            </Tag>
-          ))}
-          {permissions.length > 2 && (
-            <Tag style={{ fontSize: 11 }}>+{permissions.length - 2}</Tag>
-          )}
-        </Space>
-      ),
-    },
-    {
-      title: "Last Used",
-      dataIndex: "lastUsed",
-      key: "lastUsed",
-      width: 120,
-      render: (val: string | null) =>
-        val ? (
-          <Tooltip title={dayjs(val).format("MMM DD, YYYY HH:mm")}>
-            <Text type="secondary">{dayjs(val).fromNow()}</Text>
-          </Tooltip>
-        ) : (
-          <Text type="secondary">Never</Text>
-        ),
-    },
-    {
-      title: "Created",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      width: 100,
-      render: (val: string) => (
-        <Text type="secondary">{dayjs(val).format("MMM DD, YYYY")}</Text>
-      ),
-    },
-    {
       title: "Expires",
       dataIndex: "expiresAt",
       key: "expiresAt",
-      width: 100,
+      width: 120,
       render: (val: string | null) =>
         val ? (
           <Text type={dayjs(val).isBefore(dayjs()) ? "danger" : "secondary"}>
@@ -205,18 +179,18 @@ export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
       render: (status: ApiKeyDto["status"]) => <ApiKeyStatus status={status} />,
     },
     {
-      title: "Created By",
-      dataIndex: "createdByEmail",
-      key: "createdByEmail",
-      width: 140,
-      render: (val: string | undefined) => (
-        <Text type="secondary">{val || "-"}</Text>
+      title: "Created",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      width: 120,
+      render: (val: string) => (
+        <Text type="secondary">{dayjs(val).format("MMM DD, YYYY")}</Text>
       ),
     },
     {
       title: "Actions",
       key: "actions",
-      width: 200,
+      width: 180,
       fixed: "right" as const,
       render: (_: unknown, record: ApiKeyDto) => (
         <Space size="small">
@@ -309,7 +283,7 @@ export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
         dataSource={filteredKeys}
         rowKey="id"
         loading={loading}
-        scroll={{ x: 1400 }}
+        scroll={{ x: 1200 }}
         pagination={{
           pageSize: 10,
           showSizeChanger: true,
@@ -323,6 +297,7 @@ export default function ApiKeyTable({ projectId }: ApiKeyTableProps) {
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         projectId={projectId}
+        projectName={projectName}
         onSuccess={fetchKeys}
       />
 

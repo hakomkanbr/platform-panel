@@ -25,7 +25,7 @@ const statusConfig: Record<TApiKeyStatus, { color: string; icon: React.ReactNode
 };
 
 export default function ApiKeyStatus({ status }: { status: TApiKeyStatus }) {
-  const config = statusConfig[status];
+  const config = statusConfig[status] ?? statusConfig.disabled;
   return (
     <Tag icon={config.icon} color={config.color}>
       {config.label}

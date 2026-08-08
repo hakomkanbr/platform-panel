@@ -124,4 +124,24 @@ export const appsApi = {
       : `/api/v1/projects/${projectId}/apps/disable`;
     await client.post(url, request);
   },
+
+  setMarketplaceMember: async (
+    projectId: string,
+    enabled: boolean,
+    tenantId?: string,
+  ): Promise<void> => {
+    const client = getGatewayClient();
+    const url = tenantId
+      ? `/api/v1/projects/${projectId}/marketplace?tenantId=${tenantId}`
+      : `/api/v1/projects/${projectId}/marketplace`;
+    await client.put(url, { enabled });
+  },
+
+  getMarketplaceStores: async (): Promise<ProjectDto[]> => {
+    const client = getGatewayClient();
+    const response = await client.get<{ success: boolean; data: ProjectDto[] }>(
+      "/api/v1/projects/marketplace-stores",
+    );
+    return response.data.data;
+  },
 };

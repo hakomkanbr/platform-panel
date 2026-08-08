@@ -4,6 +4,9 @@ import type {
   ApiKeyExpiration,
   ApiKeyStatus,
   ApiKeyPermission,
+  ApiKeyType,
+  ApiKeyAccessLevel,
+  ApiKeyScope,
   CreateApiKeyRequest,
   UpdateApiKeyRequest,
   CreateApiKeyResponse,
@@ -16,6 +19,9 @@ export type {
   ApiKeyExpiration,
   ApiKeyStatus,
   ApiKeyPermission,
+  ApiKeyType,
+  ApiKeyAccessLevel,
+  ApiKeyScope,
   CreateApiKeyRequest,
   UpdateApiKeyRequest,
   CreateApiKeyResponse,
@@ -25,6 +31,8 @@ export type {
 export interface ApiKeyFormData {
   name: string;
   description?: string;
+  accessLevel: ApiKeyAccessLevel;
+  scope: ApiKeyScope;
   environment: ApiKeyEnvironment;
   expiration: ApiKeyExpiration;
   customExpirationDate?: string;

@@ -44,6 +44,7 @@ export interface ProjectDto {
   enabledAppCount: number
   createdAt: string
   updatedAt: string | null
+  marketplaceMember: boolean
 }
 
 export interface ProjectDetailDto {
@@ -54,6 +55,7 @@ export interface ProjectDetailDto {
   slug: string
   createdAt: string
   updatedAt: string | null
+  marketplaceMember: boolean
   apps: ProjectAppDto[]
 }
 

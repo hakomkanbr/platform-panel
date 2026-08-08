@@ -26,6 +26,7 @@ import {
   SettingOutlined,
   ShoppingCartOutlined,
   ShoppingOutlined,
+  ShopOutlined,
   SkinOutlined,
   TagOutlined,
   TagsOutlined,
@@ -65,6 +66,12 @@ export const platformNavigation: NavigationItem[] = [
     labelKey: "common.nav.projects",
     path: "/admin/projects",
     icon: <FolderOutlined />,
+  },
+  {
+    key: "marketplace",
+    label: "Marketplace",
+    path: "/admin/marketplace",
+    icon: <ShopOutlined />,
   },
   {
     key: "billing",
