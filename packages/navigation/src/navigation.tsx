@@ -70,6 +70,7 @@ export const platformNavigation: NavigationItem[] = [
   {
     key: "marketplace",
     label: "Marketplace",
+    labelKey: "common.nav.marketplace",
     path: "/admin/marketplace",
     icon: <ShopOutlined />,
   },

@@ -22,11 +22,8 @@ import {
   ShopOutlined,
   StopOutlined,
 } from "@ant-design/icons";
-import {
-  useTenantId,
-  useProjects,
-  useSetMarketplaceMember,
-} from "@repo/hooks";
+import { useTenantId, useProjects, useSetMarketplaceMember } from "@repo/hooks";
+import { useTranslations } from "@repo/localization";
 import { motion } from "framer-motion";
 import { PageTransition, AnimatedCard } from "@repo/ui";
 import CreateApiKeyDialog from "@/components/api-keys/create-api-key-dialog";
@@ -35,6 +32,7 @@ import type { ProjectDto } from "@repo/shared-types";
 const { Title, Text } = Typography;
 
 export default function MarketplacePage() {
+  const t = useTranslations();
   const tenantId = useTenantId();
   const {
     data: projects = [],
@@ -57,7 +55,8 @@ export default function MarketplacePage() {
     if (!search) return projects;
     const q = search.toLowerCase();
     return projects.filter(
-      (p) => p.name.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q),
+      (p) =>
+        p.name.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q),
     );
   }, [projects, search]);
 
@@ -71,10 +70,8 @@ export default function MarketplacePage() {
     return (
       <PageTransition>
         <div className="section-header">
-          <Title level={3}>Marketplace</Title>
-          <Text type="secondary">
-            Stores available to applications connected to your platform
-          </Text>
+          <Title level={3}>{t("dashboard.marketplace.title")}</Title>
+          <Text type="secondary">{t("dashboard.marketplace.subtitle")}</Text>
         </div>
         <div style={{ textAlign: "center", padding: 80 }}>
           <Spin size="large" />
@@ -94,7 +91,9 @@ export default function MarketplacePage() {
             boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
           }}
         >
-          <Text type="danger">Failed to load stores: {error.message}</Text>
+          <Text type="danger">
+            {t("dashboard.marketplace.loadFailed", { error: error.message })}
+          </Text>
         </div>
       </PageTransition>
     );
@@ -112,11 +111,9 @@ export default function MarketplacePage() {
       >
         <div className="section-header" style={{ marginBottom: 0 }}>
           <Title level={3} style={{ margin: 0 }}>
-            Marketplace
+            {t("dashboard.marketplace.title")}
           </Title>
-          <Text type="secondary">
-            Stores available to applications connected to your platform
-          </Text>
+          <Text type="secondary">{t("dashboard.marketplace.subtitle")}</Text>
         </div>
       </div>
 
@@ -133,12 +130,12 @@ export default function MarketplacePage() {
             type="info"
             showIcon
             icon={<GlobalOutlined />}
-            message="Marketplace membership"
-            description='Stores marked "Available in Marketplace" can be accessed by Marketplace applications. Applications use read-only API keys scoped to all participating stores.'
+            message={t("dashboard.marketplace.infoTitle")}
+            description={t("dashboard.marketplace.infoDesc")}
           />
           <Space align="center">
             <Input
-              placeholder="Search stores..."
+              placeholder={t("dashboard.marketplace.searchPlaceholder")}
               prefix={<SearchOutlined />}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -146,7 +143,11 @@ export default function MarketplacePage() {
               allowClear
             />
             <Text type="secondary">
-              {filtered.length} stores · {projects.filter((p) => p.marketplaceMember).length} available
+              {t("dashboard.marketplace.storesCount", {
+                filteredCount: filtered.length,
+                availableCount: projects.filter((p) => p.isMarketplaceMember)
+                  .length,
+              })}
             </Text>
           </Space>
         </Space>
@@ -158,9 +159,11 @@ export default function MarketplacePage() {
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={
               <Space direction="vertical" align="center">
-                <ShopOutlined style={{ fontSize: 28, color: "var(--primary)" }} />
+                <ShopOutlined
+                  style={{ fontSize: 28, color: "var(--primary)" }}
+                />
                 <Text type="secondary" style={{ fontSize: 15 }}>
-                  No stores found
+                  {t("dashboard.marketplace.noStoresFound")}
                 </Text>
               </Space>
             }
@@ -181,7 +184,9 @@ export default function MarketplacePage() {
                     justifyContent: "space-between",
                     padding: "16px 20px",
                     borderBottom:
-                      idx < filtered.length - 1 ? "1px solid var(--border-light)" : "none",
+                      idx < filtered.length - 1
+                        ? "1px solid var(--border-light)"
+                        : "none",
                     transition: "background 0.15s",
                     borderRadius:
                       idx === 0
@@ -207,7 +212,7 @@ export default function MarketplacePage() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: project.marketplaceMember
+                        color: project.isMarketplaceMember
                           ? "#10b981"
                           : "var(--primary)",
                         fontSize: 18,
@@ -226,17 +231,19 @@ export default function MarketplacePage() {
                   </Space>
                   <Space>
                     <Tag
-                      color={project.marketplaceMember ? "green" : "default"}
+                      color={project.isMarketplaceMember ? "green" : "default"}
                       style={{ borderRadius: 4, fontSize: 11 }}
                       icon={
-                        project.marketplaceMember ? <CheckCircleOutlined /> : undefined
+                        project.isMarketplaceMember ? (
+                          <CheckCircleOutlined />
+                        ) : undefined
                       }
                     >
-                      {project.marketplaceMember
-                        ? "Available in Marketplace"
-                        : "Not available"}
+                      {project.isMarketplaceMember
+                        ? t("dashboard.marketplace.statusAvailable")
+                        : t("dashboard.marketplace.statusNotAvailable")}
                     </Tag>
-                    {project.marketplaceMember ? (
+                    {project.isMarketplaceMember ? (
                       <Button
                         size="small"
                         danger
@@ -245,7 +252,7 @@ export default function MarketplacePage() {
                         style={{ borderRadius: 8 }}
                         onClick={() => handleToggle(project, false)}
                       >
-                        Remove
+                        {t("dashboard.marketplace.btnRemove")}
                       </Button>
                     ) : (
                       <Button
@@ -256,7 +263,7 @@ export default function MarketplacePage() {
                         style={{ borderRadius: 8 }}
                         onClick={() => handleToggle(project, true)}
                       >
-                        Add to Marketplace
+                        {t("dashboard.marketplace.btnAdd")}
                       </Button>
                     )}
                   </Space>
@@ -267,11 +274,11 @@ export default function MarketplacePage() {
         )}
       </AnimatedCard>
 
-      <Card
+      {/* <Card
         title={
           <Space>
             <ApiOutlined style={{ color: "#F7931E" }} />
-            Marketplace API Access
+            {t("dashboard.marketplace.apiTitle")}
           </Space>
         }
         style={{
@@ -282,14 +289,10 @@ export default function MarketplacePage() {
         }}
       >
         <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-          <Text type="secondary">
-            Create a read-only API key for applications that consume your
-            Marketplace. The key can read data from all stores available in
-            Marketplace.
-          </Text>
+          <Text type="secondary">{t("dashboard.marketplace.apiDesc")}</Text>
           <Space wrap>
             <Select
-              placeholder="Key owner store"
+              placeholder={t("dashboard.marketplace.apiSelectPlaceholder")}
               value={ownerProjectId}
               onChange={setOwnerProjectId}
               options={projects.map((p) => ({
@@ -305,11 +308,11 @@ export default function MarketplacePage() {
               onClick={() => setCreateKeyOpen(true)}
               style={{ borderRadius: 6 }}
             >
-              Create Marketplace API Key
+              {t("dashboard.marketplace.apiBtnCreate")}
             </Button>
           </Space>
         </Space>
-      </Card>
+      </Card> */}
 
       <CreateApiKeyDialog
         open={createKeyOpen}
@@ -318,7 +321,7 @@ export default function MarketplacePage() {
         projectName={ownerProjectName}
         defaultScope="marketplace_projects"
         defaultAccessLevel="standard_read"
-        title="Create Marketplace API Key"
+        title={t("dashboard.marketplace.apiBtnCreate")}
         onSuccess={() => {
           setCreateKeyOpen(false);
         }}

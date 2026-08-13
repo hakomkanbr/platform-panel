@@ -41,5 +41,23 @@
     "exploreDesc": "Hazır SaaS modüllerini kur",
     "invite": "Takım Üyesi Davet Et",
     "inviteDesc": "Rolleri ve izinleri ata"
+  },
+  "marketplace": {
+    "title": "Pazar Yeri",
+    "subtitle": "Platformunuza bağlı uygulamaların erişebileceği mağazalar",
+    "loadFailed": "Mağazalar yüklenemedi: {error}",
+    "infoTitle": "Pazar Yeri Üyeliği",
+    "infoDesc": "\"Pazar Yerinde Mevcut\" olarak işaretlenen mağazalara Pazar Yeri uygulamaları erişebilir. Uygulamalar, katılan tüm mağazalarla sınırlı salt okunur API anahtarları kullanır.",
+    "searchPlaceholder": "Mağazaları ara...",
+    "storesCount": "{filteredCount} mağaza · {availableCount} mevcut",
+    "noStoresFound": "Mağaza bulunamadı",
+    "statusAvailable": "Pazar Yerinde Mevcut",
+    "statusNotAvailable": "Mevcut Değil",
+    "btnRemove": "Kaldır",
+    "btnAdd": "Pazar Yerine Ekle",
+    "apiTitle": "Pazar Yeri API Erişimi",
+    "apiDesc": "Pazar Yerinizi kullanan uygulamalar için salt okunur bir API anahtarı oluşturun. Anahtar, Pazar Yerinde bulunan tüm mağazalardan veri okuyabilir.",
+    "apiSelectPlaceholder": "Anahtar sahibi mağaza",
+    "apiBtnCreate": "Pazar Yeri API Anahtarı Oluştur"
   }
 }

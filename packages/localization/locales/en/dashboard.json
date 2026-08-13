@@ -41,5 +41,23 @@
     "exploreDesc": "Install pre-built SaaS modules",
     "invite": "Invite Team Member",
     "inviteDesc": "Assign roles & permissions"
+  },
+  "marketplace": {
+    "title": "Marketplace",
+    "subtitle": "Stores available to applications connected to your platform",
+    "loadFailed": "Failed to load stores: {error}",
+    "infoTitle": "Marketplace membership",
+    "infoDesc": "Stores marked \"Available in Marketplace\" can be accessed by Marketplace applications. Applications use read-only API keys scoped to all participating stores.",
+    "searchPlaceholder": "Search stores...",
+    "storesCount": "{filteredCount} stores · {availableCount} available",
+    "noStoresFound": "No stores found",
+    "statusAvailable": "Available in Marketplace",
+    "statusNotAvailable": "Not available",
+    "btnRemove": "Remove",
+    "btnAdd": "Add to Marketplace",
+    "apiTitle": "Marketplace API Access",
+    "apiDesc": "Create a read-only API key for applications that consume your Marketplace. The key can read data from all stores available in Marketplace.",
+    "apiSelectPlaceholder": "Key owner store",
+    "apiBtnCreate": "Create Marketplace API Key"
   }
 }
