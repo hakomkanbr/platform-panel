@@ -5,6 +5,7 @@ import { LockOutlined } from "@ant-design/icons";
 import { API_KEY_READ_PERMISSIONS } from "@repo/shared-types";
 import type { ApiKeyPermissionGroup } from "@repo/shared-types";
 import { useMemo } from "react";
+import { useTranslations } from "@repo/localization";
 import { ACCESS_LEVEL_OPTIONS, presetPermissions } from "./access-levels";
 import type { ApiKeyAccessLevel, ApiKeyPermission } from "./types";
 
@@ -21,6 +22,7 @@ export default function AccessSelector({
   permissions,
   onChange,
 }: AccessSelectorProps) {
+  const t = useTranslations();
   const selectedSet = useMemo(
     () => new Set(permissions.map((p) => p.resource)),
     [permissions],
@@ -103,13 +105,13 @@ export default function AccessSelector({
         type="info"
         showIcon
         icon={<LockOutlined />}
-        message="This API key is read-only"
-        description="API keys can retrieve data but cannot create, update, or delete anything."
+        message={t("settings.apiKeys.readOnlyAlertTitle")}
+        description={t("settings.apiKeys.readOnlyKeysDesc")}
       />
 
       <div>
         <Text type="secondary" style={{ display: "block", marginBottom: 12 }}>
-          Choose the access level for this API key.
+          {t("settings.apiKeys.chooseAccessLevel")}
         </Text>
         <Radio.Group
           value={accessLevel}
@@ -117,20 +119,28 @@ export default function AccessSelector({
           style={{ width: "100%" }}
         >
           <Space direction="vertical" style={{ width: "100%" }}>
-            {ACCESS_LEVEL_OPTIONS.map((option) => (
-              <Radio
-                key={option.value}
-                value={option.value}
-                style={{ display: "block", padding: "10px 12px", border: "1px solid #e5e7eb", borderRadius: 8, marginBottom: 8 }}
-              >
-                <Space direction="vertical" size={0}>
-                  <Text strong>{option.label}</Text>
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    {option.description}
-                  </Text>
-                </Space>
-              </Radio>
-            ))}
+            {ACCESS_LEVEL_OPTIONS.map((option) => {
+              const levelKey =
+                option.value === "read_only"
+                  ? "readOnly"
+                  : option.value === "standard_read"
+                    ? "standardRead"
+                    : "customRead";
+              return (
+                <Radio
+                  key={option.value}
+                  value={option.value}
+                  style={{ display: "block", padding: "10px 12px", border: "1px solid #e5e7eb", borderRadius: 8, marginBottom: 8 }}
+                >
+                  <Space direction="vertical" size={0}>
+                    <Text strong>{t(`settings.apiKeys.levels.${levelKey}` as any) || option.label}</Text>
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      {t(`settings.apiKeys.levels.${levelKey}Desc` as any) || option.description}
+                    </Text>
+                  </Space>
+                </Radio>
+              );
+            })}
           </Space>
         </Radio.Group>
       </div>
@@ -148,7 +158,7 @@ export default function AccessSelector({
       {accessLevel === "custom_read" && (
         <div>
           <Text type="secondary" style={{ display: "block", marginBottom: 12 }}>
-            Select which read permissions this key should have.
+            {t("settings.apiKeys.selectPermissionsDesc")}
           </Text>
           <Collapse
             items={customItems}

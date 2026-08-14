@@ -1,5 +1,6 @@
 import { Alert, Button, Space, Typography, message } from "antd";
 import { CopyOutlined, WarningOutlined, KeyOutlined } from "@ant-design/icons";
+import { useTranslations } from "@repo/localization";
 
 const { Text, Paragraph } = Typography;
 
@@ -9,12 +10,14 @@ interface RevealSecretProps {
 }
 
 export default function RevealSecret({ secret, keyName }: RevealSecretProps) {
+  const t = useTranslations();
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(secret);
-      message.success("Secret copied to clipboard!");
+      message.success(t("settings.apiKeys.secretCopied"));
     } catch {
-      message.error("Failed to copy secret");
+      message.error(t("settings.apiKeys.copyFailed"));
     }
   };
 
@@ -24,8 +27,8 @@ export default function RevealSecret({ secret, keyName }: RevealSecretProps) {
         type="warning"
         showIcon
         icon={<WarningOutlined />}
-        message="This secret will never be shown again."
-        description="Make sure to copy and store it in a secure location. If you lose it, you will need to rotate the key."
+        message={t("settings.apiKeys.secretAlertTitle")}
+        description={t("settings.apiKeys.secretAlertDesc")}
         style={{ marginBottom: 24, borderRadius: 8 }}
       />
 
@@ -41,7 +44,7 @@ export default function RevealSecret({ secret, keyName }: RevealSecretProps) {
         <Space direction="vertical" style={{ width: "100%" }}>
           <Text strong>
             <KeyOutlined style={{ marginRight: 8 }} />
-            API Key Secret for &quot;{keyName}&quot;
+            {t("settings.apiKeys.secretForKey", { keyName })}
           </Text>
           <Paragraph
             code
@@ -66,7 +69,7 @@ export default function RevealSecret({ secret, keyName }: RevealSecretProps) {
             size="large"
             style={{ width: "100%", borderRadius: 6 }}
           >
-            Copy Secret
+            {t("settings.apiKeys.copySecret")}
           </Button>
         </Space>
       </div>

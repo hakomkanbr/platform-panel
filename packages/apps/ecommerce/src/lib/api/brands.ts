@@ -12,14 +12,14 @@ function buildQuery(params?: ListParams): string {
 
 export const brandsApi = {
   list: (params?: ListParams) =>
-    apiGet<PaginatedList<Brand>>(`/Admin/Brands${buildQuery(params)}`),
+    apiGet<PaginatedList<Brand>>(`/Admin/v1/Brands${buildQuery(params)}`),
 
   create: (data: BrandFormData) =>
-    apiPost<number>('/Admin/Brands', data),
+    apiPost<number>('/Admin/v1/Brands', data),
 
   update: (data: BrandFormData & { id: number }) =>
-    apiPut<number>('/Admin/Brands', data),
+    apiPut<number>('/Admin/v1/Brands', data),
 
   delete: (id: number) =>
-    apiDelete<number>(`/Admin/Brands/${id}`),
+    apiDelete<number>(`/Admin/v1/Brands/${id}`),
 };

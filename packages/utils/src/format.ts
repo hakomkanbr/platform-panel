@@ -106,3 +106,13 @@ export function titleCase(value?: string | null): string {
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 }
+
+export function getStoreUrl(slug?: string): string {
+  const baseUrl =
+    (typeof process !== "undefined" &&
+      process.env?.NEXT_PUBLIC_STORE_BASE_URL) ||
+    "https://store.share2sells.com/store";
+  if (!slug) return baseUrl;
+  const cleanBase = baseUrl.replace(/\/+$/, "");
+  return `${cleanBase}/${encodeURIComponent(slug)}`;
+}

@@ -121,17 +121,48 @@ body {
   background: transparent !important;
 }
 
-.modern-layout .ant-menu-item {
+/* Uncollapsed Menu Items & Submenu Titles */
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-item {
   margin: 4px auto !important;
   border-radius: 10px !important;
-  padding: 6px 13px !important;
-  width: 94%;
-  height: 49px !important;
+  padding: 0 12px !important;
+  padding-inline-start: 12px !important;
+  padding-inline-end: 12px !important;
+  width: calc(100% - 12px) !important;
+  height: 44px !important;
   line-height: 44px !important;
   display: flex !important;
   align-items: center !important;
   font-weight: 500;
   transition: all 0.2s ease;
+}
+
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-submenu-title {
+  margin: 4px auto !important;
+  border-radius: 10px !important;
+  padding: 0 12px !important;
+  padding-inline-start: 12px !important;
+  padding-inline-end: 12px !important;
+  width: calc(100% - 12px) !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-item .anticon,
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-item .ant-menu-item-icon,
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-submenu-title .anticon,
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-submenu-title .ant-menu-item-icon {
+  font-size: 18px !important;
+  margin-inline-end: 10px !important;
+  margin-inline-start: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0;
 }
 
 .modern-layout .ant-menu-item-selected {
@@ -140,29 +171,12 @@ body {
   font-weight: 600;
 }
 
-.modern-layout .ant-menu-item-selected .ant-menu-item-icon {
+.modern-layout .ant-menu-item-selected .ant-menu-item-icon,
+.modern-layout .ant-menu-item-selected .anticon {
   color: var(--s2s-orange) !important;
 }
 
-.modern-layout .ant-menu-item:hover {
-  background: var(--s2s-bg-hover) !important;
-  color: var(--s2s-orange) !important;
-}
-
-.modern-layout .ant-menu-submenu-title {
-  margin: 4px 7px !important;
-  border-radius: 10px !important;
-  height: 44px !important;
-  line-height: 44px !important;
-  font-weight: 500;
-  width: calc(100% - 15px);
-  padding-left : 14px!important;
-}
-
-.ant-menu.ant-menu-sub .ant-menu-item{
-  padding-left: 32px!important;
-}
-
+.modern-layout .ant-menu-item:hover,
 .modern-layout .ant-menu-submenu-title:hover {
   background: var(--s2s-bg-hover) !important;
   color: var(--s2s-orange) !important;
@@ -170,6 +184,11 @@ body {
 
 .modern-layout .ant-menu-submenu-selected > .ant-menu-submenu-title {
   color: var(--s2s-orange) !important;
+}
+
+.ant-menu.ant-menu-sub .ant-menu-item {
+  padding-inline-start: 28px !important;
+  padding-inline-end: 12px !important;
 }
 
 .modern-layout .ant-menu-inline .ant-menu-sub {
@@ -180,6 +199,93 @@ body {
   border-color: var(--s2s-border);
 }
 
+/* ===== Collapsed Sidebar Menu Items & Centered Icons Fix ===== */
+.modern-layout .ant-menu.ant-menu-inline-collapsed,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu {
+  width: 100% !important;
+}
+
+.modern-layout .ant-menu-inline-collapsed > .ant-menu-item,
+.modern-layout .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-item,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-submenu-title {
+  width: 44px !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  margin: 4px auto !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  position: relative !important;
+  left: auto !important;
+  right: auto !important;
+  inset-inline-start: auto !important;
+  inset-inline-end: auto !important;
+}
+
+.modern-layout .ant-menu-inline-collapsed > .ant-menu-item .anticon,
+.modern-layout .ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon,
+.modern-layout .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title .anticon,
+.modern-layout .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title .ant-menu-item-icon,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-item .anticon,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-item .ant-menu-item-icon,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-submenu-title .anticon,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-submenu-title .ant-menu-item-icon {
+  margin: 0 !important;
+  margin-inline-start: 0 !important;
+  margin-inline-end: 0 !important;
+  padding: 0 !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: unset !important;
+  transform: none !important;
+}
+
+.modern-layout .ant-menu-inline-collapsed .ant-menu-title-content,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-title-content {
+  display: none !important;
+}
+
+.modern-layout .ant-menu-inline-collapsed .ant-menu-submenu-arrow,
+.s2s-sidebar-floating.ant-layout-sider-collapsed .ant-menu-submenu-arrow {
+  display: none !important;
+}
+
+/* Submenu Popup Dropdown */
+.ant-menu-submenu-popup {
+  z-index: 1050 !important;
+}
+
+.ant-menu-submenu-popup .ant-menu {
+  border-radius: 12px !important;
+  padding: 6px !important;
+  box-shadow: var(--s2s-shadow-lg) !important;
+  border: 1px solid var(--s2s-border) !important;
+  background: var(--s2s-bg-container) !important;
+}
+
+.ant-menu-submenu-popup .ant-menu-item {
+  border-radius: 8px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  margin: 2px 0 !important;
+  padding: 0 12px !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.ant-menu-submenu-popup .ant-menu-item .anticon {
+  margin-inline-end: 8px !important;
+  font-size: 16px !important;
+}
+
 /* ===== Sidebar Floating Effect ===== */
 .s2s-sidebar-floating {
   margin: 12px !important;
@@ -187,6 +293,37 @@ body {
   box-shadow: var(--s2s-shadow-md) !important;
   border: 1px solid var(--s2s-border) !important;
   height: calc(100vh - 24px) !important;
+}
+
+.s2s-sidebar-floating .ant-layout-sider-children {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.modern-sidebar-content {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.sidebar-scroll-area {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.sidebar-bottom-fixed {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: #FFFFFF !important;
+  z-index: 10 !important;
 }
 
 /* ===== Card Styles ===== */
@@ -415,5 +552,81 @@ body {
   background: rgba(0, 0, 0, 0.5);
   z-index: 99;
   animation: s2s-fade-in 0.2s ease;
+}
+
+/* ===== Ant Design Pagination RTL & General Fixes ===== */
+.ant-pagination {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.ant-pagination .ant-pagination-total-text {
+  margin-inline-end: 16px !important;
+  font-size: 13px !important;
+  color: var(--s2s-text-secondary);
+}
+
+.ant-pagination .ant-pagination-options {
+  margin-inline-start: 16px !important;
+}
+
+.ant-pagination .ant-pagination-options-size-changer {
+  min-width: 125px !important;
+}
+
+.ant-pagination .ant-pagination-options-size-changer .ant-select-selector {
+  padding-inline-start: 12px !important;
+  padding-inline-end: 32px !important;
+}
+
+.ant-pagination .ant-pagination-options-size-changer .ant-select-selection-item {
+  padding-inline-end: 18px !important;
+  margin-inline-end: 8px !important;
+}
+
+.ant-pagination .ant-pagination-options-size-changer .ant-select-arrow {
+  inset-inline-end: 10px !important;
+  inset-inline-start: auto !important;
+}
+
+[dir="rtl"] .ant-pagination .ant-pagination-options-size-changer .ant-select-arrow,
+html[dir="rtl"] .ant-pagination .ant-pagination-options-size-changer .ant-select-arrow,
+html[lang="ar"] .ant-pagination .ant-pagination-options-size-changer .ant-select-arrow {
+  left: 10px !important;
+  right: auto !important;
+}
+
+.ant-pagination .ant-pagination-item,
+.ant-pagination .ant-pagination-prev,
+.ant-pagination .ant-pagination-next,
+.ant-pagination .ant-pagination-jump-prev,
+.ant-pagination .ant-pagination-jump-next {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  margin: 0 !important;
+  border-radius: var(--s2s-radius-sm, 6px) !important;
+}
+
+.ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination .ant-pagination-next .ant-pagination-item-link {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--s2s-radius-sm, 6px) !important;
+}
+
+/* Button icon spacing in RTL */
+[dir="rtl"] .ant-btn > .anticon + span,
+[dir="rtl"] .ant-btn > span + .anticon,
+html[dir="rtl"] .ant-btn > .anticon + span,
+html[lang="ar"] .ant-btn > .anticon + span {
+  margin-inline-start: 8px !important;
+  margin-inline-end: 0 !important;
 }
 `;

@@ -15,4 +15,5 @@ export {
   initial,
   truncate,
   titleCase,
+  getStoreUrl,
 } from './format';

@@ -17,7 +17,6 @@ import {
   EyeTwoTone,
   GoogleOutlined,
   ArrowRightOutlined,
-  WindowsOutlined,
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -179,46 +178,16 @@ export default function LoginPage() {
 
         <Space style={{ width: "100%", display: "flex" }} size={10}>
           <Button
+            disabled
             icon={<GoogleOutlined style={{ fontSize: 15 }} />}
             style={{
-              flex: 1,
+              width: "100%",
               height: 40,
               borderRadius: 8,
-              border: "1px solid #e5e7eb",
-              color: "#6b7280",
               fontSize: 13,
-              background: "#fff",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#F7931E";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "#e5e7eb";
             }}
           >
             Google
-          </Button>
-          <Button
-            icon={<WindowsOutlined style={{ fontSize: 15 }} />}
-            style={{
-              flex: 1,
-              height: 40,
-              borderRadius: 8,
-              border: "1px solid #e5e7eb",
-              color: "#6b7280",
-              fontSize: 13,
-              background: "#fff",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#F7931E";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "#e5e7eb";
-            }}
-          >
-            Microsoft
           </Button>
         </Space>
 

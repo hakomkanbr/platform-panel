@@ -32,6 +32,7 @@
   "noProjectsYet": "لا توجد مشاريع بعد",
   "createProject": "إنشاء مشروع",
   "openWorkspace": "فتح مساحة العمل",
+  "visitStore": "زيارة المتجر",
   "appsText": "{enabled}/{total} تطبيقات · {slug}",
   "quick": {
     "title": "اختصارات سريعة",

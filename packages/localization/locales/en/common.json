@@ -41,7 +41,13 @@
     "deactivate": "Deactivate",
     "activate": "Activate",
     "statusUpdated": "Status updated",
-    "next": "Next"
+    "next": "Next",
+    "visitStore": "Visit Store",
+    "viewStore": "View Store",
+    "storeUrl": "Store URL",
+    "copyStoreUrl": "Copy Store URL",
+    "storeCopied": "Store URL copied successfully",
+    "selectStoreToVisit": "Select store to visit"
   },
   "fields": {
     "name": "Name",

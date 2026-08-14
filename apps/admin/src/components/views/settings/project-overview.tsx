@@ -1,110 +1,148 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Typography,
-  Spin,
-  Button,
-  Space,
-  Tag,
-  Card,
-  Descriptions,
-  Empty,
-  Form,
-  Input,
-  Modal,
-} from "antd";
-import {
-  SettingOutlined,
-  FolderOpenOutlined,
-  CalendarOutlined,
-  ClockCircleOutlined,
-  IdcardOutlined,
-  EditOutlined,
-  FileTextOutlined,
-} from "@ant-design/icons";
+import React, { useState } from "react";
+import { Spin, Button, Typography, Space, Empty, Row, Col, message } from "antd";
 import { useRouter } from "next/navigation";
-import { useTenantId, useProject, useUpdateProject } from "@repo/hooks";
+import { useTenantId, useUpdateProject } from "@repo/hooks";
+import { useTranslations } from "@repo/localization";
 import { PageTransition } from "@repo/ui";
-import ProjectSettingsTabs from "@/components/projects/project-settings-tabs";
-import dayjs from "dayjs";
+import { useActiveProject } from "./use-active-project";
+import { useStoreSettings, useCreateStore, useUpdateStoreSettings } from "@/api/use-store-settings";
+import StoreHeader from "./store-header";
+import ProjectInformation from "./project-information";
+import StoreInformation from "./store-information";
+import StoreSettingsTabs from "./store-settings-tabs";
+import ProjectEditModal from "./project-edit-modal";
+import StoreEditModal from "./store-edit-modal";
 
-const { Title, Text } = Typography;
-
-function getProjectId(): string | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp(`(^| )ProjectId=([^;]+)`));
-  return match ? decodeURIComponent(match[2]!) : null;
-}
+const { Text } = Typography;
 
 export default function ProjectOverview() {
+  const t = useTranslations();
   const router = useRouter();
   const tenantId = useTenantId();
   const tid = tenantId || "";
-  const projectId = getProjectId() || "";
-
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [editForm] = Form.useForm();
 
   const {
-    data: project,
+    projects,
+    activeProjectId,
+    project,
+    projectError,
     isLoading,
-    error,
-  } = useProject(projectId, tid || undefined);
+    switchProject,
+  } = useActiveProject(tid || undefined);
 
   const updateProject = useUpdateProject();
+  const {
+    data: store,
+    isLoading: storeLoading,
+  } = useStoreSettings(activeProjectId || undefined);
+  const createStore = useCreateStore();
+  const updateStoreSettings = useUpdateStoreSettings();
 
-  const handleUpdateProject = async (values: any) => {
+  const [projectEditVisible, setProjectEditVisible] = useState(false);
+  const [storeEditVisible, setStoreEditVisible] = useState(false);
+
+  const handleProjectSubmit = async (values: {
+    name: string;
+    description?: string;
+    logo: string;
+  }) => {
     try {
       await updateProject.mutateAsync({
-        id: projectId,
-        request: { name: values.name, description: values.description },
+        id: activeProjectId,
+        request: {
+          name: values.name,
+          description: values.description,
+          logoUrl: values.logo || "",
+          logo: values.logo || "",
+        },
         tenantId: tid || undefined,
       });
-      setEditModalVisible(false);
+      message.success(t("settings.saveSuccess"));
+      setProjectEditVisible(false);
     } catch {
       // error handled in hook
     }
   };
 
-  const openEditModal = () => {
-    if (!project) return;
-    editForm.setFieldsValue({
-      name: project.name,
-      description: project.description,
-    });
-    setEditModalVisible(true);
+  const handleStoreSubmit = async (values: {
+    whatsappPhone?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+    postalCode?: string;
+    currency?: string;
+  }) => {
+    if (!activeProjectId || !project) return;
+    const whatsappEnabled = !!values.whatsappPhone;
+
+    const payload = {
+      whatsAppOrdersEnabled: whatsappEnabled,
+      whatsAppOrderNumber: values.whatsappPhone || null,
+      phone: values.phone || null,
+      address: values.address || null,
+      city: values.city || null,
+      country: values.country || null,
+      postalCode: values.postalCode || null,
+      currencyCode: values.currency || "USD",
+    };
+
+    try {
+      if (store) {
+        await updateStoreSettings.mutateAsync({
+          storeId: store.id,
+          projectId: activeProjectId,
+          request: payload,
+        });
+      } else {
+        await createStore.mutateAsync({
+          projectId: activeProjectId,
+          request: {
+            name: project.name,
+            slug: project.slug,
+            description: project.description,
+            ...payload,
+          },
+        });
+      }
+      message.success(t("settings.saveSuccess"));
+      setStoreEditVisible(false);
+    } catch {
+      // error handled in hook
+    }
   };
 
-  if (isLoading) {
+  if (isLoading || storeLoading) {
     return (
       <div style={{ textAlign: "center", padding: 80 }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text type="secondary">Loading project details...</Text>
+          <Text type="secondary">{t("settings.loadingProject")}</Text>
         </div>
       </div>
     );
   }
 
-  if (error || !project) {
+  if (projectError || !project) {
     return (
       <Empty
         style={{ marginTop: 60 }}
         image={Empty.PRESENTED_IMAGE_SIMPLE}
         description={
           <Space direction="vertical" size={8}>
-            <Text strong>No project selected</Text>
+            <Text strong>{t("settings.noProjectSelected")}</Text>
             <Text type="secondary">
-              {projectId
-                ? "The selected project could not be loaded for settings."
-                : "Pick a project from the header selector to see its details here."}
+              {activeProjectId
+                ? t("settings.projectNotLoadedDesc")
+                : t("settings.selectProjectDesc")}
             </Text>
           </Space>
         }
       >
         <Button type="primary" onClick={() => router.push("/admin/projects")}>
-          Go to Projects
+          {t("settings.goToProjects")}
         </Button>
       </Empty>
     );
@@ -112,145 +150,58 @@ export default function ProjectOverview() {
 
   return (
     <PageTransition>
+      <StoreHeader
+        project={project}
+        projects={projects}
+        activeProjectId={activeProjectId}
+        onSwitchProject={switchProject}
+      />
+
+      <Row gutter={[20, 20]} style={{ marginBottom: 24 }}>
+        <Col xs={24} lg={12}>
+          <ProjectInformation
+            project={project}
+            projectsCount={projects.length}
+            onEdit={() => setProjectEditVisible(true)}
+          />
+        </Col>
+        <Col xs={24} lg={12}>
+          <StoreInformation
+            project={project}
+            store={store}
+            onEdit={() => setStoreEditVisible(true)}
+          />
+        </Col>
+      </Row>
+
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-          gap: 16,
-          marginBottom: 24,
-          flexWrap: "wrap",
+          background: "#FFFFFF",
+          borderRadius: 16,
+          border: "1px solid #E2E8F0",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          padding: "8px 16px",
         }}
       >
-        <Space direction="vertical" size={6}>
-          <Space align="center">
-            <FolderOpenOutlined
-              style={{ fontSize: 26, color: "var(--primary)" }}
-            />
-            <Title level={2} style={{ margin: 0 }}>
-              {project.name}
-            </Title>
-            {project.slug && (
-              <Tag color="blue" style={{ borderRadius: 6 }}>
-                {project.slug}
-              </Tag>
-            )}
-          </Space>
-          <Text type="secondary" style={{ fontSize: 14, maxWidth: 600 }}>
-            {project.description || "No description provided for this project."}
-          </Text>
-        </Space>
-        <Button icon={<EditOutlined />} onClick={openEditModal} style={{ borderRadius: 8 }}>
-          Edit Details
-        </Button>
+        <StoreSettingsTabs project={project} store={store} />
       </div>
 
-      <Card
-        style={{
-          borderRadius: 12,
-          border: "1px solid #e2e8f0",
-          boxShadow: "0 4px 6px -1px rgba(15, 23, 42, 0.08)",
-          marginBottom: 24,
-        }}
-        title={
-          <Space>
-            <SettingOutlined style={{ color: "var(--primary)" }} />
-            <span>Project Details</span>
-          </Space>
-        }
-      >
-        <Descriptions
-          bordered
-          column={{ xs: 1, sm: 2, md: 3 }}
-          size="middle"
-          labelStyle={{ fontWeight: 600, width: 160 }}
-          contentStyle={{ color: "#1F2937" }}
-        >
-          <Descriptions.Item label="Project ID">
-            <Space>
-              <IdcardOutlined style={{ color: "#9CA3AF" }} />
-              <Text style={{ wordBreak: "break-all" }}>{project.id}</Text>
-            </Space>
-          </Descriptions.Item>
-          <Descriptions.Item label="Name">
-            <FolderOpenOutlined style={{ color: "#9CA3AF", marginRight: 6 }} />
-            {project.name}
-          </Descriptions.Item>
-          <Descriptions.Item label="Slug">
-            {project.slug ? (
-              <Tag color="blue" style={{ borderRadius: 6 }}>
-                {project.slug}
-              </Tag>
-            ) : (
-              "—"
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Description" span={3}>
-            <FileTextOutlined style={{ color: "#9CA3AF", marginRight: 6 }} />
-            {project.description || "No description"}
-          </Descriptions.Item>
-          <Descriptions.Item label="Created">
-            <Space>
-              <CalendarOutlined style={{ color: "#9CA3AF" }} />
-              {dayjs(project.createdAt).format("MMM DD, YYYY hh:mm A")}
-            </Space>
-          </Descriptions.Item>
-          <Descriptions.Item label="Last Updated">
-            <Space>
-              <ClockCircleOutlined style={{ color: "#9CA3AF" }} />
-              {project.updatedAt
-                ? dayjs(project.updatedAt).format("MMM DD, YYYY hh:mm A")
-                : "—"}
-            </Space>
-          </Descriptions.Item>
-          <Descriptions.Item label="Status">
-            <Tag color="green" style={{ borderRadius: 6 }}>
-              Active
-            </Tag>
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
+      <ProjectEditModal
+        open={projectEditVisible}
+        project={project}
+        submitting={updateProject.isPending}
+        onCancel={() => setProjectEditVisible(false)}
+        onSubmit={handleProjectSubmit}
+      />
 
-      <Card
-        style={{
-          borderRadius: 12,
-          border: "1px solid #e2e8f0",
-          boxShadow: "0 4px 6px -1px rgba(15, 23, 42, 0.08)",
-        }}
-        title={
-          <Space>
-            <SettingOutlined style={{ color: "var(--primary)" }} />
-            <span>Project Settings</span>
-          </Space>
-        }
-      >
-        <ProjectSettingsTabs project={project} />
-      </Card>
-
-      <Modal
-        title={
-          <Space>
-            <EditOutlined style={{ color: "var(--primary)" }} /> Edit Project
-          </Space>
-        }
-        open={editModalVisible}
-        onCancel={() => setEditModalVisible(false)}
-        onOk={() => editForm.submit()}
-        confirmLoading={updateProject.isPending}
-      >
-        <Form form={editForm} layout="vertical" onFinish={handleUpdateProject}>
-          <Form.Item
-            name="name"
-            label="Project Name"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input.TextArea rows={3} />
-          </Form.Item>
-        </Form>
-      </Modal>
+      <StoreEditModal
+        open={storeEditVisible}
+        project={project}
+        store={store}
+        submitting={updateStoreSettings.isPending || createStore.isPending}
+        onCancel={() => setStoreEditVisible(false)}
+        onSubmit={handleStoreSubmit}
+      />
     </PageTransition>
   );
 }

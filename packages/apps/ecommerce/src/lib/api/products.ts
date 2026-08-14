@@ -18,50 +18,50 @@ function buildQuery(params?: ProductListParams): string {
 
 export const productsApi = {
   list: (params?: ProductListParams) =>
-    apiGet<PaginatedList<ProductListItem>>(`/Admin/Products${buildQuery(params)}`),
+    apiGet<PaginatedList<ProductListItem>>(`/Admin/v1/Products${buildQuery(params)}`),
 
   getById: (id: string | number) =>
-    apiGet<ProductDetail>(`/Admin/Products/${id}`),
+    apiGet<ProductDetail>(`/Admin/v1/Products/${id}`),
 
   create: (data: ProductFormData) =>
-    apiPost<number>('/Admin/Products', data),
+    apiPost<number>('/Admin/v1/Products', data),
 
   update: (data: ProductFormData & { id: string | number }) =>
-    apiPut<number>('/Admin/Products', data),
+    apiPut<number>('/Admin/v1/Products', data),
 
   setPublishable: (id: number, state: boolean) =>
-    apiPut<number>(`/Admin/Products/${id}/SetIsPublishable/${state}`),
+    apiPut<number>(`/Admin/v1/Products/${id}/SetIsPublishable/${state}`),
 
   setInStock: (id: number, state: boolean) =>
-    apiPut<number>(`/Admin/Products/${id}/SetInStock/${state}`),
+    apiPut<number>(`/Admin/v1/Products/${id}/SetInStock/${state}`),
 
   delete: (id: number) =>
-    apiDelete<number>(`/Admin/Products/${id}`),
+    apiDelete<number>(`/Admin/v1/Products/${id}`),
 
   getImages: (productId: number, rowId?: string) =>
-    apiGet<string[]>(`/Admin/Products/${productId}/images${rowId ? `/${rowId}` : ''}`),
+    apiGet<string[]>(`/Admin/v1/Products/${productId}/images${rowId ? `/${rowId}` : ''}`),
 
   updateImages: (productId: number, rowId: string, images: string[]) =>
-    apiPut<number>(`/Admin/Products/${productId}/images/${rowId}`, images),
+    apiPut<number>(`/Admin/v1/Products/${productId}/images/${rowId}`, images),
 
   copy: (productId: number) =>
-    apiPost<number>(`/Admin/Products/${productId}/copy`),
+    apiPost<number>(`/Admin/v1/Products/${productId}/copy`),
 
   bulkDelete: (ids: number[]) =>
-    apiDelete<number>('/Admin/Products', { data: { ids } }),
+    apiDelete<number>('/Admin/v1/Products', { data: { ids } }),
 
   bulkPublish: (ids: number[], state: boolean) =>
-    apiPut<number>('/Admin/Products/bulk/publish', { ids, state }),
+    apiPut<number>('/Admin/v1/Products/bulk/publish', { ids, state }),
 
   bulkStock: (ids: number[], state: boolean) =>
-    apiPut<number>('/Admin/Products/bulk/stock', { ids, state }),
+    apiPut<number>('/Admin/v1/Products/bulk/stock', { ids, state }),
 
   addConfiguration: (data: ProductConfigurationDto) =>
-    apiPost<number>('/Admin/Products/configuration', data),
+    apiPost<number>('/Admin/v1/Products/configuration', data),
 
   exportCsv: async (params?: ProductListParams): Promise<Blob> => {
     const query = buildQuery(params);
-    const response = await fetch(`/Admin/Products/export${query}`, {
+    const response = await fetch(`/Admin/v1/Products/export${query}`, {
       headers: { Accept: 'text/csv' },
     });
     return response.blob();

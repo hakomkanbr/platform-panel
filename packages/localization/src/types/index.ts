@@ -71,6 +71,7 @@ export interface GlobalSchema {
   dashboard: Messages;
   catalog: Messages;
   pricing: Messages;
+  settings: Messages;
 }
 
 /** All valid top-level dotted keys of the global dictionaries. */

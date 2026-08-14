@@ -85,21 +85,40 @@ const AdminShellInner: React.FC<{
 
     useEffect(() => {
       if (currentProject) {
+        const found = propProjects?.find(
+          (p) => String(p.id) === String(currentProject.id),
+        );
         setCurrentProject({
           id: String(currentProject.id),
           name: currentProject.name,
+          slug: found?.slug || (currentProject as any).slug || undefined,
         });
       } else {
-        const storedId = Cookies.get("ProjectId");
-        const storedName = Cookies.get("ProjectName");
+        const storedId =
+          Cookies.get("ProjectId") ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("ProjectId") || localStorage.getItem("projectId")
+            : null);
+        const storedName =
+          Cookies.get("ProjectName") ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("ProjectName") || localStorage.getItem("projectName")
+            : null);
+        const storedSlug =
+          Cookies.get("ProjectSlug") ||
+          (typeof window !== "undefined"
+            ? localStorage.getItem("ProjectSlug") || localStorage.getItem("projectSlug")
+            : null);
         if (storedId && storedName) {
+          const found = propProjects?.find((p) => String(p.id) === String(storedId));
           setCurrentProject({
             id: storedId,
             name: storedName,
+            slug: found?.slug || storedSlug || undefined,
           });
         }
       }
-    }, [currentProject, setCurrentProject]);
+    }, [currentProject, setCurrentProject, propProjects]);
 
     useEffect(() => {
       if (

@@ -25,6 +25,8 @@ import {
   TeamOutlined,
   ArrowUpOutlined,
   ShoppingCartOutlined,
+  ShopOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { StatusPill } from "@repo/ui";
@@ -36,6 +38,7 @@ import { useUsageSummary } from "@repo/hooks";
 import { useTenantId } from "@repo/hooks";
 import { StatSkeleton } from "@repo/ui";
 import { useTranslations } from "@repo/localization";
+import { getStoreUrl } from "@repo/utils";
 
 const { Title, Text } = Typography;
 
@@ -451,7 +454,30 @@ export default function HomePage() {
                             </div>
                           </div>
 
-                          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                            {project.slug && (
+                              <Button
+                                size="middle"
+                                icon={<ShopOutlined style={{ color: "#F7931E" }} />}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(getStoreUrl(project.slug), "_blank");
+                                }}
+                                style={{
+                                  borderRadius: 10,
+                                  fontWeight: 600,
+                                  borderColor: "#FED7AA",
+                                  background: "#FFF7ED",
+                                  color: "#C2410C",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 6,
+                                }}
+                              >
+                                <span>{t("dashboard.visitStore") || t("common.actions.visitStore")}</span>
+                                <ExportOutlined style={{ fontSize: 11 }} />
+                              </Button>
+                            )}
                             <Button
                               type="primary"
                               size="middle"

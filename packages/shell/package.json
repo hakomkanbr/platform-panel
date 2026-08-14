@@ -28,6 +28,7 @@
     "@repo/navigation": "workspace:*",
     "@repo/theme": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@repo/utils": "workspace:*",
     "antd": "^5.16.5",
     "js-cookie": "^3.0.8",
     "moment": "^2.30.1",

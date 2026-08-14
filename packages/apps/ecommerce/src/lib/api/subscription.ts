@@ -12,5 +12,5 @@ export interface SubscriptionSnapshot {
 }
 
 export async function fetchSubscriptionAccess(): Promise<SubscriptionSnapshot> {
-  return apiGet<SubscriptionSnapshot>("/Admin/Subscription/access");
+  return apiGet<SubscriptionSnapshot>("/Admin/v1/Subscription/access");
 }

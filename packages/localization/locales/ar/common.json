@@ -41,7 +41,13 @@
     "deactivate": "إلغاء التفعيل",
     "activate": "تفعيل",
     "statusUpdated": "تم تحديث الحالة",
-    "next": "التالي"
+    "next": "التالي",
+    "visitStore": "زيارة المتجر",
+    "viewStore": "عرض المتجر",
+    "storeUrl": "رابط المتجر",
+    "copyStoreUrl": "نسخ رابط المتجر",
+    "storeCopied": "تم نسخ رابط المتجر بنجاح",
+    "selectStoreToVisit": "اختر متجراً لزيارته"
   },
   "fields": {
     "name": "الاسم",

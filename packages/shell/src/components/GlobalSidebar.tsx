@@ -11,15 +11,17 @@ import {
   UpOutlined,
   DownOutlined,
   AppstoreOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import { useNavigation } from "@repo/navigation";
 import { useTranslations, type Translator } from "@repo/localization";
+import { getStoreUrl } from "@repo/utils";
 import { useShell } from "../context/ShellContext";
 import type { NavigationItem } from "@repo/navigation";
 
 const { Text } = Typography;
 
-const BOTTOM_KEYS = ["projects", "billing", "team"];
+const BOTTOM_KEYS = ["projects", "billing", "marketplace", "team"];
 
 export function GlobalSidebar() {
   const pathname = usePathname();
@@ -70,7 +72,9 @@ export function GlobalSidebar() {
     const active = findActive(allItems);
     const activeKey = active?.key || "dashboard";
     setSelectedKeys([activeKey]);
-    setOpenKeys((prev) => Array.from(new Set([...prev, ...getOpenChain(allItems, activeKey)])));
+    setOpenKeys((prev) =>
+      Array.from(new Set([...prev, ...getOpenChain(allItems, activeKey)])),
+    );
   }, [pathname, platform, application]);
 
   useEffect(() => {
@@ -158,6 +162,7 @@ export function GlobalSidebar() {
 
   const menuProps = {
     mode: "inline" as const,
+    inlineCollapsed: collapsed,
     selectedKeys,
     onClick: handleMenuClick,
     style: { border: "none", background: "transparent" },
@@ -166,7 +171,13 @@ export function GlobalSidebar() {
   return (
     <div
       className="modern-sidebar-content"
-      style={{ position: "relative" }}
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        overflow: "hidden",
+      }}
     >
       {/* Brand Logo */}
       <div
@@ -194,8 +205,8 @@ export function GlobalSidebar() {
             <div
               onClick={() => router.push("/admin")}
               style={{
-                width: 40,
-                height: 40,
+                width: 44,
+                height: 44,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -206,7 +217,7 @@ export function GlobalSidebar() {
               <img
                 src="/assets/images/logo-icon.png"
                 alt="S2S"
-                style={{ height: 40, width: "auto", objectFit: "contain" }}
+                style={{ height: 36, width: "auto", objectFit: "contain" }}
               />
             </div>
           </Tooltip>
@@ -288,13 +299,16 @@ export function GlobalSidebar() {
           flex: 1,
           minHeight: 0,
           overflowY: "auto",
+          overflowX: "hidden",
           padding: collapsed ? "4px 0 160px" : "0 6px 160px",
         }}
       >
         <Menu
           {...menuProps}
-          openKeys={openKeys}
-          onOpenChange={(keys) => setOpenKeys(keys)}
+          openKeys={collapsed ? [] : openKeys}
+          onOpenChange={(keys) => {
+            if (!collapsed) setOpenKeys(keys);
+          }}
           items={mainMenuItems}
           inlineIndent={18}
         />
@@ -327,7 +341,7 @@ export function GlobalSidebar() {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 10,
+                    justifyContent: "space-between",
                     padding: "8px 10px",
                     borderRadius: 8,
                     cursor: "pointer",
@@ -345,18 +359,57 @@ export function GlobalSidebar() {
                     e.currentTarget.style.color = "#4B5563";
                   }}
                 >
-                  <FolderOutlined
-                    style={{ color: project.color || "#F7931E" }}
-                  />
-                  <span
+                  <div
                     style={{
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      minWidth: 0,
+                      flex: 1,
                     }}
                   >
-                    {project.name}
-                  </span>
+                    <FolderOutlined
+                      style={{ color: project.color || "#F7931E", flexShrink: 0 }}
+                    />
+                    <span
+                      style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {project.name}
+                    </span>
+                  </div>
+                  {project.slug && (
+                    <Tooltip title={`${t("common.actions.visitStore")}: ${project.name}`}>
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(getStoreUrl(project.slug), "_blank");
+                        }}
+                        style={{
+                          padding: "2px 6px",
+                          borderRadius: 4,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#9CA3AF",
+                          transition: "all 0.15s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = "#F7931E";
+                          e.currentTarget.style.background = "#FFE8CC";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = "#9CA3AF";
+                          e.currentTarget.style.background = "transparent";
+                        }}
+                      >
+                        <ShopOutlined style={{ fontSize: 13 }} />
+                      </div>
+                    </Tooltip>
+                  )}
                 </div>
               ))
             ) : (
@@ -486,8 +539,8 @@ export function GlobalSidebar() {
             >
               <div
                 style={{
-                  width: 40,
-                  height: 40,
+                  width: 44,
+                  height: 44,
                   margin: "0 auto",
                   display: "flex",
                   alignItems: "center",
@@ -507,7 +560,7 @@ export function GlobalSidebar() {
                   e.currentTarget.style.background = "#FAFBFC";
                 }}
               >
-                <AppstoreOutlined style={{ color: "#F7931E", fontSize: 16 }} />
+                <AppstoreOutlined style={{ color: "#F7931E", fontSize: 18 }} />
               </div>
             </Dropdown>
           </Tooltip>
@@ -521,8 +574,9 @@ export function GlobalSidebar() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              height: 36,
-              margin: "10px 0 0",
+              width: collapsed ? 44 : "auto",
+              height: collapsed ? 44 : 36,
+              margin: collapsed ? "8px auto 0" : "10px 0 0",
               borderRadius: 10,
               border: "1px solid #E5E7EB",
               cursor: "pointer",
@@ -542,7 +596,11 @@ export function GlobalSidebar() {
               e.currentTarget.style.background = "#FFFFFF";
             }}
           >
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            {collapsed ? (
+              <MenuUnfoldOutlined style={{ fontSize: 16 }} />
+            ) : (
+              <MenuFoldOutlined style={{ fontSize: 16 }} />
+            )}
           </div>
         )}
       </div>
@@ -556,7 +614,8 @@ function renderMenuItems(items: NavigationItem[], t: Translator): any[] {
       return {
         key: item.key,
         icon: item.icon,
-        label: item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
+        label:
+          item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
         children: renderMenuItems(item.children, t),
         disabled: item.disabled,
       };
@@ -564,7 +623,8 @@ function renderMenuItems(items: NavigationItem[], t: Translator): any[] {
     return {
       key: item.key,
       icon: item.icon,
-      label: item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
+      label:
+        item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
       disabled: item.disabled,
     };
   });

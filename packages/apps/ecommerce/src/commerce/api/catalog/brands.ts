@@ -4,17 +4,17 @@ import type { BrandReadModel, BrandFilters, CreateBrandCommand, UpdateBrandReque
 
 export const brandsApi = {
   list: (params?: BrandFilters) =>
-    http.get<PaginatedResult<BrandReadModel>>("/Admin/Brands", params),
+    http.get<PaginatedResult<BrandReadModel>>("/Admin/v1/Brands", params),
 
-  getById: (id: string) => http.get<BrandReadModel>(`/Admin/Brands/${id}`),
+  getById: (id: string) => http.get<BrandReadModel>(`/Admin/v1/Brands/${id}`),
 
-  create: (body: CreateBrandCommand) => http.post<BrandReadModel>("/Admin/Brands", body),
+  create: (body: CreateBrandCommand) => http.post<BrandReadModel>("/Admin/v1/Brands", body),
 
   update: (id: string, body: UpdateBrandRequest) =>
-    http.put<BrandReadModel>(`/Admin/Brands/${id}`, body),
+    http.put<BrandReadModel>(`/Admin/v1/Brands/${id}`, body),
 
-  delete: (id: string) => http.del<void>(`/Admin/Brands/${id}`),
+  delete: (id: string) => http.del<void>(`/Admin/v1/Brands/${id}`),
 
   setStatus: (id: string, body: ChangeBrandStatusRequest) =>
-    http.put<void>(`/Admin/Brands/${id}/status`, body),
+    http.put<void>(`/Admin/v1/Brands/${id}/status`, body),
 };

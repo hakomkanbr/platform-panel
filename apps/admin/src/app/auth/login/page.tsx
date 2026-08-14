@@ -14,7 +14,6 @@ import {
   EyeInvisibleOutlined,
   EyeTwoTone,
   GoogleOutlined,
-  WindowsOutlined,
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -118,7 +117,7 @@ function LoginPageContent() {
         border: "1px solid #E5E7EB",
       }}
     >
-      <div style={{ marginBottom: 28, textAlign: "left" }}>
+      <div style={{ marginBottom: 28, textAlign: "start" }}>
         <img
           src="/assets/images/logo-png.png"
           alt="Logo"
@@ -285,50 +284,30 @@ function LoginPageContent() {
       </div>
 
       {/* Social SSO Buttons */}
-      <div style={{ display: "flex", gap: 12 }}>
+      <div>
         <button
           type="button"
+          disabled
           style={{
-            flex: 1,
+            width: "100%",
             height: 42,
             borderRadius: 10,
             border: "1.5px solid #E5E7EB",
-            background: "#FFFFFF",
-            color: "#4B5563",
+            background: "#F9FAFB",
+            color: "#9CA3AF",
             fontSize: 13,
             fontWeight: 600,
-            cursor: "pointer",
+            cursor: "not-allowed",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             gap: 8,
+            opacity: 0.7,
             transition: "all 0.2s ease",
           }}
         >
-          <GoogleOutlined style={{ fontSize: 16, color: "#EA4335" }} />
+          <GoogleOutlined style={{ fontSize: 16, color: "#9CA3AF" }} />
           {t("auth.login.google")}
-        </button>
-        <button
-          type="button"
-          style={{
-            flex: 1,
-            height: 42,
-            borderRadius: 10,
-            border: "1.5px solid #E5E7EB",
-            background: "#FFFFFF",
-            color: "#4B5563",
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            transition: "all 0.2s ease",
-          }}
-        >
-          <WindowsOutlined style={{ fontSize: 16, color: "#00A4EF" }} />
-          {t("auth.login.microsoft")}
         </button>
       </div>
 

@@ -19,46 +19,46 @@ function buildQuery(params?: Record<string, any>): string {
 
 export const inventoryApi = {
   list: (params?: InventoryListParams) =>
-    apiGet<PaginatedList<InventoryItem>>(`/Admin/Inventory${buildQuery(params)}`),
+    apiGet<PaginatedList<InventoryItem>>(`/Admin/v1/Inventory${buildQuery(params)}`),
 
   getById: (id: number) =>
-    apiGet<InventoryItem>(`/Admin/Inventory/${id}`),
+    apiGet<InventoryItem>(`/Admin/v1/Inventory/${id}`),
 
   create: (data: InventoryFormData) =>
-    apiPost<number>('/Admin/Inventory', data),
+    apiPost<number>('/Admin/v1/Inventory', data),
 
   update: (id: number, data: Partial<InventoryFormData>) =>
-    apiPut<number>(`/Admin/Inventory/${id}`, data),
+    apiPut<number>(`/Admin/v1/Inventory/${id}`, data),
 
   delete: (id: number) =>
-    apiDelete<number>(`/Admin/Inventory/${id}`),
+    apiDelete<number>(`/Admin/v1/Inventory/${id}`),
 
   getSummary: () =>
-    apiGet<InventorySummary>('/Admin/Inventory/summary'),
+    apiGet<InventorySummary>('/Admin/v1/Inventory/summary'),
 
   getMovements: (inventoryId: number, params?: { skip?: number; pageSize?: number }) =>
-    apiGet<PaginatedList<StockMovement>>(`/Admin/Inventory/${inventoryId}/movements${buildQuery(params)}`),
+    apiGet<PaginatedList<StockMovement>>(`/Admin/v1/Inventory/${inventoryId}/movements${buildQuery(params)}`),
 
   adjustStock: (id: number, quantity: number, note?: string) =>
-    apiPost<number>(`/Admin/Inventory/${id}/adjust`, { quantity, note }),
+    apiPost<number>(`/Admin/v1/Inventory/${id}/adjust`, { quantity, note }),
 
   transferStock: (fromId: number, toWarehouseId: number, quantity: number, note?: string) =>
-    apiPost<number>('/Admin/Inventory/transfer', { fromInventoryId: fromId, toWarehouseId, quantity, note }),
+    apiPost<number>('/Admin/v1/Inventory/transfer', { fromInventoryId: fromId, toWarehouseId, quantity, note }),
 };
 
 export const warehousesApi = {
   list: (params?: { search?: string; skip?: number; pageSize?: number }) =>
-    apiGet<PaginatedList<Warehouse>>(`/Admin/Warehouses${buildQuery(params)}`),
+    apiGet<PaginatedList<Warehouse>>(`/Admin/v1/Warehouses${buildQuery(params)}`),
 
   getById: (id: number) =>
-    apiGet<Warehouse>(`/Admin/Warehouses/${id}`),
+    apiGet<Warehouse>(`/Admin/v1/Warehouses/${id}`),
 
   create: (data: WarehouseFormData) =>
-    apiPost<number>('/Admin/Warehouses', data),
+    apiPost<number>('/Admin/v1/Warehouses', data),
 
   update: (id: number, data: WarehouseFormData) =>
-    apiPut<number>(`/Admin/Warehouses/${id}`, data),
+    apiPut<number>(`/Admin/v1/Warehouses/${id}`, data),
 
   delete: (id: number) =>
-    apiDelete<number>(`/Admin/Warehouses/${id}`),
+    apiDelete<number>(`/Admin/v1/Warehouses/${id}`),
 };

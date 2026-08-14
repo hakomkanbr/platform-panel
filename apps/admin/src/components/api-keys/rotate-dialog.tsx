@@ -1,6 +1,7 @@
 import { Modal, Typography, Alert, Space, message } from "antd";
 import { SyncOutlined, WarningOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useTranslations } from "@repo/localization";
 import { apiKeyService } from "./service";
 import RevealSecret from "./reveal-secret";
 import type { ApiKeyDto, CreateApiKeyResponse } from "./types";
@@ -16,6 +17,7 @@ interface RotateDialogProps {
 }
 
 export default function RotateDialog({ open, onClose, projectId, keyData, onSuccess }: RotateDialogProps) {
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CreateApiKeyResponse | null>(null);
 
@@ -26,7 +28,7 @@ export default function RotateDialog({ open, onClose, projectId, keyData, onSucc
       setResult(res);
       onSuccess(res);
     } catch {
-      message.error("Failed to rotate API key");
+      message.error(t("settings.apiKeys.rotateFailed"));
     } finally {
       setLoading(false);
     }
@@ -37,7 +39,7 @@ export default function RotateDialog({ open, onClose, projectId, keyData, onSucc
       title={
         <Space>
           <SyncOutlined style={{ color: "#faad14" }} />
-          Rotate API Key
+          {t("settings.apiKeys.rotateTitle")}
         </Space>
       }
       open={open}
@@ -55,8 +57,8 @@ export default function RotateDialog({ open, onClose, projectId, keyData, onSucc
             type="warning"
             showIcon
             icon={<WarningOutlined />}
-            message="You are about to rotate this API key"
-            description={`This will invalidate the current key "${keyData.name}" immediately. Any services using this key will stop working until updated with the new key.`}
+            message={t("settings.apiKeys.rotateAlertTitle")}
+            description={t("settings.apiKeys.rotateAlertDesc", { name: keyData.name })}
           />
 
           <div
@@ -68,9 +70,9 @@ export default function RotateDialog({ open, onClose, projectId, keyData, onSucc
             }}
           >
             <Space direction="vertical" size={4}>
-              <Text strong>Key to rotate:</Text>
+              <Text strong>{t("settings.apiKeys.keyToRotate")}</Text>
               <Text code>{keyData.prefix}...</Text>
-              <Text type="secondary">Environment: {keyData.environment}</Text>
+              <Text type="secondary">{t("settings.apiKeys.environment")}: {t(`settings.apiKeys.environments.${keyData.environment}` as any) || keyData.environment}</Text>
             </Space>
           </div>
 
@@ -88,7 +90,7 @@ export default function RotateDialog({ open, onClose, projectId, keyData, onSucc
                 cursor: "pointer",
               }}
             >
-              Cancel
+              {t("common.actions.cancel")}
             </button>
             <button
               onClick={handleRotate}
@@ -104,7 +106,7 @@ export default function RotateDialog({ open, onClose, projectId, keyData, onSucc
                 opacity: loading ? 0.7 : 1,
               }}
             >
-              {loading ? "Rotating..." : "Rotate Key"}
+              {loading ? t("settings.apiKeys.rotating") : t("settings.apiKeys.rotateKeyBtn")}
             </button>
           </Space>
         </Space>

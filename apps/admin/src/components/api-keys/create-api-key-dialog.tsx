@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import dayjs from "dayjs";
+import { useTranslations } from "@repo/localization";
 import AccessSelector from "./access-selector";
 import ScopeSummary from "./scope-summary";
 import RevealSecret from "./reveal-secret";
@@ -37,26 +38,6 @@ interface CreateApiKeyDialogProps {
   title?: string;
 }
 
-const steps = [
-  { title: "General", icon: <KeyOutlined /> },
-  { title: "Access", icon: <LockOutlined /> },
-  { title: "Scope", icon: <GlobalOutlined /> },
-  { title: "Expiration", icon: <ClockCircleOutlined /> },
-  { title: "Review", icon: <EyeOutlined /> },
-];
-
-const expirationOptions: { value: ApiKeyFormData["expiration"]; label: string }[] = [
-  { value: "never", label: "Never" },
-  { value: "30days", label: "30 Days" },
-  { value: "90days", label: "90 Days" },
-  { value: "1year", label: "1 Year" },
-  { value: "custom", label: "Custom Date" },
-];
-
-function getExpirationLabel(value: string): string {
-  return expirationOptions.find((o) => o.value === value)?.label || value;
-}
-
 const accessLevelColors: Record<ApiKeyAccessLevel, string> = {
   read_only: "green",
   standard_read: "blue",
@@ -71,8 +52,9 @@ export default function CreateApiKeyDialog({
   projectName,
   defaultScope = "current_project",
   defaultAccessLevel = "read_only",
-  title = "Create API Key",
+  title,
 }: CreateApiKeyDialogProps) {
+  const t = useTranslations();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<CreateApiKeyResponse | null>(null);
@@ -90,6 +72,26 @@ export default function CreateApiKeyDialog({
     rateLimit: undefined,
     metadata: "",
   }));
+
+  const steps = [
+    { title: t("settings.apiKeys.steps.general"), icon: <KeyOutlined /> },
+    { title: t("settings.apiKeys.steps.access"), icon: <LockOutlined /> },
+    { title: t("settings.apiKeys.steps.scope"), icon: <GlobalOutlined /> },
+    { title: t("settings.apiKeys.steps.expiration"), icon: <ClockCircleOutlined /> },
+    { title: t("settings.apiKeys.steps.review"), icon: <EyeOutlined /> },
+  ];
+
+  const expirationOptions: { value: ApiKeyFormData["expiration"]; label: string }[] = [
+    { value: "never", label: t("settings.apiKeys.never") },
+    { value: "30days", label: t("settings.apiKeys.days30") },
+    { value: "90days", label: t("settings.apiKeys.days90") },
+    { value: "1year", label: t("settings.apiKeys.year1") },
+    { value: "custom", label: t("settings.apiKeys.customDate") },
+  ];
+
+  function getExpirationLabel(value: string): string {
+    return expirationOptions.find((o) => o.value === value)?.label || value;
+  }
 
   const updateField = <K extends keyof ApiKeyFormData>(
     key: K,
@@ -119,7 +121,7 @@ export default function CreateApiKeyDialog({
 
   const handleNext = () => {
     if (currentStep === 0 && !formData.name.trim()) {
-      message.warning("Please enter a key name");
+      message.warning(t("settings.apiKeys.enterKeyNameWarning"));
       return;
     }
     if (
@@ -127,7 +129,7 @@ export default function CreateApiKeyDialog({
       formData.accessLevel === "custom_read" &&
       formData.permissions.length === 0
     ) {
-      message.warning("Select at least one permission");
+      message.warning(t("settings.apiKeys.selectPermissionWarning"));
       return;
     }
     setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
@@ -173,7 +175,7 @@ export default function CreateApiKeyDialog({
       setCurrentStep(steps.length);
       onSuccess();
     } catch {
-      message.error("Failed to create API key");
+      message.error(t("settings.apiKeys.createFailed"));
     } finally {
       setLoading(false);
     }
@@ -186,10 +188,10 @@ export default function CreateApiKeyDialog({
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <div>
               <Text strong style={{ display: "block", marginBottom: 4 }}>
-                Key Name <span style={{ color: "#ff4d4f" }}>*</span>
+                {t("settings.apiKeys.keyName")} <span style={{ color: "#ff4d4f" }}>*</span>
               </Text>
               <Input
-                placeholder="e.g., My Mobile App"
+                placeholder={t("settings.apiKeys.keyNamePlaceholder")}
                 value={formData.name}
                 onChange={(e) => updateField("name", e.target.value)}
                 size="large"
@@ -198,10 +200,10 @@ export default function CreateApiKeyDialog({
             </div>
             <div>
               <Text strong style={{ display: "block", marginBottom: 4 }}>
-                Description
+                {t("common.fields.description")}
               </Text>
               <TextArea
-                placeholder="Optional description for this key"
+                placeholder={t("settings.apiKeys.descriptionPlaceholder")}
                 value={formData.description}
                 onChange={(e) => updateField("description", e.target.value)}
                 rows={3}
@@ -210,16 +212,16 @@ export default function CreateApiKeyDialog({
             </div>
             <div>
               <Text strong style={{ display: "block", marginBottom: 4 }}>
-                Environment
+                {t("settings.apiKeys.environment")}
               </Text>
               <Radio.Group
                 value={formData.environment}
                 onChange={(e) => updateField("environment", e.target.value)}
               >
                 <Space direction="vertical" style={{ width: "100%" }}>
-                  <Radio value="development">Development</Radio>
-                  <Radio value="staging">Staging</Radio>
-                  <Radio value="production">Production</Radio>
+                  <Radio value="development">{t("settings.apiKeys.environments.development")}</Radio>
+                  <Radio value="staging">{t("settings.apiKeys.environments.staging")}</Radio>
+                  <Radio value="production">{t("settings.apiKeys.environments.production")}</Radio>
                 </Space>
               </Radio.Group>
             </div>
@@ -242,7 +244,7 @@ export default function CreateApiKeyDialog({
         return (
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
-              This is the data this API key can access.
+              {t("settings.apiKeys.scopeDesc")}
             </Text>
             <ScopeSummary scope={formData.scope} projectName={projectName} />
           </Space>
@@ -252,7 +254,7 @@ export default function CreateApiKeyDialog({
         return (
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
             <Text type="secondary" style={{ display: "block", marginBottom: 8 }}>
-              Set when this API key should expire.
+              {t("settings.apiKeys.expirationDesc")}
             </Text>
             <Select
               value={formData.expiration}
@@ -264,7 +266,7 @@ export default function CreateApiKeyDialog({
             {formData.expiration === "custom" && (
               <div style={{ marginTop: 12 }}>
                 <Text strong style={{ display: "block", marginBottom: 4 }}>
-                  Expiration Date
+                  {t("settings.apiKeys.expirationDate")}
                 </Text>
                 <DatePicker
                   value={
@@ -283,42 +285,48 @@ export default function CreateApiKeyDialog({
             {formData.expiration !== "never" &&
               formData.expiration !== "custom" && (
                 <Tag color="blue" style={{ marginTop: 8 }}>
-                  Expires in {formData.expiration}
+                  {t("settings.apiKeys.expiresIn", { val: getExpirationLabel(formData.expiration) })}
                 </Tag>
               )}
           </Space>
         );
 
-      case 4:
+      case 4: {
+        const levelKey =
+          formData.accessLevel === "read_only"
+            ? "readOnly"
+            : formData.accessLevel === "standard_read"
+              ? "standardRead"
+              : "customRead";
         return (
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            <Title level={5}>Review API Key</Title>
+            <Title level={5}>{t("settings.apiKeys.reviewTitle")}</Title>
             <Alert
               type="warning"
               showIcon
               icon={<LockOutlined />}
-              message="This API key is read-only"
-              description="It can read data but cannot create, update, or delete anything."
+              message={t("settings.apiKeys.readOnlyAlertTitle")}
+              description={t("settings.apiKeys.readOnlyAlertDesc")}
             />
             <Card style={{ borderRadius: 8 }}>
               <Descriptions column={1} size="small">
-                <Descriptions.Item label="Name">
+                <Descriptions.Item label={t("common.fields.name")}>
                   {formData.name}
                 </Descriptions.Item>
                 {formData.description && (
-                  <Descriptions.Item label="Description">
+                  <Descriptions.Item label={t("common.fields.description")}>
                     {formData.description}
                   </Descriptions.Item>
                 )}
-                <Descriptions.Item label="Access">
+                <Descriptions.Item label={t("settings.apiKeys.access")}>
                   <Tag color={accessLevelColors[formData.accessLevel]}>
-                    {accessLevelLabel(formData.accessLevel)}
+                    {t(`settings.apiKeys.levels.${levelKey}` as any) || accessLevelLabel(formData.accessLevel)}
                   </Tag>
                   <Tag color="green">
-                    <LockOutlined /> Read only
+                    <LockOutlined /> {t("settings.apiKeys.readOnlyTag")}
                   </Tag>
                 </Descriptions.Item>
-                <Descriptions.Item label="Scope">
+                <Descriptions.Item label={t("settings.apiKeys.scope")}>
                   <Tag
                     color={
                       formData.scope === "marketplace_projects"
@@ -326,10 +334,12 @@ export default function CreateApiKeyDialog({
                         : "green"
                     }
                   >
-                    {scopeLabel(formData.scope)}
+                    {formData.scope === "marketplace_projects"
+                      ? t("settings.apiKeys.marketplace")
+                      : t("settings.apiKeys.thisStore")}
                   </Tag>
                 </Descriptions.Item>
-                <Descriptions.Item label="Environment">
+                <Descriptions.Item label={t("settings.apiKeys.environment")}>
                   <Tag
                     color={
                       formData.environment === "production"
@@ -339,17 +349,17 @@ export default function CreateApiKeyDialog({
                           : "blue"
                     }
                   >
-                    {formData.environment}
+                    {t(`settings.apiKeys.environments.${formData.environment}` as any) || formData.environment}
                   </Tag>
                 </Descriptions.Item>
-                <Descriptions.Item label="Expiration">
+                <Descriptions.Item label={t("settings.apiKeys.expires")}>
                   {getExpirationLabel(formData.expiration)}
                   {formData.customExpirationDate &&
                     ` - ${dayjs(formData.customExpirationDate).format("MMM DD, YYYY")}`}
                 </Descriptions.Item>
-                <Descriptions.Item label="Permissions">
+                <Descriptions.Item label={t("settings.apiKeys.steps.access")}>
                   {formData.permissions.length === 0 ? (
-                    <Text type="secondary">None</Text>
+                    <Text type="secondary">{t("settings.apiKeys.none")}</Text>
                   ) : (
                     <Space wrap>
                       {formData.permissions.map((p) => (
@@ -364,6 +374,7 @@ export default function CreateApiKeyDialog({
             </Card>
           </Space>
         );
+      }
 
       case 5:
         return result ? (
@@ -380,7 +391,7 @@ export default function CreateApiKeyDialog({
       title={
         <Space>
           <KeyOutlined style={{ color: "#F7931E" }} />
-          {result ? "API Key Created" : title}
+          {result ? t("settings.apiKeys.apiKeyCreated") : (title || t("settings.apiKeys.createApiKey"))}
         </Space>
       }
       open={open}
@@ -408,7 +419,7 @@ export default function CreateApiKeyDialog({
             icon={<LeftOutlined />}
             style={{ borderRadius: 6 }}
           >
-            Back
+            {t("common.actions.back")}
           </Button>
           {currentStep < steps.length - 1 ? (
             <Button
@@ -417,7 +428,7 @@ export default function CreateApiKeyDialog({
               icon={<RightOutlined />}
               style={{ borderRadius: 6 }}
             >
-              Next
+              {t("common.actions.next")}
             </Button>
           ) : (
             <Button
@@ -427,7 +438,7 @@ export default function CreateApiKeyDialog({
               icon={<CheckOutlined />}
               style={{ borderRadius: 6 }}
             >
-              Create Key
+              {t("settings.apiKeys.createKeyBtn")}
             </Button>
           )}
         </Space>
@@ -436,7 +447,7 @@ export default function CreateApiKeyDialog({
       {result && (
         <Space style={{ width: "100%", justifyContent: "flex-end" }}>
           <Button type="primary" onClick={handleClose} style={{ borderRadius: 6 }}>
-            Done
+            {t("settings.apiKeys.done")}
           </Button>
         </Space>
       )}

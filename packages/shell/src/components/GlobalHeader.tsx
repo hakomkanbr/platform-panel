@@ -23,6 +23,8 @@ import {
   MoonOutlined,
   BellOutlined,
   SettingOutlined,
+  ShopOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,7 +32,8 @@ import { useShell } from "../context/ShellContext";
 import { ProjectSelector } from "./ProjectSelector";
 import { ApplicationSelector } from "./ApplicationSelector";
 import { WorkspaceSelector } from "./WorkspaceSelector";
-import { LocaleSwitcher } from "@repo/localization";
+import { LocaleSwitcher, useTranslations } from "@repo/localization";
+import { getStoreUrl } from "@repo/utils";
 import { CommandPalette } from "@repo/ui";
 import type { ApplicationDefinition } from "@repo/application-types";
 import type { MenuProps } from "antd";
@@ -68,10 +71,26 @@ export function GlobalHeader({
   applications,
 }: GlobalHeaderProps) {
   const router = useRouter();
-  const { collapsed, isMobile, setCollapsed, user, theme, basePath } =
-    useShell();
+  const t = useTranslations();
+  const {
+    collapsed,
+    isMobile,
+    setCollapsed,
+    user,
+    theme,
+    basePath,
+    currentProject,
+    projects: ctxProjects,
+  } = useShell();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+
+  const allProjects = projects ?? ctxProjects;
+  const activeSlug =
+    currentProject?.slug ||
+    (currentProject?.id
+      ? allProjects?.find((p) => String(p.id) === String(currentProject.id))?.slug
+      : undefined);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -140,6 +159,30 @@ export function GlobalHeader({
       disabled: true,
     },
     { type: "divider" },
+    ...(activeSlug
+      ? [
+          {
+            key: "visit-store",
+            icon: <ShopOutlined style={{ color: "#F7931E" }} />,
+            label: (
+              <a
+                href={getStoreUrl(activeSlug)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <span>{t("common.actions.visitStore")}</span>
+                <ExportOutlined style={{ fontSize: 11, color: "#9CA3AF" }} />
+              </a>
+            ),
+          },
+        ]
+      : []),
     {
       key: "profile",
       icon: <UserOutlined />,
@@ -302,11 +345,84 @@ export function GlobalHeader({
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 6,
+            gap: 8,
             flex: 1,
             justifyContent: "flex-end",
           }}
         >
+          {/* Visit Store Action */}
+          {activeSlug ? (
+            <Tooltip
+              title={`${t("common.actions.visitStore")}${currentProject?.name ? ` (${currentProject.name})` : ""}`}
+            >
+              <Button
+                type="default"
+                icon={<ShopOutlined style={{ color: "#F7931E", fontSize: 16 }} />}
+                onClick={() => window.open(getStoreUrl(activeSlug), "_blank")}
+                style={{
+                  height: 36,
+                  borderRadius: 8,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  fontWeight: 600,
+                  fontSize: 13,
+                  borderColor: "#FED7AA",
+                  background: "#FFF7ED",
+                  color: "#C2410C",
+                  padding: "0 12px",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#FFEDD5";
+                  e.currentTarget.style.borderColor = "#F7931E";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "#FFF7ED";
+                  e.currentTarget.style.borderColor = "#FED7AA";
+                }}
+              >
+                {!isMobile && <span>{t("common.actions.visitStore")}</span>}
+                <ExportOutlined style={{ fontSize: 11, color: "#EA580C" }} />
+              </Button>
+            </Tooltip>
+          ) : allProjects && allProjects.length > 0 ? (
+            <Dropdown
+              placement="bottomRight"
+              menu={{
+                items: allProjects.map((p) => ({
+                  key: p.id,
+                  icon: <ShopOutlined style={{ color: "#F7931E" }} />,
+                  label: p.name,
+                  onClick: () => window.open(getStoreUrl(p.slug), "_blank"),
+                })),
+              }}
+            >
+              <Tooltip title={t("common.actions.selectStoreToVisit")}>
+                <Button
+                  type="default"
+                  icon={<ShopOutlined style={{ color: "#F7931E", fontSize: 16 }} />}
+                  style={{
+                    height: 36,
+                    borderRadius: 8,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontWeight: 600,
+                    fontSize: 13,
+                    borderColor: "#E5E7EB",
+                    background: "#FAFBFC",
+                    color: "#4B5563",
+                    padding: "0 12px",
+                  }}
+                >
+                  {!isMobile && <span>{t("common.actions.visitStore")}</span>}
+                  <ExportOutlined style={{ fontSize: 11, color: "#9CA3AF" }} />
+                </Button>
+              </Tooltip>
+            </Dropdown>
+          ) : null}
+
           {/* Quick Actions */}
           <Tooltip title="Toggle Fullscreen">
             <Button
@@ -341,7 +457,7 @@ export function GlobalHeader({
           </Tooltip>
 
           {/* Notifications */}
-          <Tooltip title="Notifications">
+          {/* <Tooltip title="Notifications">
             <Badge count={0} size="small" offset={[-2, 2]}>
               <Button
                 type="text"
@@ -357,7 +473,7 @@ export function GlobalHeader({
                 }}
               />
             </Badge>
-          </Tooltip>
+          </Tooltip> */}
 
           <Divider
             type="vertical"

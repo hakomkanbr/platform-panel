@@ -12,11 +12,11 @@ function buildQuery(params?: ListParams): string {
 
 export const ordersApi = {
   list: (params?: ListParams) =>
-    apiGet<PaginatedList<Order>>(`/Admin/Orders${buildQuery(params)}`),
+    apiGet<PaginatedList<Order>>(`/Admin/v1/Orders${buildQuery(params)}`),
 
   getById: (id: number) =>
-    apiGet<OrderDetail>(`/Admin/Orders/${id}`),
+    apiGet<OrderDetail>(`/Admin/v1/Orders/${id}`),
 
   setStatus: (id: number, status: number) =>
-    apiPut<number>(`/Admin/Orders/${id}/SetStatus/${status}`),
+    apiPut<number>(`/Admin/v1/Orders/${id}/SetStatus/${status}`),
 };

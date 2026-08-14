@@ -9,6 +9,7 @@ import {
   CrownOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "@repo/localization";
 import dayjs from "dayjs";
 import { LANGUAGE_FLAGS } from "@repo/shared-types";
 import { languageService } from "./service";
@@ -25,6 +26,7 @@ interface LanguageTableProps {
 }
 
 export default function LanguageTable({ projectId }: LanguageTableProps) {
+  const t = useTranslations();
   const [languages, setLanguages] = useState<ProjectLanguageDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -36,11 +38,11 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       const data = await languageService.list(projectId);
       setLanguages(data);
     } catch {
-      message.error("Failed to load languages");
+      message.error(t("settings.languages.loadFailed"));
     } finally {
       setLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, t]);
 
   useEffect(() => {
     fetchLanguages();
@@ -50,33 +52,34 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
     try {
       if (lang.enabled) {
         await languageService.disable(projectId, lang.id);
+        message.success(t("settings.languages.disabledSuccess"));
       } else {
         await languageService.enable(projectId, lang.id);
+        message.success(t("settings.languages.enabledSuccess"));
       }
-      message.success(`Language ${lang.enabled ? "disabled" : "enabled"} successfully`);
       fetchLanguages();
     } catch {
-      message.error("Failed to update language status");
+      message.error(t("settings.languages.updateStatusFailed"));
     }
   };
 
   const handleSetDefault = async (lang: ProjectLanguageDto) => {
     try {
       await languageService.setDefault(projectId, lang.id);
-      message.success("Default language updated");
+      message.success(t("settings.languages.defaultUpdatedSuccess"));
       fetchLanguages();
     } catch {
-      message.error("Failed to set default language");
+      message.error(t("settings.languages.defaultUpdateFailed"));
     }
   };
 
   const handleDelete = async (lang: ProjectLanguageDto) => {
     try {
       await languageService.delete(projectId, lang.id);
-      message.success("Language deleted successfully");
+      message.success(t("settings.languages.deleteSuccess"));
       fetchLanguages();
     } catch {
-      message.error("Failed to delete language");
+      message.error(t("settings.languages.deleteFailed"));
     }
   };
 
@@ -90,7 +93,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       ),
     },
     {
-      title: "Flag",
+      title: t("settings.languages.flag"),
       dataIndex: "flag",
       key: "flag",
       width: 60,
@@ -99,7 +102,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       ),
     },
     {
-      title: "Name",
+      title: t("common.fields.name"),
       dataIndex: "name",
       key: "name",
       width: 160,
@@ -112,7 +115,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       ),
     },
     {
-      title: "Code",
+      title: t("settings.languages.code"),
       dataIndex: "code",
       key: "code",
       width: 100,
@@ -121,21 +124,21 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       ),
     },
     {
-      title: "RTL",
+      title: t("settings.languages.rtl"),
       dataIndex: "rtl",
       key: "rtl",
       width: 60,
-      render: (rtl: boolean) => (rtl ? <Tag color="purple">Yes</Tag> : <Tag>No</Tag>),
+      render: (rtl: boolean) => (rtl ? <Tag color="purple">{t("common.actions.yes")}</Tag> : <Tag>{t("common.actions.no")}</Tag>),
     },
     {
-      title: "Default",
+      title: t("common.default"),
       dataIndex: "isDefault",
       key: "isDefault",
       width: 80,
       render: (isDefault: boolean) => <DefaultBadge isDefault={isDefault} />,
     },
     {
-      title: "Status",
+      title: t("common.fields.status"),
       dataIndex: "enabled",
       key: "enabled",
       width: 100,
@@ -144,13 +147,13 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
           checked={enabled}
           onChange={() => handleToggleEnabled(record)}
           size="small"
-          checkedChildren="On"
-          unCheckedChildren="Off"
+          checkedChildren={t("settings.languages.on")}
+          unCheckedChildren={t("settings.languages.off")}
         />
       ),
     },
     {
-      title: "Translation",
+      title: t("settings.languages.translation"),
       dataIndex: "translationCompletion",
       key: "translationCompletion",
       width: 140,
@@ -164,7 +167,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       ),
     },
     {
-      title: "Created",
+      title: t("settings.created"),
       dataIndex: "createdAt",
       key: "createdAt",
       width: 100,
@@ -173,14 +176,14 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       ),
     },
     {
-      title: "Actions",
+      title: t("settings.actions"),
       key: "actions",
       width: 200,
       fixed: "right" as const,
       render: (_: unknown, record: ProjectLanguageDto) => (
         <Space size="small">
           {!record.isDefault && (
-            <Tooltip title="Set as default">
+            <Tooltip title={t("settings.languages.setAsDefault")}>
               <Button
                 type="text"
                 size="small"
@@ -189,7 +192,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
               />
             </Tooltip>
           )}
-          <Tooltip title="Edit">
+          <Tooltip title={t("common.actions.edit")}>
             <Button
               type="text"
               size="small"
@@ -201,7 +204,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
             />
           </Tooltip>
           {!record.isDefault && (
-            <Tooltip title="Delete">
+            <Tooltip title={t("common.actions.delete")}>
               <Button
                 type="text"
                 size="small"
@@ -229,9 +232,9 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
         <Space>
           <GlobalOutlined style={{ color: "#F7931E", fontSize: 18 }} />
           <Text strong style={{ fontSize: 16 }}>
-            Project Languages
+            {t("settings.languages.projectLanguages")}
           </Text>
-          <Text type="secondary">{languages.length} languages</Text>
+          <Text type="secondary">{t("settings.languages.languagesCount", { count: languages.length })}</Text>
         </Space>
         <Button
           type="primary"
@@ -242,7 +245,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
           }}
           style={{ borderRadius: 6 }}
         >
-          Add Language
+          {t("settings.languages.addLanguage")}
         </Button>
       </div>
 
@@ -255,7 +258,11 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
         pagination={{
           pageSize: 10,
           showSizeChanger: true,
-          showTotal: (total) => `${total} languages`,
+          showTotal: (total) => (
+            <span style={{ marginInlineEnd: 12 }}>
+              {t("settings.languages.languagesCount", { count: total })}
+            </span>
+          ),
           style: { marginTop: 16 },
         }}
         style={{ borderRadius: 8 }}

@@ -12,5 +12,5 @@ function buildQuery(params?: ListParams): string {
 
 export const customersApi = {
   list: (params?: ListParams) =>
-    apiGet<PaginatedList<Customer>>(`/Admin/Customer${buildQuery(params)}`),
+    apiGet<PaginatedList<Customer>>(`/Admin/v1/Customer${buildQuery(params)}`),
 };

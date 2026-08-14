@@ -41,7 +41,7 @@ export default function WalletCard({
   if (!wallet) {
     return (
       <Card style={{ borderRadius: 12, height: "100%" }}>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No wallet found for this tenant" />
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="لم يتم العثور على محفظة لهذا الحساب" />
       </Card>
     );
   }
@@ -65,7 +65,7 @@ export default function WalletCard({
           <Space>
             <WalletOutlined style={{ fontSize: 24, color: "#fff" }} />
             <Text strong style={{ color: "#fff", fontSize: 16 }}>
-              Client Wallet
+              محفظة الحساب
             </Text>
           </Space>
           <Space>
@@ -97,18 +97,18 @@ export default function WalletCard({
             <>
               <Button type="default" ghost icon={<PlusCircleOutlined />} onClick={() => onAdjust("add")}
                 style={{ borderColor: "rgba(255,255,255,0.5)", color: "#fff" }}>
-                Add Credit
+                إضافة رصيد
               </Button>
               <Button type="default" ghost icon={<MinusCircleOutlined />} onClick={() => onAdjust("deduct")}
                 style={{ borderColor: "rgba(255,255,255,0.5)", color: "#fff" }}>
-                Deduct
+                خصم رصيد
               </Button>
             </>
           )}
           {!onAdjust && onTopUp && (
             <Button type="default" ghost icon={<DollarOutlined />} onClick={onTopUp}
               style={{ borderColor: "rgba(255,255,255,0.5)", color: "#fff", fontWeight: 600 }} size="large">
-              Request Top-Up
+              طلب شحن المحفظة
             </Button>
           )}
         </div>

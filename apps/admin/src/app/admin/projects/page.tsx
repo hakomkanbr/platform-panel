@@ -23,6 +23,8 @@ import {
   FolderOutlined,
   CalendarOutlined,
   CodeOutlined,
+  ShopOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import { useTenantId } from "@repo/hooks";
@@ -33,6 +35,8 @@ import {
   useCurrentCapabilities,
 } from "@repo/hooks";
 import { useCanConsume } from "@repo/hooks";
+import { useTranslations } from "@repo/localization";
+import { getStoreUrl } from "@repo/utils";
 import Link from "next/link";
 import dayjs from "dayjs";
 import type { ProjectDto } from "@repo/shared-types";
@@ -42,17 +46,14 @@ import { TableSkeleton } from "@repo/ui";
 const { Title, Text } = Typography;
 
 export default function ProjectCenterPage() {
+  const t = useTranslations();
   const tenantId = useTenantId();
   const [createModalVisible, setCreateModalVisible] = useState(false);
   const [limitModalVisible, setLimitModalVisible] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form] = Form.useForm();
 
-  const {
-    data: projects = [],
-    isLoading,
-    error,
-  } = useProjects(tenantId);
+  const { data: projects = [], isLoading, error } = useProjects(tenantId);
   const createProject = useCreateProject();
   const deleteProject = useDeleteProject();
   const canConsumeMutation = useCanConsume();
@@ -98,7 +99,9 @@ export default function ProjectCenterPage() {
       <PageTransition>
         <div className="section-header">
           <Title level={3}>Project Center</Title>
-          <Text type="secondary">Manage your projects and launch applications</Text>
+          <Text type="secondary">
+            Manage your projects and launch applications
+          </Text>
         </div>
         <TableSkeleton />
       </PageTransition>
@@ -108,7 +111,14 @@ export default function ProjectCenterPage() {
   if (error) {
     return (
       <PageTransition>
-        <div style={{ background: "var(--bg-card)", borderRadius: 16, padding: 24, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+        <div
+          style={{
+            background: "var(--bg-card)",
+            borderRadius: 16,
+            padding: 24,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+          }}
+        >
           <Text type="danger">Failed to load projects: {error.message}</Text>
         </div>
       </PageTransition>
@@ -126,8 +136,12 @@ export default function ProjectCenterPage() {
         }}
       >
         <div className="section-header" style={{ marginBottom: 0 }}>
-          <Title level={3} style={{ margin: 0 }}>Project Center</Title>
-          <Text type="secondary">Manage your projects and launch applications</Text>
+          <Title level={3} style={{ margin: 0 }}>
+            Project Center
+          </Title>
+          <Text type="secondary">
+            Manage your projects and launch applications
+          </Text>
         </div>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button
@@ -150,21 +164,32 @@ export default function ProjectCenterPage() {
               <Space direction="vertical" align="center">
                 <div
                   style={{
-                    width: 64, height: 64, borderRadius: 16,
+                    width: 64,
+                    height: 64,
+                    borderRadius: 16,
                     background: "var(--primary-light)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     margin: "0 auto 8px",
                   }}
                 >
-                  <FolderOutlined style={{ fontSize: 28, color: "var(--primary)" }} />
+                  <FolderOutlined
+                    style={{ fontSize: 28, color: "var(--primary)" }}
+                  />
                 </div>
-                <Text type="secondary" style={{ fontSize: 15 }}>No projects yet</Text>
+                <Text type="secondary" style={{ fontSize: 15 }}>
+                  No projects yet
+                </Text>
                 <Text type="secondary" style={{ fontSize: 13 }}>
                   Create your first project to start using apps
                 </Text>
-                <Button type="primary" icon={<PlusOutlined />}
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
                   onClick={() => setCreateModalVisible(true)}
-                  style={{ marginTop: 8, borderRadius: 8 }}>
+                  style={{ marginTop: 8, borderRadius: 8 }}
+                >
                   Create Project
                 </Button>
               </Space>
@@ -181,49 +206,119 @@ export default function ProjectCenterPage() {
               >
                 <div
                   style={{
-                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     padding: "16px 20px",
-                    borderBottom: idx < projects.length - 1 ? "1px solid var(--border-light)" : "none",
+                    borderBottom:
+                      idx < projects.length - 1
+                        ? "1px solid var(--border-light)"
+                        : "none",
                     transition: "background 0.15s",
-                    borderRadius: idx === 0 ? "12px 12px 0 0" : idx === projects.length - 1 ? "0 0 12px 12px" : 0,
+                    borderRadius:
+                      idx === 0
+                        ? "12px 12px 0 0"
+                        : idx === projects.length - 1
+                          ? "0 0 12px 12px"
+                          : 0,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--primary-light)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "var(--primary-light)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = "transparent")
+                  }
                 >
-                  <Space>
-                    <div style={{
-                      width: 40, height: 40, borderRadius: 10,
-                      background: "var(--primary-light)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: "var(--primary)", fontSize: 18,
-                    }}>
-                      <FolderOutlined />
-                    </div>
-                    <Space direction="vertical" size={1}>
-                      <Text strong style={{ fontSize: 14 }}>{project.name}</Text>
-                      <Space size={12}>
-                        <Text type="secondary" style={{ fontSize: 12 }}>{project.slug}</Text>
-                        <Tag color={project.enabledAppCount > 0 ? "blue" : "default"} style={{ borderRadius: 4, fontSize: 10 }}>
-                          {project.enabledAppCount}/{project.appCount} apps
-                        </Tag>
+                  <Link
+                    href={`/admin/projects/${project.id}`}
+                    style={{ textDecoration: "none", color: "inherit", flex: 1, minWidth: 0 }}
+                  >
+                    <Space style={{ cursor: "pointer" }}>
+                      <div
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: 10,
+                          background: "var(--primary-light)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "var(--primary)",
+                          fontSize: 18,
+                        }}
+                      >
+                        <FolderOutlined />
+                      </div>
+                      <Space direction="vertical" size={1}>
+                        <Text strong style={{ fontSize: 14 }}>
+                          {project.name}
+                        </Text>
+                        <Space size={12}>
+                          <Text type="secondary" style={{ fontSize: 12 }}>
+                            {project.slug}
+                          </Text>
+                          <Tag
+                            color={
+                              project.enabledAppCount > 0 ? "blue" : "default"
+                            }
+                            style={{ borderRadius: 4, fontSize: 10 }}
+                          >
+                            {project.enabledAppCount}/{project.appCount} apps
+                          </Tag>
+                        </Space>
                       </Space>
                     </Space>
-                  </Space>
-                  <Space>
-                    <Text type="secondary" style={{ fontSize: 12 }}>
+                  </Link>
+                  <Space size={8}>
+                    <Text type="secondary" style={{ fontSize: 12, marginRight: 8 }}>
                       {dayjs(project.createdAt).format("MMM DD, YYYY")}
                     </Text>
+
+                    {project.slug && (
+                      <Button
+                        size="small"
+                        icon={<ShopOutlined style={{ color: "#F7931E" }} />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(getStoreUrl(project.slug), "_blank");
+                        }}
+                        style={{
+                          borderRadius: 8,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4,
+                          borderColor: "#FED7AA",
+                          background: "#FFF7ED",
+                          color: "#C2410C",
+                          fontWeight: 500,
+                        }}
+                      >
+                        <span>{t("common.actions.visitStore")}</span>
+                        <ExportOutlined style={{ fontSize: 10 }} />
+                      </Button>
+                    )}
+
                     <Link href={`/admin/projects/${project.id}`}>
-                      <Button type="primary" size="small" icon={<EyeOutlined />} style={{ borderRadius: 8 }}>
-                        Open
+                      <Button
+                        size="small"
+                        icon={<EyeOutlined />}
+                        style={{ borderRadius: 8 }}
+                      >
+                        {t("common.actions.manage")}
                       </Button>
                     </Link>
+
                     <Popconfirm
                       title="Delete this project?"
                       description="This will remove all app configurations for this project."
                       onConfirm={() => handleDeleteProject(project.id)}
                     >
-                      <Button size="small" danger icon={<DeleteOutlined />} style={{ borderRadius: 8 }} />
+                      <Button
+                        size="small"
+                        danger
+                        icon={<DeleteOutlined />}
+                        style={{ borderRadius: 8 }}
+                      />
                     </Popconfirm>
                   </Space>
                 </div>
@@ -234,24 +329,58 @@ export default function ProjectCenterPage() {
       </AnimatedCard>
 
       <Modal
-        title={<Space><PlusOutlined style={{ color: "var(--primary)" }} /> Create New Project</Space>}
+        title={
+          <Space>
+            <PlusOutlined style={{ color: "var(--primary)" }} /> Create New
+            Project
+          </Space>
+        }
         open={createModalVisible}
-        onCancel={() => { setCreateModalVisible(false); form.resetFields(); setSubmitting(false); }}
+        onCancel={() => {
+          setCreateModalVisible(false);
+          form.resetFields();
+          setSubmitting(false);
+        }}
         footer={[
-          <Button key="cancel" onClick={() => { setCreateModalVisible(false); form.resetFields(); setSubmitting(false); }}>
+          <Button
+            key="cancel"
+            onClick={() => {
+              setCreateModalVisible(false);
+              form.resetFields();
+              setSubmitting(false);
+            }}
+          >
             Cancel
           </Button>,
-          <Button key="create" type="primary" onClick={() => form.submit()} loading={submitting} disabled={submitting}>
+          <Button
+            key="create"
+            type="primary"
+            onClick={() => form.submit()}
+            loading={submitting}
+            disabled={submitting}
+          >
             Create
           </Button>,
         ]}
       >
         <Form form={form} layout="vertical" onFinish={handleCreateProject}>
-          <Form.Item name="name" label="Project Name" rules={[{ required: true, message: "Please enter a project name" }]}>
-            <Input prefix={<FolderOutlined style={{ color: "var(--text-tertiary)" }} />} placeholder="e.g., My E-commerce Site" />
+          <Form.Item
+            name="name"
+            label="Project Name"
+            rules={[{ required: true, message: "Please enter a project name" }]}
+          >
+            <Input
+              prefix={
+                <FolderOutlined style={{ color: "var(--text-tertiary)" }} />
+              }
+              placeholder="e.g., My E-commerce Site"
+            />
           </Form.Item>
           <Form.Item name="description" label="Description">
-            <Input.TextArea rows={3} placeholder="Brief description of this project" />
+            <Input.TextArea
+              rows={3}
+              placeholder="Brief description of this project"
+            />
           </Form.Item>
           <Alert
             type="info"
@@ -263,19 +392,37 @@ export default function ProjectCenterPage() {
       </Modal>
 
       <Modal
-        title={<Space><WarningOutlined style={{ color: "var(--warning)" }} /> Limit Reached</Space>}
+        title={
+          <Space>
+            <WarningOutlined style={{ color: "var(--warning)" }} /> Limit
+            Reached
+          </Space>
+        }
         open={limitModalVisible}
         onCancel={() => setLimitModalVisible(false)}
         footer={[
-          <Button key="close" onClick={() => setLimitModalVisible(false)}>Close</Button>,
-          <Button key="upgrade" type="primary" onClick={() => { setLimitModalVisible(false); window.location.href = "/admin/billing"; }}>
+          <Button key="close" onClick={() => setLimitModalVisible(false)}>
+            Close
+          </Button>,
+          <Button
+            key="upgrade"
+            type="primary"
+            onClick={() => {
+              setLimitModalVisible(false);
+              window.location.href = "/admin/billing";
+            }}
+          >
             Upgrade Plan
           </Button>,
         ]}
       >
-        <Alert type="warning" message="Project Limit Reached"
+        <Alert
+          type="warning"
+          message="Project Limit Reached"
           description={`You have reached the maximum number of projects (${maxProjects}) allowed for your current plan.`}
-          style={{ marginBottom: 16, borderRadius: 8 }} showIcon />
+          style={{ marginBottom: 16, borderRadius: 8 }}
+          showIcon
+        />
       </Modal>
     </PageTransition>
   );

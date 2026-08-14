@@ -39,15 +39,36 @@ export function ProjectSelector({
       setCurrentProject(null);
       Cookies.remove("ProjectId");
       Cookies.remove("ProjectName");
+      Cookies.remove("ProjectSlug");
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("ProjectId");
+        localStorage.removeItem("ProjectName");
+        localStorage.removeItem("ProjectSlug");
+      }
       router.refresh();
-    };
+      return;
+    }
     const project = projects.find((p) => p.id === value);
     if (project) {
       setCurrentProject(project);
       onProjectChange?.(project);
       Cookies.set("ProjectId", project.id);
       Cookies.set("ProjectName", project.name);
+      if (project.slug) {
+        Cookies.set("ProjectSlug", project.slug);
+      } else {
+        Cookies.remove("ProjectSlug");
+      }
+      if (typeof window !== "undefined") {
+        localStorage.setItem("ProjectId", project.id);
+        localStorage.setItem("ProjectName", project.name);
+        if (project.slug) localStorage.setItem("ProjectSlug", project.slug);
+      }
     }
+
+    setTimeout(() => {
+      router.refresh();
+    }, 1000);
   };
 
   console.info("current project : ", currentProject);

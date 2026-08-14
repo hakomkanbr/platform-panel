@@ -14,20 +14,20 @@ function buildQuery(params?: ListParams): string {
 
 export const discountsApi = {
   list: (params?: ListParams) =>
-    apiGet<PaginatedList<Discount>>(`/Admin/Discounts${buildQuery(params)}`),
+    apiGet<PaginatedList<Discount>>(`/Admin/v1/Discounts${buildQuery(params)}`),
 
   getById: (id: number) =>
-    apiGet<Discount>(`/Admin/Discounts/${id}`),
+    apiGet<Discount>(`/Admin/v1/Discounts/${id}`),
 
   create: (data: DiscountFormData) =>
-    apiPost<number>('/Admin/Discounts', data),
+    apiPost<number>('/Admin/v1/Discounts', data),
 
   update: (data: DiscountFormData & { id: number }) =>
-    apiPut<number>(`/Admin/Discounts`, data),
+    apiPut<number>(`/Admin/v1/Discounts`, data),
 
   delete: (id: number) =>
-    apiDelete<number>(`/Admin/Discounts/${id}`),
+    apiDelete<number>(`/Admin/v1/Discounts/${id}`),
 
   toggleActive: (id: number, isActive: boolean) =>
-    apiPut<boolean>(`/Admin/Discounts/${id}/status`, { isActive }),
+    apiPut<boolean>(`/Admin/v1/Discounts/${id}/status`, { isActive }),
 };

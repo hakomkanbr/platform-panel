@@ -2,6 +2,7 @@
 
 import { Space, Typography } from "antd";
 import { GlobalOutlined, ShopOutlined } from "@ant-design/icons";
+import { useTranslations } from "@repo/localization";
 import type { ApiKeyScope } from "./types";
 
 const { Text, Title } = Typography;
@@ -12,6 +13,7 @@ interface ScopeSummaryProps {
 }
 
 export default function ScopeSummary({ scope, projectName }: ScopeSummaryProps) {
+  const t = useTranslations();
   const isMarketplace = scope === "marketplace_projects";
 
   return (
@@ -45,22 +47,21 @@ export default function ScopeSummary({ scope, projectName }: ScopeSummaryProps) 
             {isMarketplace ? (
               <>
                 <Title level={5} style={{ margin: 0 }}>
-                  Access participating stores
+                  {t("settings.apiKeys.scopeParticipatingStores")}
                 </Title>
                 <Text type="secondary">
-                  This key can read data from all stores available in
-                  Marketplace. The platform resolves the stores automatically.
+                  {t("settings.apiKeys.scopeParticipatingStoresDesc")}
                 </Text>
               </>
             ) : (
               <>
                 <Title level={5} style={{ margin: 0 }}>
-                  This store
+                  {t("settings.apiKeys.thisStore")}
                 </Title>
                 <Text type="secondary">
                   {projectName
-                    ? `Read data from "${projectName}" only. This key cannot access any other store.`
-                    : "Read data from this store only. This key cannot access any other store."}
+                    ? t("settings.apiKeys.scopeThisStoreProjectDesc", { projectName })
+                    : t("settings.apiKeys.scopeThisStoreDesc")}
                 </Text>
               </>
             )}

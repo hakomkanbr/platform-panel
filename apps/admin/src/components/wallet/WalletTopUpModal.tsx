@@ -82,24 +82,24 @@ export default function WalletTopUpModal({
   const renderChoose = () => (
     <div>
       <div style={{ textAlign: "center", marginBottom: 24 }}>
-        <Title level={4} style={{ margin: 0 }}>Choose Top-Up Method</Title>
-        <Text type="secondary">Select how you would like to add funds to your wallet</Text>
+        <Title level={4} style={{ margin: 0 }}>اختر طريقة شحن المحفظة</Title>
+        <Text type="secondary">حدد الطريقة المفضلة لإضافة رصيد إلى محفظتك</Text>
       </div>
       <div style={{ display: "flex", gap: 16 }}>
         {renderMethodCard(
           <BankOutlined />,
-          "Bank Transfer",
-          "View our bank details and submit a transfer request. Funds are added once confirmed.",
+          "التحويل البنكي",
+          "عرض بيانات الحساب البنكي وتقديم طلب التحويل. يُضاف الرصيد بعد تأكيد العملية.",
           "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)",
           undefined,
           () => setMethod("bank"),
         )}
         {renderMethodCard(
           <CreditCardOutlined />,
-          "Card Payment",
-          "Pay instantly with your credit or debit card. Funds are added immediately upon success.",
+          "الدفع بالبطاقة",
+          "دفع فوري عبر البطاقة الائتمانية أو بطاقة مدى. يُضاف الرصيد فوراً وبشكل تلقائي.",
           "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
-          "Coming Soon",
+          "قريباً",
           () => setMethod("card"),
         )}
       </div>
@@ -108,7 +108,7 @@ export default function WalletTopUpModal({
 
   return (
     <Modal
-      title={<Space><WalletOutlined /><span>Wallet Top-Up</span></Space>}
+      title={<Space><WalletOutlined /><span>شحن المحفظة</span></Space>}
       open={open}
       onCancel={onCancel}
       footer={null}

@@ -15,6 +15,7 @@ import {
   ShopOutlined,
 } from "@ant-design/icons";
 import { useState, useMemo, useEffect, useCallback } from "react";
+import { useTranslations } from "@repo/localization";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import ApiKeyStatus from "./api-key-status";
@@ -41,6 +42,7 @@ const accessLevelColors: Record<string, string> = {
 };
 
 export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps) {
+  const t = useTranslations();
   const [keys, setKeys] = useState<ApiKeyDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -55,11 +57,11 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
       const data = await apiKeyService.list(projectId);
       setKeys(data);
     } catch {
-      message.error("Failed to load API keys");
+      message.error(t("settings.apiKeys.loadFailed"));
     } finally {
       setLoading(false);
     }
-  }, [projectId]);
+  }, [projectId, t]);
 
   useEffect(() => {
     fetchKeys();
@@ -80,20 +82,20 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
     try {
       if (key.status === "active") {
         await apiKeyService.disable(projectId, key.id);
-        message.success("API key disabled");
+        message.success(t("settings.apiKeys.disabledSuccess"));
       } else if (key.status === "disabled") {
         await apiKeyService.enable(projectId, key.id);
-        message.success("API key enabled");
+        message.success(t("settings.apiKeys.enabledSuccess"));
       }
       fetchKeys();
     } catch {
-      message.error("Failed to update API key status");
+      message.error(t("settings.apiKeys.updateStatusFailed"));
     }
   };
 
   const columns = [
     {
-      title: "Name",
+      title: t("common.fields.name"),
       dataIndex: "name",
       key: "name",
       width: 220,
@@ -112,38 +114,44 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
       ),
     },
     {
-      title: "Access",
+      title: t("settings.apiKeys.access"),
       key: "access",
       width: 140,
       render: (_: unknown, record: ApiKeyDto) => {
         const level = record.accessLevel ?? resolveAccessLevel(record.permissions);
+        const levelKey =
+          level === "read_only"
+            ? "readOnly"
+            : level === "standard_read"
+              ? "standardRead"
+              : "customRead";
         return (
           <Space size={4}>
             <LockOutlined style={{ color: "#10b981", fontSize: 12 }} />
             <Tag color={accessLevelColors[level]} style={{ marginInlineEnd: 0 }}>
-              {accessLevelLabel(level)}
+              {t(`settings.apiKeys.levels.${levelKey}` as any) || accessLevelLabel(level)}
             </Tag>
           </Space>
         );
       },
     },
     {
-      title: "Scope",
+      title: t("settings.apiKeys.scope"),
       key: "scope",
       width: 130,
       render: (_: unknown, record: ApiKeyDto) =>
         record.scope === "marketplace_projects" ? (
           <Tag icon={<GlobalOutlined />} color="purple">
-            Marketplace
+            {t("settings.apiKeys.marketplace")}
           </Tag>
         ) : (
           <Tag icon={<ShopOutlined />} color="green">
-            This store
+            {t("settings.apiKeys.thisStore")}
           </Tag>
         ),
     },
     {
-      title: "Environment",
+      title: t("settings.apiKeys.environment"),
       dataIndex: "environment",
       key: "environment",
       width: 120,
@@ -153,12 +161,12 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
             env === "production" ? "red" : env === "staging" ? "orange" : "blue"
           }
         >
-          {env}
+          {t(`settings.apiKeys.environments.${env}` as any) || env}
         </Tag>
       ),
     },
     {
-      title: "Expires",
+      title: t("settings.apiKeys.expires"),
       dataIndex: "expiresAt",
       key: "expiresAt",
       width: 120,
@@ -168,18 +176,18 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
             {dayjs(val).format("MMM DD, YYYY")}
           </Text>
         ) : (
-          <Text type="secondary">Never</Text>
+          <Text type="secondary">{t("settings.apiKeys.never")}</Text>
         ),
     },
     {
-      title: "Status",
+      title: t("common.fields.status"),
       dataIndex: "status",
       key: "status",
       width: 100,
       render: (status: ApiKeyDto["status"]) => <ApiKeyStatus status={status} />,
     },
     {
-      title: "Created",
+      title: t("settings.created"),
       dataIndex: "createdAt",
       key: "createdAt",
       width: 120,
@@ -188,24 +196,24 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
       ),
     },
     {
-      title: "Actions",
+      title: t("settings.actions"),
       key: "actions",
       width: 180,
       fixed: "right" as const,
       render: (_: unknown, record: ApiKeyDto) => (
         <Space size="small">
-          <Tooltip title="Edit">
+          <Tooltip title={t("common.actions.edit")}>
             <Button
               type="text"
               size="small"
               icon={<EditOutlined />}
               onClick={() => {
                 setSelectedKey(record);
-                message.info("Edit functionality coming soon");
+                message.info(t("settings.apiKeys.editComingSoon"));
               }}
             />
           </Tooltip>
-          <Tooltip title="Rotate">
+          <Tooltip title={t("settings.apiKeys.rotateKey")}>
             <Button
               type="text"
               size="small"
@@ -216,7 +224,7 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
               }}
             />
           </Tooltip>
-          <Tooltip title={record.status === "active" ? "Disable" : "Enable"}>
+          <Tooltip title={record.status === "active" ? t("settings.apiKeys.disable") : t("settings.apiKeys.enable")}>
             <Button
               type="text"
               size="small"
@@ -230,7 +238,7 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
               onClick={() => handleToggleStatus(record)}
             />
           </Tooltip>
-          <Tooltip title="Delete">
+          <Tooltip title={t("common.actions.delete")}>
             <Button
               type="text"
               size="small"
@@ -259,14 +267,14 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
       >
         <Space>
           <Input
-            placeholder="Search keys..."
+            placeholder={t("settings.apiKeys.searchPlaceholder")}
             prefix={<SearchOutlined />}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: 260, borderRadius: 6 }}
             allowClear
           />
-          <Text type="secondary">{filteredKeys.length} keys</Text>
+          <Text type="secondary">{t("settings.apiKeys.keysCount", { count: filteredKeys.length })}</Text>
         </Space>
         <Button
           type="primary"
@@ -274,7 +282,7 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
           onClick={() => setCreateOpen(true)}
           style={{ borderRadius: 6 }}
         >
-          Create API Key
+          {t("settings.apiKeys.createApiKey")}
         </Button>
       </div>
 
@@ -287,7 +295,11 @@ export default function ApiKeyTable({ projectId, projectName }: ApiKeyTableProps
         pagination={{
           pageSize: 10,
           showSizeChanger: true,
-          showTotal: (total) => `${total} keys`,
+          showTotal: (total) => (
+            <span style={{ marginInlineEnd: 12 }}>
+              {t("settings.apiKeys.keysCount", { count: total })}
+            </span>
+          ),
           style: { marginTop: 16 },
         }}
         style={{ borderRadius: 8 }}

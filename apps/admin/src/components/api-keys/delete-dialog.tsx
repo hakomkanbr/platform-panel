@@ -1,6 +1,7 @@
 import { Modal, Typography, Alert, Space, message } from "antd";
 import { DeleteOutlined, WarningOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useTranslations } from "@repo/localization";
 import { apiKeyService } from "./service";
 import type { ApiKeyDto } from "./types";
 
@@ -15,6 +16,7 @@ interface DeleteDialogProps {
 }
 
 export default function DeleteDialog({ open, onClose, projectId, keyData, onSuccess }: DeleteDialogProps) {
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const [confirmText, setConfirmText] = useState("");
 
@@ -22,11 +24,11 @@ export default function DeleteDialog({ open, onClose, projectId, keyData, onSucc
     setLoading(true);
     try {
       await apiKeyService.delete(projectId, keyData.id);
-      message.success("API key deleted successfully");
+      message.success(t("settings.apiKeys.deleteSuccess"));
       onSuccess();
       onClose();
     } catch {
-      message.error("Failed to delete API key");
+      message.error(t("settings.apiKeys.deleteFailed"));
     } finally {
       setLoading(false);
     }
@@ -37,7 +39,7 @@ export default function DeleteDialog({ open, onClose, projectId, keyData, onSucc
       title={
         <Space>
           <DeleteOutlined style={{ color: "#ff4d4f" }} />
-          Delete API Key
+          {t("settings.apiKeys.deleteTitle")}
         </Space>
       }
       open={open}
@@ -51,8 +53,8 @@ export default function DeleteDialog({ open, onClose, projectId, keyData, onSucc
           type="error"
           showIcon
           icon={<WarningOutlined />}
-          message="This action cannot be undone"
-          description={`You are about to permanently delete the API key "${keyData.name}". All services using this key will immediately lose access.`}
+          message={t("settings.apiKeys.deleteAlertTitle")}
+          description={t("settings.apiKeys.deleteAlertDesc", { name: keyData.name })}
         />
 
         <div
@@ -64,21 +66,21 @@ export default function DeleteDialog({ open, onClose, projectId, keyData, onSucc
           }}
         >
           <Space direction="vertical" size={4}>
-            <Text strong>Key to delete:</Text>
-            <Text>Name: {keyData.name}</Text>
+            <Text strong>{t("settings.apiKeys.keyToDelete")}</Text>
+            <Text>{t("common.fields.name")}: {keyData.name}</Text>
             <Text code>{keyData.prefix}...</Text>
-            <Text type="secondary">Environment: {keyData.environment}</Text>
+            <Text type="secondary">{t("settings.apiKeys.environment")}: {t(`settings.apiKeys.environments.${keyData.environment}` as any) || keyData.environment}</Text>
           </Space>
         </div>
 
         <div>
           <Text style={{ display: "block", marginBottom: 8 }}>
-            Type <Text code strong>delete</Text> to confirm:
+            {t("settings.apiKeys.deleteConfirmPrompt")}
           </Text>
           <input
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
-            placeholder='Type "delete" to confirm'
+            placeholder={t("settings.apiKeys.deleteConfirmPlaceholder")}
             style={{
               width: "100%",
               padding: "8px 12px",
@@ -100,7 +102,7 @@ export default function DeleteDialog({ open, onClose, projectId, keyData, onSucc
               cursor: "pointer",
             }}
           >
-            Cancel
+            {t("common.actions.cancel")}
           </button>
           <button
             onClick={handleDelete}
@@ -116,7 +118,7 @@ export default function DeleteDialog({ open, onClose, projectId, keyData, onSucc
               opacity: confirmText !== "delete" || loading ? 0.5 : 1,
             }}
           >
-            {loading ? "Deleting..." : "Delete Key"}
+            {loading ? t("settings.apiKeys.deleting") : t("settings.apiKeys.deleteKeyBtn")}
           </button>
         </Space>
       </Space>

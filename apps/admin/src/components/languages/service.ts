@@ -29,7 +29,7 @@ interface BackendCreateRequest {
   code: string;
   name: string;
   nativeName: string;
-  direction: number;
+  direction: string;
   flagIcon: string | null;
   region?: string | null;
   displayOrder?: number;
@@ -62,7 +62,7 @@ function mapCreateToBackend(
     code: f.code,
     name: f.name,
     nativeName: f.nativeName,
-    direction: f.rtl,
+    direction: f.rtl ? "RTL" : "LTR",
     flagIcon: f.flag || null,
   };
 }

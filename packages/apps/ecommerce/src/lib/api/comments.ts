@@ -12,8 +12,8 @@ function buildQuery(params?: ListParams): string {
 
 export const commentsApi = {
   list: (params?: ListParams) =>
-    apiGet<PaginatedList<Comment>>(`/Admin/Comments${buildQuery(params)}`),
+    apiGet<PaginatedList<Comment>>(`/Admin/v1/Comments${buildQuery(params)}`),
 
   delete: (id: number) =>
-    apiDelete<number>(`/Admin/Comments/${id}`),
+    apiDelete<number>(`/Admin/v1/Comments/${id}`),
 };

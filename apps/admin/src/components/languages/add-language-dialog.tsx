@@ -1,11 +1,10 @@
 import { Modal, Button, Space, Typography, message } from "antd";
 import { GlobalOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
+import { useTranslations } from "@repo/localization";
 import LanguageForm from "./language-form";
 import { languageService } from "./service";
 import type { LanguageFormData } from "./types";
-
-const { Text } = Typography;
 
 interface AddLanguageDialogProps {
   open: boolean;
@@ -16,6 +15,7 @@ interface AddLanguageDialogProps {
 }
 
 export default function AddLanguageDialog({ open, onClose, projectId, onSuccess, editData }: AddLanguageDialogProps) {
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<LanguageFormData>({
     code: "",
@@ -33,7 +33,7 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
 
   const handleSubmit = async () => {
     if (!formData.code) {
-      message.warning("Please select a language");
+      message.warning(t("settings.languages.selectLanguageWarning"));
       return;
     }
     setLoading(true);
@@ -45,7 +45,7 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
           flag: formData.flag,
           rtl: formData.rtl,
         });
-        message.success("Language updated successfully");
+        message.success(t("settings.languages.updatedSuccess"));
       } else {
         await languageService.create(projectId, {
           code: formData.code,
@@ -54,12 +54,12 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
           flag: formData.flag,
           rtl: formData.rtl ? 1 : 0,
         });
-        message.success("Language added successfully");
+        message.success(t("settings.languages.addedSuccess"));
       }
       onSuccess();
       handleClose();
     } catch {
-      message.error(`Failed to ${isEdit ? "update" : "add"} language`);
+      message.error(isEdit ? t("settings.languages.updateFailed") : t("settings.languages.addFailed"));
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
       title={
         <Space>
           <GlobalOutlined style={{ color: "#F7931E" }} />
-          {isEdit ? "Edit Language" : "Add Language"}
+          {isEdit ? t("settings.languages.editLanguage") : t("settings.languages.addLanguage")}
         </Space>
       }
       open={open}
@@ -88,7 +88,7 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
 
       <Space style={{ width: "100%", justifyContent: "flex-end", marginTop: 24 }}>
         <Button onClick={handleClose} style={{ borderRadius: 6 }}>
-          Cancel
+          {t("common.actions.cancel")}
         </Button>
         <Button
           type="primary"
@@ -97,7 +97,7 @@ export default function AddLanguageDialog({ open, onClose, projectId, onSuccess,
           icon={isEdit ? undefined : <PlusOutlined />}
           style={{ borderRadius: 6 }}
         >
-          {isEdit ? "Update" : "Add Language"}
+          {isEdit ? t("settings.languages.update") : t("settings.languages.addLanguage")}
         </Button>
       </Space>
     </Modal>

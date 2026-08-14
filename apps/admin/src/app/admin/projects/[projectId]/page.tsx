@@ -32,6 +32,8 @@ import {
   ApiOutlined,
   SettingOutlined,
   ShopOutlined,
+  ExportOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -44,6 +46,9 @@ import {
   useDeleteProject,
   useSetMarketplaceMember,
 } from "@repo/hooks";
+import { useTranslations } from "@repo/localization";
+import { getStoreUrl } from "@repo/utils";
+import { message } from "antd";
 import AppLauncher from "@/components/apps/AppLauncher";
 import ProjectSettingsTabs from "@/components/projects/project-settings-tabs";
 import { motion } from "framer-motion";
@@ -87,6 +92,7 @@ async function handleOpenCms() {
 }
 
 export default function ProjectDetailPage() {
+  const t = useTranslations();
   const params = useParams();
   const router = useRouter();
   const tenantId = useTenantId();
@@ -236,7 +242,29 @@ export default function ProjectDetailPage() {
             {project.description || "No description"}
           </Text>
         </Space>
-        <Space>
+        <Space wrap>
+          {project.slug && (
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                type="primary"
+                icon={<ShopOutlined />}
+                onClick={() => window.open(getStoreUrl(project.slug), "_blank")}
+                style={{
+                  borderRadius: 8,
+                  background: "linear-gradient(135deg, #F7931E 0%, #EA580C 100%)",
+                  border: "none",
+                  boxShadow: "0 2px 8px rgba(247, 147, 30, 0.4)",
+                  fontWeight: 600,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                <span>{t("common.actions.visitStore")}</span>
+                <ExportOutlined style={{ fontSize: 11 }} />
+              </Button>
+            </motion.div>
+          )}
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               type="primary"
@@ -276,6 +304,87 @@ export default function ProjectDetailPage() {
           </Popconfirm>
         </Space>
       </div>
+
+      {project.slug && (
+        <AnimatedCard
+          style={{
+            marginBottom: 24,
+            background: "linear-gradient(135deg, #FFF7ED 0%, #FFFFFF 100%)",
+            border: "1px solid #FED7AA",
+            borderRadius: 14,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 16,
+            }}
+          >
+            <Space align="center" size={12}>
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: "#F7931E18",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#F7931E",
+                  fontSize: 22,
+                }}
+              >
+                <ShopOutlined />
+              </div>
+              <div>
+                <Text strong style={{ fontSize: 15, color: "#1F2937", display: "block" }}>
+                  {t("common.actions.storeUrl")}
+                </Text>
+                <Text
+                  code
+                  style={{
+                    fontSize: 13,
+                    color: "#C2410C",
+                    background: "#FFF",
+                    borderColor: "#FDBA74",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {getStoreUrl(project.slug)}
+                </Text>
+              </div>
+            </Space>
+
+            <Space>
+              <Button
+                icon={<CopyOutlined />}
+                onClick={() => {
+                  navigator.clipboard.writeText(getStoreUrl(project.slug));
+                  message.success(t("common.actions.storeCopied"));
+                }}
+                style={{ borderRadius: 8 }}
+              >
+                {t("common.actions.copyStoreUrl")}
+              </Button>
+              <Button
+                type="primary"
+                icon={<ExportOutlined />}
+                onClick={() => window.open(getStoreUrl(project.slug), "_blank")}
+                style={{
+                  borderRadius: 8,
+                  background: "#F7931E",
+                  borderColor: "#F7931E",
+                }}
+              >
+                {t("common.actions.visitStore")}
+              </Button>
+            </Space>
+          </div>
+        </AnimatedCard>
+      )}
 
       <Row
         gutter={[20, 20]}
@@ -362,13 +471,13 @@ export default function ProjectDetailPage() {
             </Text>
           </Space>
           <Space>
-            {project.marketplaceMember && (
+            {project.isMarketplaceMember && (
               <Tag color="purple" style={{ borderRadius: 6 }}>
                 Subscribed
               </Tag>
             )}
             <Switch
-              checked={project.marketplaceMember}
+              checked={project.isMarketplaceMember}
               onChange={handleToggleMarketplace}
               loading={setMarketplaceMember.isPending}
             />

@@ -38,10 +38,10 @@ export default function BankTransferMethod({
     return (
       <div style={{ textAlign: "center", padding: "20px 0" }}>
         <CheckCircleOutlined style={{ fontSize: 64, color: "#10b981" }} />
-        <Title level={4} style={{ margin: "16px 0 8px" }}>Transfer Instructions Sent!</Title>
+        <Title level={4} style={{ margin: "16px 0 8px" }}>تم إرسال طلب التحويل بنجاح!</Title>
         <Text type="secondary" style={{ display: "block", marginBottom: 16 }}>
-          Please transfer <Text strong>${amount?.toFixed(2)}</Text> using the bank details below.
-          Funds will be credited after confirmation.
+          يرجى تحويل مبلغ <Text strong>${amount?.toFixed(2)}</Text> باستخدام بيانات الحساب البنكي الموضحة أدناه.
+          سيتم إضافة الرصيد إلى محفظتك بعد التحقق والتأكيد من قبل الإدارة.
         </Text>
       </div>
     );
@@ -60,7 +60,7 @@ export default function BankTransferMethod({
       <div style={{ textAlign: "center", padding: 40 }}>
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={<Text type="secondary">Bank details not configured</Text>}
+          description={<Text type="secondary">لم يتم إعداد بيانات الحساب البنكي بعد</Text>}
         />
       </div>
     );
@@ -70,28 +70,28 @@ export default function BankTransferMethod({
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
         <Button type="text" icon={<ArrowLeftOutlined />} onClick={onBack} size="small" />
-        <Title level={5} style={{ margin: 0 }}>Bank Transfer</Title>
+        <Title level={5} style={{ margin: 0 }}>التحويل البنكي</Title>
       </div>
 
       <div style={{ borderRadius: 16, border: "1px solid #e5e7eb", overflow: "hidden", marginBottom: 20 }}>
         <div style={{ background: "linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)", padding: "16px 20px", color: "#fff" }}>
-          <BankOutlined style={{ fontSize: 24, marginRight: 8 }} />
-          <Text strong style={{ color: "#fff", fontSize: 16 }}>Bank Account Information</Text>
+          <BankOutlined style={{ fontSize: 24, marginLeft: 8 }} />
+          <Text strong style={{ color: "#fff", fontSize: 16 }}>معلومات الحساب البنكي</Text>
         </div>
         <div style={{ padding: "16px 20px" }}>
           <Descriptions column={1} size="small" colon={false}>
-            <Descriptions.Item label={<Text type="secondary">Bank Name</Text>} style={{ paddingBottom: 12 }}>
+            <Descriptions.Item label={<Text type="secondary">اسم البنك</Text>} style={{ paddingBottom: 12 }}>
               <Text strong>{details.bankName}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label={<Text type="secondary">Account Name</Text>} style={{ paddingBottom: 12 }}>
+            <Descriptions.Item label={<Text type="secondary">اسم صاحب الحساب</Text>} style={{ paddingBottom: 12 }}>
               <Text strong>{details.accountName}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label={<Text type="secondary">IBAN</Text>} style={{ paddingBottom: 12 }}>
+            <Descriptions.Item label={<Text type="secondary">رقم الآيبان (IBAN)</Text>} style={{ paddingBottom: 12 }}>
               <Text strong copyable style={{ fontSize: 15, letterSpacing: 1, fontFamily: "monospace", background: "#f3f4f6", padding: "4px 8px", borderRadius: 6 }}>
                 {details.iban}
               </Text>
             </Descriptions.Item>
-            <Descriptions.Item label={<Text type="secondary">SWIFT/BIC</Text>} style={{ paddingBottom: 12 }}>
+            <Descriptions.Item label={<Text type="secondary">رمز السويفت (SWIFT/BIC)</Text>} style={{ paddingBottom: 12 }}>
               <Text strong copyable style={{ fontFamily: "monospace" }}>{details.swift}</Text>
             </Descriptions.Item>
           </Descriptions>
@@ -103,11 +103,11 @@ export default function BankTransferMethod({
       <Form form={form} layout="vertical">
         <Form.Item
           name="amount"
-          label={<Text strong>Amount to Transfer</Text>}
+          label={<Text strong>المبلغ المراد تحويله</Text>}
           rules={[
-            { required: true, message: "Please enter an amount" },
-            { type: "number", min: 0.01, message: "Amount must be greater than 0" },
-            { type: "number", max: 999999999, message: "Amount is too large" },
+            { required: true, message: "يرجى إدخال المبلغ المطلوب" },
+            { type: "number", min: 0.01, message: "يجب أن يكون المبلغ أكبر من 0" },
+            { type: "number", max: 999999999, message: "المبلغ المدخل كبير جداً" },
           ]}
         >
           <InputNumber
@@ -120,8 +120,8 @@ export default function BankTransferMethod({
 
       <div style={{ background: "#fefce8", border: "1px solid #fde68a", borderRadius: 12, padding: "12px 16px", marginBottom: 16 }}>
         <Text style={{ color: "#92400e", fontSize: 13 }}>
-          After making the transfer, please allow 1-3 business days for the funds to reflect in your wallet.
-          Include your tenant ID as the transfer reference.
+          بعد إتمام عملية التحويل البنكي، يُرجى الانتظار من 1 إلى 3 أيام عمل لظهور الرصيد في محفظتك.
+          يرجى تضمين رمز الحساب (Tenant ID) في خانة المرجع/الملاحظات عند التحويل.
         </Text>
       </div>
 
@@ -130,7 +130,7 @@ export default function BankTransferMethod({
         loading={submitLoading}
         style={{ height: 48, borderRadius: 12, background: "linear-gradient(135deg, #06b6d4, #3b82f6)", border: "none" }}
       >
-        Submit Transfer Request
+        إرسال طلب التحويل
       </Button>
     </div>
   );

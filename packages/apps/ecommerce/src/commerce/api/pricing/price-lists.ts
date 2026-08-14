@@ -16,58 +16,58 @@ import type {
 
 export const priceListsApi = {
   list: (params?: PriceListFilters) =>
-    http.get<PaginatedResult<PriceListReadModel>>("/Admin/PriceLists", params),
+    http.get<PaginatedResult<PriceListReadModel>>("/Admin/v1/PriceLists", params),
 
-  getById: (id: string) => http.get<PriceListReadModel>(`/Admin/PriceLists/${id}`),
+  getById: (id: string) => http.get<PriceListReadModel>(`/Admin/v1/PriceLists/${id}`),
 
-  create: (body: CreatePriceListCommand) => http.post<PriceListReadModel>("/Admin/PriceLists", body),
+  create: (body: CreatePriceListCommand) => http.post<PriceListReadModel>("/Admin/v1/PriceLists", body),
 
   update: (id: string, body: UpdatePriceListRequest) =>
-    http.put<PriceListReadModel>(`/Admin/PriceLists/${id}`, body),
+    http.put<PriceListReadModel>(`/Admin/v1/PriceLists/${id}`, body),
 
-  delete: (id: string) => http.del<void>(`/Admin/PriceLists/${id}`),
+  delete: (id: string) => http.del<void>(`/Admin/v1/PriceLists/${id}`),
 
-  publish: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/publish`),
+  publish: (id: string) => http.put<void>(`/Admin/v1/PriceLists/${id}/publish`),
 
-  activate: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/activate`),
+  activate: (id: string) => http.put<void>(`/Admin/v1/PriceLists/${id}/activate`),
 
-  deactivate: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/deactivate`),
+  deactivate: (id: string) => http.put<void>(`/Admin/v1/PriceLists/${id}/deactivate`),
 
-  archive: (id: string) => http.put<void>(`/Admin/PriceLists/${id}/archive`),
+  archive: (id: string) => http.put<void>(`/Admin/v1/PriceLists/${id}/archive`),
 
   addTranslation: (id: string, body: AddPriceListTranslationBody) =>
-    http.put<PriceListReadModel>(`/Admin/PriceLists/${id}/translations`, body),
+    http.put<PriceListReadModel>(`/Admin/v1/PriceLists/${id}/translations`, body),
 
   updateTranslation: (id: string, languageId: string, body: UpdatePriceListTranslationBody) =>
-    http.put<PriceListReadModel>(`/Admin/PriceLists/${id}/translations/${languageId}`, body),
+    http.put<PriceListReadModel>(`/Admin/v1/PriceLists/${id}/translations/${languageId}`, body),
 
   assignCustomerGroup: (id: string, body: AssignCustomerGroupBody) =>
-    http.put<void>(`/Admin/PriceLists/${id}/customer-groups`, body),
+    http.put<void>(`/Admin/v1/PriceLists/${id}/customer-groups`, body),
 
   removeCustomerGroup: (id: string, customerGroupId: string) =>
-    http.del<void>(`/Admin/PriceLists/${id}/customer-groups/${customerGroupId}`),
+    http.del<void>(`/Admin/v1/PriceLists/${id}/customer-groups/${customerGroupId}`),
 
   assignChannel: (id: string, body: AssignChannelBody) =>
-    http.put<void>(`/Admin/PriceLists/${id}/channels`, body),
+    http.put<void>(`/Admin/v1/PriceLists/${id}/channels`, body),
 
   removeChannel: (id: string, channelId: string) =>
-    http.del<void>(`/Admin/PriceLists/${id}/channels/${channelId}`),
+    http.del<void>(`/Admin/v1/PriceLists/${id}/channels/${channelId}`),
 
   assignRegion: (id: string, body: AssignRegionBody) =>
-    http.put<void>(`/Admin/PriceLists/${id}/regions`, body),
+    http.put<void>(`/Admin/v1/PriceLists/${id}/regions`, body),
 
   removeRegion: (id: string, regionId: string) =>
-    http.del<void>(`/Admin/PriceLists/${id}/regions/${regionId}`),
+    http.del<void>(`/Admin/v1/PriceLists/${id}/regions/${regionId}`),
 
   assignStore: (id: string, body: AssignStoreBody) =>
-    http.put<void>(`/Admin/PriceLists/${id}/stores`, body),
+    http.put<void>(`/Admin/v1/PriceLists/${id}/stores`, body),
 
   removeStore: (id: string, storeId: string) =>
-    http.del<void>(`/Admin/PriceLists/${id}/stores/${storeId}`),
+    http.del<void>(`/Admin/v1/PriceLists/${id}/stores/${storeId}`),
 
   upsertMetadata: (id: string, body: UpsertMetadataBody) =>
-    http.put<void>(`/Admin/PriceLists/${id}/metadata`, body),
+    http.put<void>(`/Admin/v1/PriceLists/${id}/metadata`, body),
 
   removeMetadata: (id: string, key: string) =>
-    http.del<void>(`/Admin/PriceLists/${id}/metadata/${key}`),
+    http.del<void>(`/Admin/v1/PriceLists/${id}/metadata/${key}`),
 };

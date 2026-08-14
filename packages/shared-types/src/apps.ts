@@ -40,6 +40,15 @@ export interface ProjectDto {
   name: string;
   description: string;
   slug: string;
+  logo?: string;
+  logoUrl?: string;
+  phone?: string;
+  whatsappPhone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  postalCode?: string;
+  currency?: string;
   appCount: number;
   enabledAppCount: number;
   createdAt: string;
@@ -53,9 +62,18 @@ export interface ProjectDetailDto {
   name: string;
   description: string;
   slug: string;
+  logo?: string;
+  logoUrl?: string;
+  phone?: string;
+  whatsappPhone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  postalCode?: string;
+  currency?: string;
   createdAt: string;
   updatedAt: string | null;
-  marketplaceMember: boolean;
+  isMarketplaceMember: boolean;
   apps: ProjectAppDto[];
 }
 
@@ -76,11 +94,29 @@ export interface ProjectAppDto {
 export interface CreateProjectRequest {
   name: string;
   description: string;
+  logo?: string;
+  logoUrl?: string;
+  phone?: string;
+  whatsappPhone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  postalCode?: string;
+  currency?: string;
 }
 
 export interface UpdateProjectRequest {
   name?: string;
   description?: string;
+  logo?: string;
+  logoUrl?: string;
+  phone?: string;
+  whatsappPhone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  postalCode?: string;
+  currency?: string;
 }
 
 export interface EnableAppRequest {

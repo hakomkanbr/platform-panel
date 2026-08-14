@@ -12,14 +12,14 @@ function buildQuery(params?: ListParams): string {
 
 export const couponsApi = {
   list: (params?: ListParams) =>
-    apiGet<PaginatedList<Coupon>>(`/Admin/Coupons${buildQuery(params)}`),
+    apiGet<PaginatedList<Coupon>>(`/Admin/v1/Coupons${buildQuery(params)}`),
 
   create: (data: CouponFormData) =>
-    apiPost<number>('/Admin/Coupons', data),
+    apiPost<number>('/Admin/v1/Coupons', data),
 
   update: (data: CouponFormData & { id: number }) =>
-    apiPut<number>('/Admin/Coupons', data),
+    apiPut<number>('/Admin/v1/Coupons', data),
 
   delete: (id: number) =>
-    apiDelete<number>(`/Admin/Coupons/${id}`),
+    apiDelete<number>(`/Admin/v1/Coupons/${id}`),
 };

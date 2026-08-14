@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "@repo/localization";
@@ -9,8 +10,8 @@ import {
   CheckCircleOutlined,
   SafetyCertificateOutlined,
   ThunderboltOutlined,
-  CloudServerOutlined,
-  GlobalOutlined,
+  ShopOutlined,
+  RiseOutlined,
 } from "@ant-design/icons";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -72,29 +73,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         />
 
         {/* Brand Header */}
-        <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center", gap: 12 }}>
-          <div
-            style={{
-              width: 42,
-              height: 42,
-              borderRadius: 12,
-              background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 8px 20px rgba(247, 147, 30, 0.3)",
-            }}
-          >
-            <LayoutOutlined style={{ color: "#fff", fontSize: 22 }} />
-          </div>
-          <div>
-            <span style={{ fontSize: 20, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.03em" }}>
-              {t("auth.layout.brand")}
-            </span>
-            <span style={{ fontSize: 11, color: "#009FE3", display: "block", fontWeight: 600 }}>
-              {t("auth.layout.tagline")}
-            </span>
-          </div>
+        <div style={{ position: "relative", zIndex: 2, display: "flex", alignItems: "center" }}>
+          <Image 
+            src="/assets/images/logo-png.png" 
+            alt="Logo"
+            width={140}
+            height={40}
+            style={{ height: 36, width: "auto", objectFit: "contain" }}
+            priority
+          />
         </div>
 
         {/* Middle Showcase Content */}
@@ -154,21 +141,21 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           >
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#009FE3", fontSize: 13, marginBottom: 4 }}>
-                <CloudServerOutlined /> <span>{t("auth.layout.applications")}</span>
+                <ShopOutlined /> <span>{t("auth.layout.applications")}</span>
               </div>
-              <span style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>{t("auth.layout.appsCount")}</span>
+              <span style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", display: "block", whiteSpace: "nowrap" }}>{t("auth.layout.appsCount")}</span>
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#10B981", fontSize: 13, marginBottom: 4 }}>
                 <CheckCircleOutlined /> <span>{t("auth.layout.uptime")}</span>
               </div>
-              <span style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>99.99%</span>
+              <span style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", display: "block", whiteSpace: "nowrap" }}>{t("auth.layout.uptimeValue")}</span>
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#F7931E", fontSize: 13, marginBottom: 4 }}>
-                <GlobalOutlined /> <span>{t("auth.layout.architecture")}</span>
+                <RiseOutlined /> <span>{t("auth.layout.architecture")}</span>
               </div>
-              <span style={{ fontSize: 24, fontWeight: 700, color: "#FFFFFF" }}>Turborepo</span>
+              <span style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", display: "block", whiteSpace: "nowrap" }}>{t("auth.layout.architectureValue")}</span>
             </div>
           </div>
         </motion.div>

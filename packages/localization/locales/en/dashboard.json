@@ -32,6 +32,7 @@
   "noProjectsYet": "No projects yet",
   "createProject": "Create Project",
   "openWorkspace": "Open Workspace",
+  "visitStore": "Visit Store",
   "appsText": "{enabled}/{total} apps · {slug}",
   "quick": {
     "title": "Quick Shortcuts",

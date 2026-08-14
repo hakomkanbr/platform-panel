@@ -4,19 +4,19 @@ import type { CategoryReadModel, CategoryFilters, CreateCategoryCommand, UpdateC
 
 export const categoriesApi = {
   list: (params?: CategoryFilters) =>
-    http.get<PaginatedResult<CategoryReadModel>>("/Admin/Categories", params),
+    http.get<PaginatedResult<CategoryReadModel>>("/Admin/v1/Categories", params),
 
-  tree: () => http.get<CategoryReadModel[]>("/Admin/Categories/tree"),
+  tree: () => http.get<CategoryReadModel[]>("/Admin/v1/Categories/tree"),
 
-  getById: (id: string) => http.get<CategoryReadModel>(`/Admin/Categories/${id}`),
+  getById: (id: string) => http.get<CategoryReadModel>(`/Admin/v1/Categories/${id}`),
 
-  create: (body: CreateCategoryCommand) => http.post<CategoryReadModel>("/Admin/Categories", body),
+  create: (body: CreateCategoryCommand) => http.post<CategoryReadModel>("/Admin/v1/Categories", body),
 
   update: (id: string, body: UpdateCategoryRequest) =>
-    http.put<CategoryReadModel>(`/Admin/Categories/${id}`, body),
+    http.put<CategoryReadModel>(`/Admin/v1/Categories/${id}`, body),
 
-  delete: (id: string) => http.del<void>(`/Admin/Categories/${id}`),
+  delete: (id: string) => http.del<void>(`/Admin/v1/Categories/${id}`),
 
   setStatus: (id: string, body: ChangeCategoryStatusRequest) =>
-    http.put<void>(`/Admin/Categories/${id}/status`, body),
+    http.put<void>(`/Admin/v1/Categories/${id}/status`, body),
 };

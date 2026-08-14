@@ -1,8 +1,13 @@
+"use client";
+
 import EBreadcrumb from "@/components/elements/breadcrumb";
 import ProjectOverview from "@/components/views/settings/project-overview";
 import { HomeOutlined, SettingOutlined } from "@ant-design/icons";
+import { useTranslations } from "@repo/localization";
 
 export default function SettingPage() {
+  const t = useTranslations();
+
   return (
     <>
       <EBreadcrumb
@@ -11,7 +16,7 @@ export default function SettingPage() {
             title: (
               <span>
                 <HomeOutlined style={{ marginRight: 5 }} />
-                Home
+                {t("settings.breadcrumb.home")}
               </span>
             ),
           },
@@ -19,7 +24,7 @@ export default function SettingPage() {
             title: (
               <span>
                 <SettingOutlined style={{ marginRight: 5 }} />
-                Settings
+                {t("common.nav.settings")}
               </span>
             ),
           },

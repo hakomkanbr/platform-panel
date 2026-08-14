@@ -14,18 +14,18 @@ interface WalletTransactionTableProps {
 }
 
 const sourceLabels: Record<string, { label: string; color: string }> = {
-  refund: { label: "Refund", color: "green" },
-  adjustment: { label: "Manual Adjustment", color: "blue" },
-  payment: { label: "Payment", color: "orange" },
-  subscription: { label: "Subscription", color: "purple" },
-  cardpayment: { label: "Card Payment", color: "cyan" },
-  topup: { label: "Top-Up", color: "geekblue" },
+  refund: { label: "استرداد", color: "green" },
+  adjustment: { label: "تعديل يدوي", color: "blue" },
+  payment: { label: "عملية دفع", color: "orange" },
+  subscription: { label: "اشتراك", color: "purple" },
+  cardpayment: { label: "دفع بالبطاقة", color: "cyan" },
+  topup: { label: "شحن رصيد", color: "geekblue" },
 };
 
 const statusConfig: Record<string, { color: string; label: string }> = {
-  completed: { color: "green", label: "Completed" },
-  pending: { color: "orange", label: "Pending" },
-  failed: { color: "red", label: "Failed" },
+  completed: { color: "green", label: "مكتمل" },
+  pending: { color: "orange", label: "قيد المعالجة" },
+  failed: { color: "red", label: "فشل" },
 };
 
 export default function WalletTransactionTable({
@@ -34,19 +34,19 @@ export default function WalletTransactionTable({
 }: WalletTransactionTableProps) {
   const columns: ColumnsType<WalletTransactionDto> = [
     {
-      title: "Type",
+      title: "النوع",
       dataIndex: "type",
       key: "type",
-      width: 80,
+      width: 90,
       render: (type: string) =>
         type === "credit" ? (
-          <Tag icon={<ArrowUpOutlined />} color="green">Credit</Tag>
+          <Tag icon={<ArrowUpOutlined />} color="green">إيداع</Tag>
         ) : (
-          <Tag icon={<ArrowDownOutlined />} color="red">Debit</Tag>
+          <Tag icon={<ArrowDownOutlined />} color="red">خصم</Tag>
         ),
     },
     {
-      title: "Source",
+      title: "المصدر",
       dataIndex: "source",
       key: "source",
       width: 150,
@@ -56,10 +56,10 @@ export default function WalletTransactionTable({
       },
     },
     {
-      title: "Amount",
+      title: "المبلغ",
       dataIndex: "amount",
       key: "amount",
-      width: 120,
+      width: 130,
       render: (_amount: number, record: WalletTransactionDto) => (
         <Text strong style={{ color: record.signedAmount >= 0 ? "#52c41a" : "#ff4d4f", fontSize: 15 }}>
           {record.signedAmount >= 0 ? "+" : "-"}${Math.abs(record.signedAmount).toFixed(2)}{" "}
@@ -68,7 +68,7 @@ export default function WalletTransactionTable({
       ),
     },
     {
-      title: "Description",
+      title: "الوصف",
       dataIndex: "description",
       key: "description",
       render: (desc: string) => (
@@ -80,10 +80,10 @@ export default function WalletTransactionTable({
       ),
     },
     {
-      title: "Status",
+      title: "الحالة",
       dataIndex: "status",
       key: "status",
-      width: 110,
+      width: 120,
       render: (status: string) => {
         const config = statusConfig[status] || { color: "default", label: status };
         return (
@@ -97,7 +97,7 @@ export default function WalletTransactionTable({
       },
     },
     {
-      title: "Date",
+      title: "التاريخ",
       dataIndex: "createdAt",
       key: "createdAt",
       width: 180,
@@ -121,8 +121,8 @@ export default function WalletTransactionTable({
       dataSource={transactions || []}
       rowKey="id"
       loading={isLoading}
-      pagination={{ pageSize: 10, showSizeChanger: true }}
-      locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No transactions yet" /> }}
+      pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total, range) => `${range[0]}-${range[1]} من أصل ${total}` }}
+      locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="لا توجد معاملات حتى الآن" /> }}
       scroll={{ x: 800 }}
       size="middle"
     />

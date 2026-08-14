@@ -14,9 +14,9 @@ interface TopUpRequestHistoryProps {
 }
 
 const statusConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-  Pending: { color: "orange", icon: <ClockCircleOutlined />, label: "Pending" },
-  Approved: { color: "green", icon: <CheckCircleOutlined />, label: "Approved" },
-  Rejected: { color: "red", icon: <CloseCircleOutlined />, label: "Rejected" },
+  Pending: { color: "orange", icon: <ClockCircleOutlined />, label: "قيد المراجعة" },
+  Approved: { color: "green", icon: <CheckCircleOutlined />, label: "تمت الموافقة" },
+  Rejected: { color: "red", icon: <CloseCircleOutlined />, label: "مرفوض" },
 };
 
 export default function TopUpRequestHistory({
@@ -25,7 +25,7 @@ export default function TopUpRequestHistory({
 }: TopUpRequestHistoryProps) {
   const columns: ColumnsType<TopUpRequestDto> = [
     {
-      title: "Amount",
+      title: "المبلغ",
       dataIndex: "amount",
       key: "amount",
       width: 130,
@@ -34,10 +34,10 @@ export default function TopUpRequestHistory({
       ),
     },
     {
-      title: "Status",
+      title: "الحالة",
       dataIndex: "status",
       key: "status",
-      width: 120,
+      width: 140,
       render: (status: string) => {
         const config = statusConfig[status] || { color: "default", icon: null, label: status };
         return (
@@ -48,20 +48,20 @@ export default function TopUpRequestHistory({
       },
     },
     {
-      title: "Admin Notes",
+      title: "ملاحظات الإدارة",
       dataIndex: "adminNotes",
       key: "adminNotes",
       render: (notes: string) => notes || "-",
     },
     {
-      title: "Approved By",
+      title: "تمت الموافقة بواسطة",
       dataIndex: "approvedBy",
       key: "approvedBy",
-      width: 140,
+      width: 160,
       render: (by: string) => by || "-",
     },
     {
-      title: "Date",
+      title: "التاريخ",
       dataIndex: "createdAt",
       key: "createdAt",
       width: 180,
@@ -81,8 +81,8 @@ export default function TopUpRequestHistory({
       dataSource={requests || []}
       rowKey="id"
       loading={isLoading}
-      pagination={{ pageSize: 5, showSizeChanger: true }}
-      locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No top-up requests yet" /> }}
+      pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total, range) => `${range[0]}-${range[1]} من أصل ${total}` }}
+      locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="لا توجد طلبات شحن حتى الآن" /> }}
       scroll={{ x: 700 }}
       size="middle"
     />

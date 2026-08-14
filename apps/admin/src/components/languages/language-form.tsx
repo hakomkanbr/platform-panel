@@ -1,6 +1,7 @@
 import { Form, Select, Input, Switch, Space, Typography } from "antd";
 import { LANGUAGES, LANGUAGE_FLAGS } from "@repo/shared-types";
 import { useEffect, useMemo } from "react";
+import { useTranslations } from "@repo/localization";
 import type { LanguageFormData } from "./types";
 
 const { Text } = Typography;
@@ -12,6 +13,7 @@ interface LanguageFormProps {
 }
 
 export default function LanguageForm({ formData, onChange, editMode }: LanguageFormProps) {
+  const t = useTranslations();
   const languageOptions = useMemo(
     () =>
       LANGUAGES.map((lang) => ({
@@ -42,13 +44,13 @@ export default function LanguageForm({ formData, onChange, editMode }: LanguageF
     <Space direction="vertical" size="middle" style={{ width: "100%" }}>
       <div>
         <Text strong style={{ display: "block", marginBottom: 4 }}>
-          Language <span style={{ color: "#ff4d4f" }}>*</span>
+          {t("common.fields.language")} <span style={{ color: "#ff4d4f" }}>*</span>
         </Text>
         <Select
           showSearch
           value={formData.code || undefined}
           onChange={handleCodeChange}
-          placeholder="Select a language"
+          placeholder={t("common.fields.selectLanguage")}
           options={languageOptions}
           style={{ width: "100%" }}
           size="large"
@@ -63,12 +65,12 @@ export default function LanguageForm({ formData, onChange, editMode }: LanguageF
 
       <div>
         <Text strong style={{ display: "block", marginBottom: 4 }}>
-          Native Name
+          {t("settings.languages.nativeName")}
         </Text>
         <Input
           value={formData.nativeName}
           onChange={(e) => onChange("nativeName", e.target.value)}
-          placeholder="e.g., العربية"
+          placeholder={t("settings.languages.nativeNamePlaceholder")}
           size="large"
           style={{ borderRadius: 6 }}
           disabled
@@ -77,11 +79,11 @@ export default function LanguageForm({ formData, onChange, editMode }: LanguageF
 
       <div>
         <Text strong style={{ display: "block", marginBottom: 4 }}>
-          Code
+          {t("settings.languages.code")}
         </Text>
         <Input
           value={formData.code}
-          placeholder="e.g., ar"
+          placeholder={t("settings.languages.codePlaceholder")}
           size="large"
           style={{ borderRadius: 6, fontFamily: "monospace" }}
           disabled
@@ -94,7 +96,7 @@ export default function LanguageForm({ formData, onChange, editMode }: LanguageF
             checked={formData.rtl}
             onChange={(checked) => onChange("rtl", checked)}
           />
-          <Text strong>Right-to-Left (RTL)</Text>
+          <Text strong>{t("settings.languages.rtlLabel")}</Text>
         </Space>
       </div>
     </Space>
