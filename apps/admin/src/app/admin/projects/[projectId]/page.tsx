@@ -267,21 +267,6 @@ export default function ProjectDetailPage() {
           )}
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
-              type="primary"
-              icon={<ApiOutlined />}
-              onClick={handleOpenCms}
-              style={{
-                borderRadius: 8,
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                border: "none",
-                boxShadow: "0 2px 8px rgba(102, 126, 234, 0.4)",
-              }}
-            >
-              CMS
-            </Button>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
               icon={<EditOutlined />}
               onClick={openEditModal}
               style={{ borderRadius: 8 }}
@@ -434,7 +419,7 @@ export default function ProjectDetailPage() {
         </Col>
       </Row>
 
-      <AnimatedCard
+      {/* <AnimatedCard
         data-tour="project-apps"
         title={
           <Space>
@@ -451,7 +436,7 @@ export default function ProjectDetailPage() {
           tenantId={tid}
           isLoadingCapabilities={isLoadingCapabilities}
         />
-      </AnimatedCard>
+      </AnimatedCard> */}
 
       <AnimatedCard
         title={
