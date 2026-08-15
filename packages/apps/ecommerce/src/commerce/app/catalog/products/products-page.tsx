@@ -290,7 +290,7 @@ export function ProductsPage() {
         if (record.brandName) return record.brandName;
         if (val && Array.isArray(brandsData?.data)) {
           const b = (brandsData.data as any[]).find((x) => x.id === val);
-          if (b) return b.name;
+          if (b) return b.name || b.translations?.[0]?.name;
         }
         return "\u2014";
       },
@@ -460,7 +460,7 @@ export function ProductsPage() {
           Array.isArray(brandsData?.data)
             ? (brandsData.data as any[]).map((b) => ({
                 value: b.id,
-                label: b.name,
+                label: b.name || b.translations?.[0]?.name || b.id,
               }))
             : []
         }

@@ -4,6 +4,8 @@
   "private": true,
   "exports": {
     ".": "./src/index.tsx",
+    "./commerce/config": "./src/commerce/config.ts",
+    "./commerce/api/http": "./src/commerce/api/http.ts",
     "./*": "./src/*"
   },
   "dependencies": {

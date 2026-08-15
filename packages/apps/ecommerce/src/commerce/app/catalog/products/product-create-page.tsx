@@ -219,7 +219,7 @@ export function ProductCreatePage() {
                         placeholder="Select brand"
                         optionFilterProp="label"
                         loading={brands.isLoading}
-                        options={(brands.data?.data ?? []).map((b) => ({ value: b.id, label: b.name }))}
+                        options={(brands.data?.data ?? []).map((b) => ({ value: b.id, label: b.name || b.translations?.[0]?.name || b.id }))}
                       />
                     </Form.Item>
                   </Col>
@@ -241,9 +241,11 @@ export function ProductCreatePage() {
                       <Select
                         mode="multiple"
                         allowClear
+                        showSearch
+                        optionFilterProp="label"
                         loading={tags.isLoading}
                         placeholder="Select tags"
-                        options={(tags.data?.data ?? []).map((t) => ({ value: t.id, label: t.name }))}
+                        options={(tags.data?.data ?? []).map((t) => ({ value: t.id, label: t.name || t.translations?.[0]?.name || t.id }))}
                       />
                     </Form.Item>
                   </Col>

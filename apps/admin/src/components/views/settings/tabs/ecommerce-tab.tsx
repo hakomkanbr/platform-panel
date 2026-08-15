@@ -75,7 +75,7 @@ export default function EcommerceTab({ project, store }: EcommerceTabProps) {
           <Space size={12}>
             {project.isMarketplaceMember && (
               <Tag color="purple" style={{ borderRadius: 6, padding: "4px 10px" }}>
-                Subscribed
+                {t("settings.subscribed")}
               </Tag>
             )}
             <Switch

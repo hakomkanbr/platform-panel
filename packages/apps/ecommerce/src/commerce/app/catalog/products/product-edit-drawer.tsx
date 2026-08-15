@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { Button, Col, Form, Input, InputNumber, message, Row, Select, Switch } from "antd";
 import { DrawerForm } from "@repo/ui";
+import { useTranslations } from "@repo/localization";
 import { useUpdateProduct } from "../../../hooks/useProducts";
 import { getApiErrorMessage } from "../../../api/http";
 import type { ProductDetail } from "../../../types/catalog";
@@ -14,6 +15,7 @@ export interface ProductEditDrawerProps {
 }
 
 export const ProductEditDrawer: React.FC<ProductEditDrawerProps> = ({ open, product, onClose }) => {
+  const t = useTranslations();
   const [form] = Form.useForm();
   const updateMutation = useUpdateProduct();
 
@@ -56,13 +58,13 @@ export const ProductEditDrawer: React.FC<ProductEditDrawerProps> = ({ open, prod
     <DrawerForm
       open={open}
       onClose={onClose}
-      title="Edit product"
+      title={t("catalog.products.edit.title") || "Edit product"}
       description={product?.name}
       width={620}
       form={form}
       loading={updateMutation.isPending}
       onFinish={onFinish}
-      submitLabel="Save changes"
+      submitLabel={t("common.actions.saveChanges") || "Save changes"}
     >
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Row gutter={16}>

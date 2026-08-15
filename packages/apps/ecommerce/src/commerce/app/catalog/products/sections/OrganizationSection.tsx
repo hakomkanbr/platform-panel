@@ -54,6 +54,20 @@ export function OrganizationSection({ product }: { product?: ProductDetail }) {
   const removeTag = useRemoveProductTag(productId);
   const updateProduct = useUpdateProduct();
 
+  const brandOptions = useMemo(() => {
+    return (brands.data?.data ?? []).map((b) => ({
+      value: b.id,
+      label: b.name || b.translations?.[0]?.name || b.id,
+    }));
+  }, [brands.data]);
+
+  const tagOptions = useMemo(() => {
+    return (tags.data?.data ?? []).map((tag) => ({
+      value: tag.id,
+      label: tag.name || tag.translations?.[0]?.name || tag.id,
+    }));
+  }, [tags.data]);
+
   useEffect(() => {
     if (product) {
       form.setFieldsValue({
@@ -125,7 +139,7 @@ export function OrganizationSection({ product }: { product?: ProductDetail }) {
                 showSearch
                 optionFilterProp="label"
                 loading={brands.isLoading}
-                options={(brands.data?.data ?? []).map((b) => ({ value: b.id, label: b.name }))}
+                options={brandOptions}
                 placeholder="Select or search a brand"
               />
             </Form.Item>
@@ -148,8 +162,10 @@ export function OrganizationSection({ product }: { product?: ProductDetail }) {
               <Select
                 mode="multiple"
                 allowClear
+                showSearch
+                optionFilterProp="label"
                 loading={tags.isLoading}
-                options={(tags.data?.data ?? []).map((tag) => ({ value: tag.id, label: tag.name }))}
+                options={tagOptions}
                 placeholder="Select tags"
               />
             </Form.Item>

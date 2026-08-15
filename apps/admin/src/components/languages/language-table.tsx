@@ -145,6 +145,7 @@ export default function LanguageTable({ projectId }: LanguageTableProps) {
       render: (enabled: boolean, record: ProjectLanguageDto) => (
         <Switch
           checked={enabled}
+          disabled={record.isDefault}
           onChange={() => handleToggleEnabled(record)}
           size="small"
           checkedChildren={t("settings.languages.on")}

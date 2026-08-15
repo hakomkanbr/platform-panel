@@ -139,10 +139,10 @@ function WorkspaceContent() {
 
   const getSectionStatusIndicator = (sectionKey: keyof typeof sections) => {
     const state = sections[sectionKey];
-    if (state === "clean") return <Tag color="default">Saved</Tag>;
-    if (state === "modified") return <Tag color="warning">Unsaved Changes</Tag>;
+    if (state === "clean") return <Tag color="default">{t("catalog.products.workspace.saved") || "Saved"}</Tag>;
+    if (state === "modified") return <Tag color="warning">{t("catalog.products.workspace.unsavedChanges") || "Unsaved Changes"}</Tag>;
     if (state === "uploading")
-      return <Tag color="processing">Uploading...</Tag>;
+      return <Tag color="processing">{t("catalog.products.workspace.uploading") || "Uploading..."}</Tag>;
     return null;
   };
 
@@ -313,7 +313,7 @@ function WorkspaceContent() {
                     onClick={handleCreateDraft}
                     loading={creating}
                   >
-                    Save Draft
+                    {t("catalog.products.workspace.saveDraft") || "Save Draft"}
                   </Button>
                 ) : (
                   <>
@@ -324,7 +324,7 @@ function WorkspaceContent() {
                       disabled={!isAnySectionDirty}
                       icon={<SaveOutlined />}
                     >
-                      Save Changes
+                      {t("catalog.products.workspace.saveChanges") || t("common.actions.saveChanges") || "Save Changes"}
                     </Button>
                     <Button
                       type="primary"
@@ -333,7 +333,7 @@ function WorkspaceContent() {
                       onClick={onPublish}
                       icon={<RocketOutlined />}
                     >
-                      Publish Product
+                      {t("catalog.products.workspace.publishProduct") || "Publish Product"}
                     </Button>
                   </>
                 )}
@@ -351,7 +351,7 @@ export function ProductWorkspace({ id }: { id: string | null }) {
   const router = useRouter();
 
   const title = id
-    ? "Edit Product"
+    ? t("catalog.products.edit.title") || "Edit Product"
     : t("catalog.products.create.title") || "Create Product";
 
   return (

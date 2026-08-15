@@ -64,10 +64,11 @@ export function BrandsPage() {
 
   const openEdit = (brand: Brand) => {
     setEditing(brand);
+    const trans = brand.translations?.[0];
     form.setFieldsValue({
-      name: brand.name,
-      slug: brand.slug,
-      description: brand.description,
+      name: brand.name || trans?.name,
+      slug: brand.slug || trans?.slug,
+      description: brand.description || trans?.description,
       logoUrl: brand.logoUrl,
       websiteUrl: brand.websiteUrl,
       status: brand.status,
@@ -137,7 +138,7 @@ export function BrandsPage() {
             )}
           </div>
           <div>
-            <div style={{ fontWeight: 500 }}>{record.name}</div>
+            <div style={{ fontWeight: 500 }}>{record.name || record.translations?.[0]?.name}</div>
             {record.websiteUrl && (
               <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{record.websiteUrl}</div>
             )}

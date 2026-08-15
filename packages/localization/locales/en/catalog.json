@@ -104,6 +104,8 @@
       "submit": "Create product",
       "compareAtPrice": "Compare-at price",
       "cost": "Cost",
+      "profit": "Profit",
+      "margin": "Margin",
       "currency": "Currency",
       "stockQuantity": "Stock quantity",
       "trackStock": "Track stock",
@@ -330,7 +332,16 @@
       "seo": "Search Engine Optimization (SEO)",
       "pricing": "Pricing",
       "organization": "Organization",
-      "fulfillment": "Rules & Fulfillment"
+      "fulfillment": "Rules & Fulfillment",
+      "profit": "Profit",
+      "margin": "Margin",
+      "draftCreated": "Draft created successfully!",
+      "saveDraft": "Save Draft",
+      "saveChanges": "Save Changes",
+      "publishProduct": "Publish Product",
+      "saved": "Saved",
+      "unsavedChanges": "Unsaved Changes",
+      "uploading": "Uploading..."
     }
   },
   "categories": {

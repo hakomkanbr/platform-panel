@@ -171,9 +171,9 @@ export function ProductDetailPage({ id }: { id: string }) {
                       {(product.tags?.length ?? 0) > 0 && (
                         <Card title="Tags" style={{ borderRadius: 16, border: "1px solid var(--border-light)" }}>
                           <Space wrap>
-                            {(product.tags ?? []).map((t) => (
-                              <Tag key={t.id} color="orange">
-                                {t.name}
+                            {(product.tags ?? []).map((t: any) => (
+                              <Tag key={t.id ?? t.tagId} color="orange">
+                                {t.name ?? t.translations?.[0]?.name ?? t.tagId ?? t.id}
                               </Tag>
                             ))}
                           </Space>

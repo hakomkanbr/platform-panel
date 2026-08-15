@@ -3,9 +3,10 @@
 import React, { useEffect } from "react";
 import { Form, Row, Col, InputNumber, Card, Typography, Statistic, Divider } from "antd";
 import { useTranslations } from "@repo/localization";
+import { useQueryClient } from "@tanstack/react-query";
 import { useProductWorkspace } from "../ProductWorkspaceContext";
 import type { ProductDetail } from "../../../../types/catalog";
-import { useUpdateProduct } from "../../../../hooks/useProducts";
+import { productPricesApi } from "../../../../api/pricing/product-prices";
 
 const { Text } = Typography;
 
@@ -13,35 +14,74 @@ export function PricingSection({ product }: { product?: ProductDetail }) {
   const t = useTranslations();
   const [form] = Form.useForm();
   const { productId, markSectionDirty, registerSaveHandler } = useProductWorkspace();
-  const updateProduct = useUpdateProduct();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (product) {
       form.setFieldsValue({
-        price: product.price,
+        price: product.pricing?.price ?? product.price ?? undefined,
+        compareAtPrice: product.pricing?.compareAtPrice ?? product.compareAtPrice ?? undefined,
+        cost: product.pricing?.costPrice ?? product.cost ?? undefined,
       });
-      // Cost and CompareAtPrice aren't on the base ProductReadModel according to typical CQRS in this app,
-      // Wait, let's check if they are. The ProductWorkspaceDto has them.
-      // Assuming they are available or we just mock them if not present.
     }
   }, [product, form]);
 
   useEffect(() => {
     registerSaveHandler("pricing", async () => {
       const values = await form.validateFields();
-      if (productId) {
-        // According to our backend analysis, price is updated via UpdateProductCommand? No, UpdateProductCommand 
-        // doesn't have price. Wait, price might be stored differently. 
-        // Let's assume UpdateProductCommand includes it or there is a specific command.
-        // For now we'll put it in the generic updateProduct if it supports it, else we need a specific hook.
-        // In the existing `product-workspace.tsx`, Price is sent in `ProductWorkspaceBody`.
-        // To strictly separate it, we would need `UpdateProductPricingCommand` in the backend. 
-        // If it doesn't exist, we might have to use a generic one or note it.
-        // For now, we simulate success since the orchestrator handles it.
-        console.log("Saving pricing", values);
+      if (!productId) return;
+
+      const priceValue = values.price !== undefined && values.price !== null ? Number(values.price) : 0;
+      if (priceValue <= 0) {
+        return;
       }
+
+      let existingPriceId = product?.pricing?.priceId;
+      let effectiveFrom = product?.pricing?.effectiveFrom
+        ? new Date(product.pricing.effectiveFrom).toISOString()
+        : new Date().toISOString();
+      let effectiveTo = product?.pricing?.effectiveTo
+        ? new Date(product.pricing.effectiveTo).toISOString()
+        : null;
+
+      if (!existingPriceId) {
+        try {
+          const prices = await productPricesApi.getByProduct(productId);
+          const found = prices?.find(p => !p.variantId && p.status !== 3);
+          if (found) {
+            existingPriceId = found.id;
+            effectiveFrom = found.effectiveFrom ? new Date(found.effectiveFrom).toISOString() : effectiveFrom;
+            effectiveTo = found.effectiveTo ? new Date(found.effectiveTo).toISOString() : effectiveTo;
+          }
+        } catch {
+          // ignore error
+        }
+      }
+
+      if (existingPriceId) {
+        await productPricesApi.update(existingPriceId, {
+          baseAmount: priceValue,
+          compareAtAmount: values.compareAtPrice !== undefined && values.compareAtPrice !== null && values.compareAtPrice !== "" ? Number(values.compareAtPrice) : null,
+          costAmount: values.cost !== undefined && values.cost !== null && values.cost !== "" ? Number(values.cost) : null,
+          minAmount: null,
+          maxAmount: null,
+          effectiveFrom,
+          effectiveTo,
+        });
+      } else {
+        await productPricesApi.create({
+          productId,
+          currencyId: product?.pricing?.currencyId ?? "4f7d8a31-2d4e-4b9c-a8f6-9e1d73c5b4a2",
+          baseAmount: priceValue,
+          compareAtAmount: values.compareAtPrice !== undefined && values.compareAtPrice !== null && values.compareAtPrice !== "" ? Number(values.compareAtPrice) : null,
+          costAmount: values.cost !== undefined && values.cost !== null && values.cost !== "" ? Number(values.cost) : null,
+        });
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+      queryClient.invalidateQueries({ queryKey: ["pricing", "product-prices"] });
     });
-  }, [registerSaveHandler, form, productId]);
+  }, [registerSaveHandler, form, productId, product, queryClient]);
 
   const price = Form.useWatch("price", form) || 0;
   const cost = Form.useWatch("cost", form) || 0;
@@ -83,10 +123,10 @@ export function PricingSection({ product }: { product?: ProductDetail }) {
             <Divider style={{ margin: '16px 0' }} />
             <Row gutter={16}>
               <Col xs={12} sm={8}>
-                <Statistic title="Profit" value={profit} precision={2} prefix="$" />
+                <Statistic title={t("catalog.products.workspace.profit") || t("catalog.products.create.profit") || "Profit"} value={profit} precision={2} prefix="$" />
               </Col>
               <Col xs={12} sm={8}>
-                <Statistic title="Margin" value={margin} precision={2} suffix="%" />
+                <Statistic title={t("catalog.products.workspace.margin") || t("catalog.products.create.margin") || "Margin"} value={margin} precision={2} suffix="%" />
               </Col>
             </Row>
           </>

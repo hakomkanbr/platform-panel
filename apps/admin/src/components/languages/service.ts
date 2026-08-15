@@ -98,6 +98,11 @@ export const languageService = {
   async list(projectId: string): Promise<ProjectLanguageDto[]> {
     const res = await getGatewayClient().get(
       buildUrl(api_points.projectLanguages.list, projectId),
+      {
+        params: {
+          includeDisabled: true,
+        },
+      },
     );
     const data = await unwrap<BackendLanguageDto[]>(res);
     return data.map(mapBackendToFrontend);

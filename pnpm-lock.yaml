@@ -465,7 +465,7 @@ importers:
         version: 5.101.2(react@18.3.1)
       '@tinymce/tinymce-react':
         specifier: ^6.3.0
-        version: 6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tinymce@8.8.2)
       antd:
         specifier: ^5.18.3
         version: 5.18.3(moment@2.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -956,6 +956,9 @@ importers:
       react-dom:
         specifier: ^18
         version: 18.3.1(react@18.3.1)
+      tinymce:
+        specifier: ^8.8.2
+        version: 8.8.2
     devDependencies:
       '@repo/eslint-config':
         specifier: workspace:*
@@ -963,6 +966,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@tinymce/tinymce-react':
+        specifier: ^6.3.0
+        version: 6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tinymce@8.8.2)
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
@@ -3698,6 +3704,9 @@ packages:
     resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
     engines: {node: '>=12.0.0'}
 
+  tinymce@8.8.2:
+    resolution: {integrity: sha512-wcUGaaAf4XFrQtbZtClbDN/QCqklXLlPt3+7UWliEoosuhnTOJUkXwf7Fzlq7agPnwkKKp1e4JGOhx3O1gWH3g==}
+
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -4359,11 +4368,13 @@ snapshots:
       '@tanstack/query-core': 5.101.2
       react: 18.3.1
 
-  '@tinymce/tinymce-react@6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tinymce/tinymce-react@6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tinymce@8.8.2)':
     dependencies:
       prop-types: 15.8.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      tinymce: 8.8.2
 
   '@turbo/darwin-64@2.10.5':
     optional: true
@@ -6993,6 +7004,8 @@ snapshots:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.5)
       picomatch: 4.0.5
+
+  tinymce@8.8.2: {}
 
   to-regex-range@5.0.1:
     dependencies:

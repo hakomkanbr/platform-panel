@@ -103,6 +103,8 @@
       "submit": "حفظ المنتج",
       "compareAtPrice": "السعر قبل الخصم",
       "cost": "التكلفة",
+      "profit": "الربح",
+      "margin": "هامش الربح",
       "currency": "العملة",
       "stockQuantity": "الكمية المتوفرة",
       "trackStock": "تتبع كميات المخزون",
@@ -329,7 +331,16 @@
       "seo": "تحسين محركات البحث (SEO)",
       "pricing": "التسعير",
       "organization": "التنظيم",
-      "fulfillment": "القواعد والشحن"
+      "fulfillment": "القواعد والشحن",
+      "profit": "الربح",
+      "margin": "هامش الربح",
+      "draftCreated": "تم إنشاء المسودة بنجاح!",
+      "saveDraft": "حفظ كمسودة",
+      "saveChanges": "حفظ التغييرات",
+      "publishProduct": "نشر المنتج",
+      "saved": "تم الحفظ",
+      "unsavedChanges": "تغييرات غير محفوظة",
+      "uploading": "جاري الرفع..."
     }
   },
   "categories": {

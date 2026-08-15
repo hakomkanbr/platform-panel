@@ -91,6 +91,8 @@
       "submit": "Ürün oluştur",
       "compareAtPrice": "Karşılaştırma fiyatı",
       "cost": "Maliyet",
+      "profit": "Kâr",
+      "margin": "Kâr Marjı",
       "currency": "Para birimi",
       "stockQuantity": "Stok miktarı",
       "trackStock": "Stok takibi",
@@ -208,6 +210,26 @@
         "emptyTitle": "İlişki yok",
         "emptyDescription": "İlişkili, üst satış veya çapraz satış ürünlerini bağlayın."
       }
+    },
+    "workspace": {
+      "basicInfo": "Temel Bilgiler",
+      "lockedTitle": "Devam etmek için Taslak Olarak Kaydedin",
+      "lockedDesc": "Medya, Varyantlar ve SEO temel bilgileri kaydettikten sonra açılacaktır.",
+      "media": "Medya",
+      "variantsWorkspace": "Varyantlar Çalışma Alanı",
+      "seo": "Arama Motoru Optimizasyonu (SEO)",
+      "pricing": "Fiyatlandırma",
+      "organization": "Organizasyon",
+      "fulfillment": "Kurallar ve Yerine Getirme",
+      "profit": "Kâr",
+      "margin": "Kâr Marjı",
+      "draftCreated": "Taslak başarıyla oluşturuldu!",
+      "saveDraft": "Taslak Olarak Kaydet",
+      "saveChanges": "Değişiklikleri Kaydet",
+      "publishProduct": "Ürünü Yayınla",
+      "saved": "Kaydedildi",
+      "unsavedChanges": "Kaydedilmemiş Değişiklikler",
+      "uploading": "Yükleniyor..."
     }
   },
   "categories": {

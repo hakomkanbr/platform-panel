@@ -259,6 +259,7 @@ export interface ProductTranslationReadModel {
   cultureCode: string;
   name: string;
   slug: string;
+  shortDescription?: string | null;
   description?: string | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
@@ -272,6 +273,7 @@ export interface AddProductTranslationBody {
   cultureCode: string;
   name: string;
   slug: string;
+  shortDescription?: string | null;
   description?: string | null;
 }
 
@@ -279,6 +281,7 @@ export interface UpdateProductTranslationBody {
   languageId: Id;
   name: string;
   slug: string;
+  shortDescription?: string | null;
   description?: string | null;
   metaTitle?: string | null;
   metaDescription?: string | null;

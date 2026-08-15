@@ -64,9 +64,10 @@ export function TagsPage() {
 
   const openEdit = (tag: Tag) => {
     setEditing(tag);
+    const trans = tag.translations?.[0];
     form.setFieldsValue({ 
-      name: tag.name, 
-      slug: tag.slug, 
+      name: tag.name || trans?.name, 
+      slug: tag.slug || trans?.slug, 
       status: tag.status,
       // @ts-ignore
       languageId: tag.languageId ?? defaultLanguage?.id,
@@ -117,8 +118,8 @@ export function TagsPage() {
             <TagsOutlined style={{ color: "var(--text-secondary)" }} />
           </div>
           <div>
-            <div style={{ fontWeight: 500 }}>{record.name}</div>
-            <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{record.slug}</div>
+            <div style={{ fontWeight: 500 }}>{record.name || record.translations?.[0]?.name}</div>
+            <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>{record.slug || record.translations?.[0]?.slug}</div>
           </div>
         </Space>
       ),

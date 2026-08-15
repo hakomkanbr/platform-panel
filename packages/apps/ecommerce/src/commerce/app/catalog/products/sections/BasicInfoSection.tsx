@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Form, Row, Col, Input, Select, Radio, Card, Typography } from "antd";
-import { Editor } from "@tinymce/tinymce-react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "@repo/localization";
 import { useProductWorkspace } from "../ProductWorkspaceContext";
 import { enumOptions } from "../../../../types/enums";
@@ -13,17 +13,14 @@ import { useUpdateProduct, useUpdateProductTranslation } from "../../../../hooks
 
 const { Text } = Typography;
 
-const EDITOR_INIT = {
-  height: 300,
-  menubar: false,
-  plugins: [
-    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-    'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-  ],
-  toolbar: 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-  content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-};
+const TinyMCEEditor = dynamic(
+  () => import("@repo/ui/TinyMCEEditor"),
+  {
+    ssr: false,
+  }
+);
+
+
 
 export function BasicInfoSection({ product }: { product?: ProductDetail }) {
   const t = useTranslations();
@@ -32,10 +29,10 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
   const { projectId } = useCommerce();
   const { data: languages } = useProjectLanguages(projectId);
 
-  const defaultLanguageId = languages?.find((l) => l.isDefault)?.id ?? languages?.[0]?.id ?? "00000000-0000-0000-0000-000000000001";
+  const defaultLanguageId = languages?.find((l) => l.isDefault)?.id ?? languages?.[0]?.id;
   const languageOptions = (languages && languages.length > 0)
     ? languages.map(l => ({ value: l.id, label: l.name }))
-    : [{ value: "00000000-0000-0000-0000-000000000001", label: "العربية" }];
+    : [];
 
   const updateProduct = useUpdateProduct();
   const updateTranslation = useUpdateProductTranslation(productId);
@@ -44,6 +41,8 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
     if (product) {
       const languageId = product.translations?.[0]?.languageId ?? defaultLanguageId;
       const cultureCode = product.translations?.[0]?.cultureCode ?? "ar-SA";
+      const shortDesc = product.translations?.[0]?.shortDescription ?? product.shortDescription ?? "";
+      const detailedDesc = product.translations?.[0]?.description ?? product.description ?? "";
       form.setFieldsValue({
         languageId,
         cultureCode,
@@ -51,9 +50,9 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
         code: product.code,
         slug: product.slug,
         type: product.type,
-        shortDescription: product.translations?.[0]?.description, // description in backend DTO holds shortDescription occasionally? Wait, we should map properly.
+        shortDescription: shortDesc,
+        description: detailedDesc,
       });
-      form.setFieldValue("description", product.translations?.[0]?.description || "");
       if (product.type) setProductType(product.type);
     } else {
       form.setFieldsValue({
@@ -71,7 +70,7 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
         // If creating a new product
         const selectedLanguageId = values.languageId || defaultLanguageId;
         const selectedCulture = languages?.find((l) => l.id === selectedLanguageId)?.code ?? "ar-SA";
-        
+
         try {
           const newProduct = await updateProduct.mutateAsync({
             id: "", // wait, useUpdateProduct doesn't create. We need to import useCreateProduct
@@ -83,24 +82,24 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
       } else {
         // Update basic info
         await updateProduct.mutateAsync({
-           id: productId,
-           body: {
-             code: values.code,
-             // brandId handled in Organization section
-           }
+          id: productId,
+          body: {
+            code: values.code,
+            // brandId handled in Organization section
+          }
         });
-        
+
         // Update translation
         const selectedLanguageId = values.languageId || defaultLanguageId;
-        const selectedCulture = languages?.find((l) => l.id === selectedLanguageId)?.code ?? "ar-SA";
         await updateTranslation.mutateAsync({
-           languageId: selectedLanguageId,
-           name: values.name,
-           slug: values.slug,
-           description: values.description,
-           metaTitle: product?.translations?.[0]?.metaTitle,
-           metaDescription: product?.translations?.[0]?.metaDescription,
-           metaKeywords: product?.translations?.[0]?.metaKeywords,
+          languageId: selectedLanguageId,
+          name: values.name,
+          slug: values.slug,
+          shortDescription: values.shortDescription ?? null,
+          description: values.description ?? null,
+          metaTitle: product?.translations?.[0]?.metaTitle,
+          metaDescription: product?.translations?.[0]?.metaDescription,
+          metaKeywords: product?.translations?.[0]?.metaKeywords,
         });
       }
     });
@@ -114,7 +113,7 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
   };
 
   return (
-    <Card 
+    <Card
       title={t("catalog.products.create.general") || "Basic Information"}
       style={{ borderRadius: 16, border: "1px solid var(--border-light)", marginBottom: 24 }}
     >
@@ -143,7 +142,7 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
         <Row gutter={16}>
           <Col xs={24}>
             <Form.Item name="type" label={t("catalog.products.create.productType") || "Product Type"}>
-              <Radio.Group 
+              <Radio.Group
                 options={enumOptions("productType", t)}
                 optionType="button"
                 buttonStyle="solid"
@@ -179,9 +178,8 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
           </Col>
           <Col xs={24}>
             <Form.Item name="description" label={t("catalog.products.create.description") || "Detailed Description"}>
-              <Editor
-                init={EDITOR_INIT}
-                onEditorChange={(content: string) => {
+              <TinyMCEEditor
+                onChange={(content: string) => {
                   const currentVal = form.getFieldValue("description");
                   if (currentVal !== content) {
                     form.setFieldValue("description", content);
