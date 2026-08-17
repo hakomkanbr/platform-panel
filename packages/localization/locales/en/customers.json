@@ -1,0 +1,42 @@
+{
+  "title": "Customers",
+  "description": "Manage your store customers, customer groups, and addresses.",
+  "pageNotFound": "Page not found",
+  "routeNotFound": "No customers page matches this route.",
+  "overview": {
+    "totalCustomers": "Total Customers",
+    "individual": "Individual",
+    "corporate": "Corporate",
+    "searchPlaceholder": "Search by name, email, phone...",
+    "newCustomer": "New Customer"
+  },
+  "table": {
+    "name": "Customer Name",
+    "email": "Email",
+    "phone": "Phone",
+    "type": "Type",
+    "taxOffice": "Tax Office",
+    "taxNumber": "Tax Number",
+    "company": "Company / Title",
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "noCustomers": "No customers found",
+    "noCustomersDesc": "Customers who register or place orders will appear here."
+  },
+  "type": {
+    "individual": "Individual",
+    "corporate": "Corporate"
+  },
+  "groups": {
+    "title": "Customer Groups",
+    "description": "Organize customers into groups for targeted pricing and discounts.",
+    "noGroups": "No customer groups",
+    "noGroupsDesc": "Create groups like Wholesale or VIP to offer special pricing."
+  },
+  "addresses": {
+    "title": "Customer Addresses",
+    "description": "Manage saved shipping and billing addresses for your store customers.",
+    "noAddresses": "No addresses found",
+    "noAddressesDesc": "Saved customer addresses will appear here."
+  }
+}

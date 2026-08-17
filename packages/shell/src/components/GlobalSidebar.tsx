@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Menu, Typography, Avatar, Tooltip, Spin, Dropdown } from "antd";
+import { Menu, Typography, Avatar, Tooltip, Spin, Dropdown, Tag } from "antd";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import {
@@ -608,14 +608,38 @@ export function GlobalSidebar() {
   );
 }
 
+const SoonBadge = () => (
+  <Tag
+    style={{
+      marginInlineStart: 6,
+      fontSize: 10,
+      lineHeight: "16px",
+      borderRadius: 999,
+    }}
+    color="orange"
+  >
+    Soon
+  </Tag>
+);
+
 function renderMenuItems(items: NavigationItem[], t: Translator): any[] {
   return items.map((item) => {
+    let label =
+      item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label;
+
+    if (item.disabled && item.labelKey && t.has(item.labelKey)) {
+      label = (
+        <>
+          {label} <SoonBadge />
+        </>
+      );
+    }
+
     if (item.children && item.children.length > 0) {
       return {
         key: item.key,
         icon: item.icon,
-        label:
-          item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
+        label,
         children: renderMenuItems(item.children, t),
         disabled: item.disabled,
       };
@@ -623,8 +647,7 @@ function renderMenuItems(items: NavigationItem[], t: Translator): any[] {
     return {
       key: item.key,
       icon: item.icon,
-      label:
-        item.labelKey && t.has(item.labelKey) ? t(item.labelKey) : item.label,
+      label,
       disabled: item.disabled,
     };
   });

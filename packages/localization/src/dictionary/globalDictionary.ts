@@ -8,6 +8,8 @@ import enDashboard from "../../locales/en/dashboard.json";
 import enCatalog from "../../locales/en/catalog.json";
 import enPricing from "../../locales/en/pricing.json";
 import enSettings from "../../locales/en/settings.json";
+import enOrders from "../../locales/en/orders.json";
+import enCustomers from "../../locales/en/customers.json";
 
 import arCommon from "../../locales/ar/common.json";
 import arNavigation from "../../locales/ar/navigation.json";
@@ -18,6 +20,8 @@ import arDashboard from "../../locales/ar/dashboard.json";
 import arCatalog from "../../locales/ar/catalog.json";
 import arPricing from "../../locales/ar/pricing.json";
 import arSettings from "../../locales/ar/settings.json";
+import arOrders from "../../locales/ar/orders.json";
+import arCustomers from "../../locales/ar/customers.json";
 
 import trCommon from "../../locales/tr/common.json";
 import trNavigation from "../../locales/tr/navigation.json";
@@ -28,6 +32,8 @@ import trDashboard from "../../locales/tr/dashboard.json";
 import trCatalog from "../../locales/tr/catalog.json";
 import trPricing from "../../locales/tr/pricing.json";
 import trSettings from "../../locales/tr/settings.json";
+import trOrders from "../../locales/tr/orders.json";
+import trCustomers from "../../locales/tr/customers.json";
 
 function asMessages(source: unknown): Messages {
   if (typeof source === "object" && source !== null) {
@@ -52,6 +58,8 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     catalog: asMessages(enCatalog),
     pricing: asMessages(enPricing),
     settings: asMessages(enSettings),
+    orders: asMessages(enOrders),
+    customers: asMessages(enCustomers),
   },
   ar: {
     common: asMessages(arCommon),
@@ -63,6 +71,8 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     catalog: asMessages(arCatalog),
     pricing: asMessages(arPricing),
     settings: asMessages(arSettings),
+    orders: asMessages(arOrders),
+    customers: asMessages(arCustomers),
   },
   tr: {
     common: asMessages(trCommon),
@@ -74,6 +84,8 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     catalog: asMessages(trCatalog),
     pricing: asMessages(trPricing),
     settings: asMessages(trSettings),
+    orders: asMessages(trOrders),
+    customers: asMessages(trCustomers),
   },
 };
 

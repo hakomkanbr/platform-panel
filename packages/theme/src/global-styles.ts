@@ -186,13 +186,33 @@ body {
   color: var(--s2s-orange) !important;
 }
 
-.ant-menu.ant-menu-sub .ant-menu-item {
-  padding-inline-start: 28px !important;
+/* Submenu items in open/expanded state (inline menu) */
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-sub .ant-menu-item,
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-inline.ant-menu-sub .ant-menu-item,
+.ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-sub .ant-menu-item {
+  padding-inline-start: 36px !important;
   padding-inline-end: 12px !important;
+  width: calc(100% - 12px) !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  margin: 2px auto !important;
+  font-size: 13.5px !important;
+  font-weight: 500;
+  border-radius: 8px !important;
 }
 
-.modern-layout .ant-menu-inline .ant-menu-sub {
-  background: transparent !important;
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-sub .ant-menu-item .anticon,
+.modern-layout .ant-menu:not(.ant-menu-inline-collapsed) .ant-menu-sub .ant-menu-item .ant-menu-item-icon {
+  font-size: 16px !important;
+  margin-inline-end: 8px !important;
+}
+
+.modern-layout .ant-menu-inline .ant-menu-sub,
+.modern-layout .ant-menu-inline.ant-menu-sub {
+  background: rgba(0, 0, 0, 0.02) !important;
+  border-radius: 10px !important;
+  margin: 2px 4px !important;
+  padding: 3px 0 !important;
 }
 
 .modern-layout .ant-menu-item-divider {

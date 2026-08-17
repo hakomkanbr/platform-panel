@@ -176,25 +176,19 @@ export const platformNavigation: NavigationItem[] = [
   },
   {
     key: "orders",
-    label: (
-      <>
-        Orders <SoonBadge />
-      </>
-    ),
+    label: "Orders",
+    labelKey: "common.nav.orders",
     path: "/admin/orders",
     icon: <ShoppingCartOutlined />,
-    disabled: true,
+    disabled: false,
     children: [
       {
         key: "orders-list",
-        label: (
-          <>
-            Orders <SoonBadge />
-          </>
-        ),
+        label: "Orders",
+        labelKey: "common.nav.ordersList",
         path: "/admin/orders",
         icon: <ShoppingCartOutlined />,
-        disabled: true,
+        disabled: false,
       },
       {
         key: "returns",
@@ -203,6 +197,7 @@ export const platformNavigation: NavigationItem[] = [
             Returns <SoonBadge />
           </>
         ),
+        labelKey: "common.nav.returns",
         path: "/admin/orders/returns",
         icon: <RollbackOutlined />,
         disabled: true,
@@ -214,6 +209,7 @@ export const platformNavigation: NavigationItem[] = [
             Draft Orders <SoonBadge />
           </>
         ),
+        labelKey: "common.nav.draftOrders",
         path: "/admin/orders/draft-orders",
         icon: <FileTextOutlined />,
         disabled: true,
@@ -222,25 +218,19 @@ export const platformNavigation: NavigationItem[] = [
   },
   {
     key: "customers",
-    label: (
-      <>
-        Customers <SoonBadge />
-      </>
-    ),
+    label: "Customers",
+    labelKey: "common.nav.customers",
     path: "/admin/customers",
     icon: <ContactsOutlined />,
-    disabled: true,
+    disabled: false,
     children: [
       {
         key: "customers-list",
-        label: (
-          <>
-            Customers <SoonBadge />
-          </>
-        ),
+        label: "Customers",
+        labelKey: "common.nav.customersList",
         path: "/admin/customers",
         icon: <IdcardOutlined />,
-        disabled: true,
+        disabled: false,
       },
       {
         key: "groups",
@@ -249,183 +239,181 @@ export const platformNavigation: NavigationItem[] = [
             Groups <SoonBadge />
           </>
         ),
+        labelKey: "common.nav.groups",
         path: "/admin/customers/groups",
         icon: <TeamOutlined />,
         disabled: true,
       },
       {
         key: "addresses",
-        label: (
-          <>
-            Addresses <SoonBadge />
-          </>
-        ),
+        label: "Addresses",
+        labelKey: "common.nav.addresses",
         path: "/admin/customers/addresses",
         icon: <EnvironmentOutlined />,
-        disabled: true,
+        disabled: false,
       },
     ],
   },
-  {
-    key: "content",
-    label: (
-      <>
-        Content <SoonBadge />
-      </>
-    ),
-    path: "/admin/content",
-    icon: <FileTextOutlined />,
-    disabled: true,
-    children: [
-      {
-        key: "pages",
-        label: (
-          <>
-            Pages <SoonBadge />
-          </>
-        ),
-        path: "/admin/content/pages",
-        icon: <FileTextOutlined />,
-        disabled: true,
-      },
-      {
-        key: "menus",
-        label: (
-          <>
-            Menus <SoonBadge />
-          </>
-        ),
-        path: "/admin/content/menus",
-        icon: <MenuOutlined />,
-        disabled: true,
-      },
-      {
-        key: "themes",
-        label: (
-          <>
-            Themes <SoonBadge />
-          </>
-        ),
-        path: "/admin/content/themes",
-        icon: <SkinOutlined />,
-        disabled: true,
-      },
-      {
-        key: "media",
-        label: (
-          <>
-            Media <SoonBadge />
-          </>
-        ),
-        path: "/admin/content/media",
-        icon: <PictureOutlined />,
-        disabled: true,
-      },
-    ],
-  },
-  {
-    key: "analytics",
-    label: (
-      <>
-        Analytics <SoonBadge />
-      </>
-    ),
-    path: "/admin/analytics",
-    icon: <BarChartOutlined />,
-    disabled: true,
-    children: [
-      {
-        key: "sales",
-        label: (
-          <>
-            Sales <SoonBadge />
-          </>
-        ),
-        path: "/admin/analytics/sales",
-        icon: <LineChartOutlined />,
-        disabled: true,
-      },
-      {
-        key: "visitors",
-        label: (
-          <>
-            Visitors <SoonBadge />
-          </>
-        ),
-        path: "/admin/analytics/visitors",
-        icon: <EyeOutlined />,
-        disabled: true,
-      },
-      {
-        key: "reports",
-        label: (
-          <>
-            Reports <SoonBadge />
-          </>
-        ),
-        path: "/admin/analytics/reports",
-        icon: <BarChartOutlined />,
-        disabled: true,
-      },
-    ],
-  },
-  {
-    key: "integrations",
-    label: (
-      <>
-        Integrations <SoonBadge />
-      </>
-    ),
-    path: "/admin/integrations",
-    icon: <ApiOutlined />,
-    disabled: true,
-    children: [
-      {
-        key: "payments",
-        label: (
-          <>
-            Payments <SoonBadge />
-          </>
-        ),
-        path: "/admin/integrations/payments",
-        icon: <PayCircleOutlined />,
-        disabled: true,
-      },
-      {
-        key: "shipping",
-        label: (
-          <>
-            Shipping <SoonBadge />
-          </>
-        ),
-        path: "/admin/integrations/shipping",
-        icon: <RocketOutlined />,
-        disabled: true,
-      },
-      {
-        key: "email",
-        label: (
-          <>
-            Email <SoonBadge />
-          </>
-        ),
-        path: "/admin/integrations/email",
-        icon: <MailOutlined />,
-        disabled: true,
-      },
-      {
-        key: "sms",
-        label: (
-          <>
-            SMS <SoonBadge />
-          </>
-        ),
-        path: "/admin/integrations/sms",
-        icon: <MessageOutlined />,
-        disabled: true,
-      },
-    ],
-  },
+  // {
+  //   key: "content",
+  //   label: (
+  //     <>
+  //       Content <SoonBadge />
+  //     </>
+  //   ),
+  //   path: "/admin/content",
+  //   icon: <FileTextOutlined />,
+  //   disabled: true,
+  //   children: [
+  //     {
+  //       key: "pages",
+  //       label: (
+  //         <>
+  //           Pages <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/content/pages",
+  //       icon: <FileTextOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "menus",
+  //       label: (
+  //         <>
+  //           Menus <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/content/menus",
+  //       icon: <MenuOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "themes",
+  //       label: (
+  //         <>
+  //           Themes <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/content/themes",
+  //       icon: <SkinOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "media",
+  //       label: (
+  //         <>
+  //           Media <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/content/media",
+  //       icon: <PictureOutlined />,
+  //       disabled: true,
+  //     },
+  //   ],
+  // },
+  // {
+  //   key: "analytics",
+  //   label: (
+  //     <>
+  //       Analytics <SoonBadge />
+  //     </>
+  //   ),
+  //   path: "/admin/analytics",
+  //   icon: <BarChartOutlined />,
+  //   disabled: true,
+  //   children: [
+  //     {
+  //       key: "sales",
+  //       label: (
+  //         <>
+  //           Sales <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/analytics/sales",
+  //       icon: <LineChartOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "visitors",
+  //       label: (
+  //         <>
+  //           Visitors <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/analytics/visitors",
+  //       icon: <EyeOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "reports",
+  //       label: (
+  //         <>
+  //           Reports <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/analytics/reports",
+  //       icon: <BarChartOutlined />,
+  //       disabled: true,
+  //     },
+  //   ],
+  // },
+  // {
+  //   key: "integrations",
+  //   label: (
+  //     <>
+  //       Integrations <SoonBadge />
+  //     </>
+  //   ),
+  //   path: "/admin/integrations",
+  //   icon: <ApiOutlined />,
+  //   disabled: true,
+  //   children: [
+  //     {
+  //       key: "payments",
+  //       label: (
+  //         <>
+  //           Payments <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/integrations/payments",
+  //       icon: <PayCircleOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "shipping",
+  //       label: (
+  //         <>
+  //           Shipping <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/integrations/shipping",
+  //       icon: <RocketOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "email",
+  //       label: (
+  //         <>
+  //           Email <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/integrations/email",
+  //       icon: <MailOutlined />,
+  //       disabled: true,
+  //     },
+  //     {
+  //       key: "sms",
+  //       label: (
+  //         <>
+  //           SMS <SoonBadge />
+  //         </>
+  //       ),
+  //       path: "/admin/integrations/sms",
+  //       icon: <MessageOutlined />,
+  //       disabled: true,
+  //     },
+  //   ],
+  // },
   {
     key: "settings",
     label: "Settings",

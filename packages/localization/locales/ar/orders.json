@@ -1,0 +1,80 @@
+{
+  "title": "الطلبات",
+  "description": "إدارة وتتبع طلبات العملاء وحالات الطلبات والشحن والتوصيل.",
+  "pageNotFound": "الصفحة غير موجودة",
+  "routeNotFound": "لا توجد صفحة طلبات تطابق هذا المسار.",
+  "overview": {
+    "title": "إدارة الطلبات",
+    "totalOrders": "إجمالي الطلبات",
+    "pendingOrders": "في انتظار الموافقة / الدفع",
+    "processingOrders": "قيد التجهيز / الشحن",
+    "deliveredOrders": "تم التوصيل بنجاح",
+    "totalRevenue": "إجمالي المبيعات",
+    "searchPlaceholder": "بحث برقم الطلب، اسم العميل، الهاتف...",
+    "statusFilter": "جميع الحالات",
+    "paymentFilter": "جميع طرق الدفع",
+    "refresh": "تحديث",
+    "createOrder": "طلب جديد"
+  },
+  "table": {
+    "orderCode": "رقم الطلب",
+    "customer": "العميل",
+    "phone": "الهاتف",
+    "items": "المنتجات",
+    "total": "المبلغ الإجمالي",
+    "status": "الحالة",
+    "payment": "طريقة الدفع",
+    "date": "التاريخ والوقت",
+    "actions": "الإجراءات",
+    "viewDetails": "عرض التفاصيل",
+    "changeStatus": "تغيير الحالة",
+    "contactWhatsApp": "واتساب",
+    "noOrders": "لا توجد طلبات بعد",
+    "noOrdersDesc": "عندما يقوم العملاء بالشراء من متجرك، ستظهر الطلبات هنا مباشرة."
+  },
+  "status": {
+    "AwaitingApproval": "في انتظار الموافقة",
+    "AwaitingPayment": "في انتظار الدفع",
+    "PaymentPaid": "تم الدفع",
+    "Processing": "قيد التجهيز",
+    "InCargo": "في الشحن",
+    "Delivered": "تم التوصيل",
+    "Cancelled": "ملغي",
+    "PaymentFailed": "فشل الدفع",
+    "Refunded": "مسترجع",
+    "RefundFailed": "فشل الاسترجاع"
+  },
+  "detail": {
+    "title": "تفاصيل الطلب",
+    "orderInfo": "معلومات الطلب",
+    "customerInfo": "بيانات العميل",
+    "shippingAddress": "عنوان التوصيل",
+    "billingAddress": "عنوان الفاتورة",
+    "itemsTitle": "المنتجات المطلوبة ({count})",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "freeShipping": "مجاني",
+    "discount": "الخصم",
+    "tax": "الضريبة",
+    "grandTotal": "المجموع الإجمالي",
+    "notes": "ملاحظات العميل",
+    "noNotes": "لا توجد ملاحظات إضافية",
+    "statusUpdated": "تم تحديث حالة الطلب بنجاح",
+    "whatsappChat": "مراسلة العميل عبر واتساب",
+    "printInvoice": "طباعة الفاتورة",
+    "close": "إغلاق"
+  },
+  "returns": {
+    "title": "المرتجعات والمستردات",
+    "description": "إدارة طلبات استرجاع المنتجات واسترداد المبالغ للعملاء.",
+    "noReturns": "لا توجد طلبات استرجاع حالياً",
+    "noReturnsDesc": "ستظهر طلبات الاسترجاع المقدمة من العملاء هنا."
+  },
+  "draftOrders": {
+    "title": "مسودات الطلبات",
+    "description": "إنشاء وإدارة الطلبات اليدوية وحفظها كمسودة قبل التأكيد.",
+    "createDraft": "إنشاء مسودة طلب",
+    "noDrafts": "لا توجد مسودات طلبات",
+    "noDraftsDesc": "المسودات التي تنشئها يدويًا ستظهر هنا."
+  }
+}

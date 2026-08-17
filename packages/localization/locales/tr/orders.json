@@ -1,0 +1,80 @@
+{
+  "title": "Siparişler",
+  "description": "Müşteri siparişlerini, sipariş durumlarını ve teslimat süreçlerini yönetin.",
+  "pageNotFound": "Sayfa bulunamadı",
+  "routeNotFound": "Bu rotaya uygun sipariş sayfası bulunamadı.",
+  "overview": {
+    "title": "Sipariş Yönetimi",
+    "totalOrders": "Toplam Sipariş",
+    "pendingOrders": "Onay / Ödeme Bekleyen",
+    "processingOrders": "Hazırlanan / Kargoda",
+    "deliveredOrders": "Teslim Edildi",
+    "totalRevenue": "Toplam Gelir",
+    "searchPlaceholder": "Sipariş no, müşteri adı, telefon ile ara...",
+    "statusFilter": "Tüm Durumlar",
+    "paymentFilter": "Tüm Ödeme Yöntemleri",
+    "refresh": "Yenile",
+    "createOrder": "Yeni Sipariş"
+  },
+  "table": {
+    "orderCode": "Sipariş No",
+    "customer": "Müşteri",
+    "phone": "Telefon",
+    "items": "Ürünler",
+    "total": "Toplam Tutar",
+    "status": "Durum",
+    "payment": "Ödeme Yöntemi",
+    "date": "Tarih ve Saat",
+    "actions": "İşlemler",
+    "viewDetails": "Detayları Gör",
+    "changeStatus": "Durumu Değiştir",
+    "contactWhatsApp": "WhatsApp",
+    "noOrders": "Henüz sipariş yok",
+    "noOrdersDesc": "Müşterileriniz mağazanızdan alışveriş yaptığında siparişler burada görünecektir."
+  },
+  "status": {
+    "AwaitingApproval": "Onay Bekliyor",
+    "AwaitingPayment": "Ödeme Bekliyor",
+    "PaymentPaid": "Ödendi",
+    "Processing": "Hazırlanıyor",
+    "InCargo": "Kargoda",
+    "Delivered": "Teslim Edildi",
+    "Cancelled": "İptal Edildi",
+    "PaymentFailed": "Ödeme Başarısız",
+    "Refunded": "İade Edildi",
+    "RefundFailed": "İade Başarısız"
+  },
+  "detail": {
+    "title": "Sipariş Detayı",
+    "orderInfo": "Sipariş Bilgileri",
+    "customerInfo": "Müşteri Bilgileri",
+    "shippingAddress": "Teslimat Adresi",
+    "billingAddress": "Fatura Adresi",
+    "itemsTitle": "Sipariş Edilen Ürünler ({count})",
+    "subtotal": "Ara Toplam",
+    "shipping": "Kargo",
+    "freeShipping": "Ücretsiz",
+    "discount": "İndirim",
+    "tax": "Vergi",
+    "grandTotal": "Genel Toplam",
+    "notes": "Müşteri Notu",
+    "noNotes": "Not eklenmemiş",
+    "statusUpdated": "Sipariş durumu başarıyla güncellendi",
+    "whatsappChat": "WhatsApp ile İletişime Geç",
+    "printInvoice": "Fatura Yazdır",
+    "close": "Kapat"
+  },
+  "returns": {
+    "title": "İadeler ve Geri Ödemeler",
+    "description": "Ürün iade taleplerini ve müşteri geri ödemelerini yönetin.",
+    "noReturns": "Henüz iade talebi yok",
+    "noReturnsDesc": "Müşterileriniz tarafından oluşturulan iade talepleri burada listelenecektir."
+  },
+  "draftOrders": {
+    "title": "Taslak Siparişler",
+    "description": "Manuel siparişler oluşturun ve onaylamadan önce taslak olarak saklayın.",
+    "createDraft": "Taslak Sipariş Oluştur",
+    "noDrafts": "Taslak sipariş yok",
+    "noDraftsDesc": "Manuel oluşturulan taslak siparişler burada listelenecektir."
+  }
+}

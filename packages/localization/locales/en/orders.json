@@ -1,0 +1,80 @@
+{
+  "title": "Orders",
+  "description": "Manage and track customer orders, order statuses, and fulfillment.",
+  "pageNotFound": "Page not found",
+  "routeNotFound": "No orders page matches this route.",
+  "overview": {
+    "title": "Orders Management",
+    "totalOrders": "Total Orders",
+    "pendingOrders": "Awaiting Approval / Payment",
+    "processingOrders": "Processing / In Cargo",
+    "deliveredOrders": "Delivered",
+    "totalRevenue": "Total Revenue",
+    "searchPlaceholder": "Search by order #, customer, phone...",
+    "statusFilter": "All Statuses",
+    "paymentFilter": "All Payment Methods",
+    "refresh": "Refresh",
+    "createOrder": "New Order"
+  },
+  "table": {
+    "orderCode": "Order #",
+    "customer": "Customer",
+    "phone": "Phone",
+    "items": "Items",
+    "total": "Total Amount",
+    "status": "Status",
+    "payment": "Payment Method",
+    "date": "Date & Time",
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "changeStatus": "Change Status",
+    "contactWhatsApp": "WhatsApp",
+    "noOrders": "No orders found",
+    "noOrdersDesc": "When customers place orders on your store, they will appear here."
+  },
+  "status": {
+    "AwaitingApproval": "Awaiting Approval",
+    "AwaitingPayment": "Awaiting Payment",
+    "PaymentPaid": "Paid",
+    "Processing": "Processing",
+    "InCargo": "In Cargo",
+    "Delivered": "Delivered",
+    "Cancelled": "Cancelled",
+    "PaymentFailed": "Payment Failed",
+    "Refunded": "Refunded",
+    "RefundFailed": "Refund Failed"
+  },
+  "detail": {
+    "title": "Order Details",
+    "orderInfo": "Order Information",
+    "customerInfo": "Customer Details",
+    "shippingAddress": "Delivery Address",
+    "billingAddress": "Billing Address",
+    "itemsTitle": "Order Items ({count})",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "freeShipping": "Free",
+    "discount": "Discount",
+    "tax": "Tax",
+    "grandTotal": "Grand Total",
+    "notes": "Customer Notes",
+    "noNotes": "No notes provided",
+    "statusUpdated": "Order status updated successfully",
+    "whatsappChat": "Open WhatsApp Chat",
+    "printInvoice": "Print Invoice",
+    "close": "Close"
+  },
+  "returns": {
+    "title": "Returns & Refunds",
+    "description": "Manage return requests and process customer refunds.",
+    "noReturns": "No return requests",
+    "noReturnsDesc": "Customer return requests will be displayed here."
+  },
+  "draftOrders": {
+    "title": "Draft Orders",
+    "description": "Create and manage manual orders before confirmation.",
+    "createDraft": "Create Draft Order",
+    "noDrafts": "No draft orders",
+    "noDraftsDesc": "Draft orders created manually will appear here."
+  }
+}

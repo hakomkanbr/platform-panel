@@ -1,0 +1,42 @@
+{
+  "title": "Müşteriler",
+  "description": "Mağaza müşterilerini, müşteri gruplarını ve adreslerini yönetin.",
+  "pageNotFound": "Sayfa bulunamadı",
+  "routeNotFound": "Bu rotaya uygun müşteri sayfası bulunamadı.",
+  "overview": {
+    "totalCustomers": "Toplam Müşteri",
+    "individual": "Bireysel",
+    "corporate": "Kurumsal",
+    "searchPlaceholder": "İsim, e-posta veya telefon ile ara...",
+    "newCustomer": "Yeni Müşteri"
+  },
+  "table": {
+    "name": "Müşteri Adı",
+    "email": "E-posta",
+    "phone": "Telefon",
+    "type": "Müşteri Tipi",
+    "taxOffice": "Vergi Dairesi",
+    "taxNumber": "Vergi Numarası",
+    "company": "Şirket / Unvan",
+    "actions": "İşlemler",
+    "viewDetails": "Detayları Gör",
+    "noCustomers": "Müşteri bulunamadı",
+    "noCustomersDesc": "Kayıt olan veya sipariş veren müşteriler burada listelenecektir."
+  },
+  "type": {
+    "individual": "Bireysel",
+    "corporate": "Kurumsal"
+  },
+  "groups": {
+    "title": "Müşteri Grupları",
+    "description": "Özel fiyatlandırma ve kampanyalar için müşterileri gruplara ayırın.",
+    "noGroups": "Müşteri grubu yok",
+    "noGroupsDesc": "Toptan veya VIP gibi gruplar oluşturarak özel fiyatlar uygulayın."
+  },
+  "addresses": {
+    "title": "Müşteri Adresleri",
+    "description": "Mağaza müşterilerinizin teslimat ve fatura adreslerini yönetin.",
+    "noAddresses": "Kayıtlı adres yok",
+    "noAddressesDesc": "Müşterilerin eklediği adresler burada görünecektir."
+  }
+}
