@@ -72,6 +72,7 @@ export interface GlobalSchema {
   catalog: Messages;
   pricing: Messages;
   settings: Messages;
+  media: Messages;
 }
 
 /** All valid top-level dotted keys of the global dictionaries. */

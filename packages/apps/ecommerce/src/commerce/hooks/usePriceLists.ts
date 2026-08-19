@@ -46,3 +46,47 @@ export function useDeletePriceList() {
     },
   });
 }
+
+export function usePublishPriceList() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => priceListsApi.publish(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-lists"] });
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list"] });
+    },
+  });
+}
+
+export function useActivatePriceList() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => priceListsApi.activate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-lists"] });
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list"] });
+    },
+  });
+}
+
+export function useDeactivatePriceList() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => priceListsApi.deactivate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-lists"] });
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list"] });
+    },
+  });
+}
+
+export function useArchivePriceList() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => priceListsApi.archive(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-lists"] });
+      queryClient.invalidateQueries({ queryKey: ["pricing", "price-list"] });
+    },
+  });
+}

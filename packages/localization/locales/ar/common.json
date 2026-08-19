@@ -14,9 +14,12 @@
     "brands": "العلامات التجارية",
     "tags": "الوسوم",
     "attributes": "الخصائص",
+    "media": "الوسائط",
     "pricing": "التسعير",
     "priceLists": "قوائم الأسعار",
     "productPrices": "أسعار المنتجات",
+    "discounts": "الخصومات",
+    "taxes": "الضرائب",
     "orders": "الطلبات",
     "ordersList": "الطلبات",
     "returns": "المرتجعات",
@@ -38,6 +41,8 @@
   "actions": {
     "back": "رجوع",
     "cancel": "إلغاء",
+    "create": "إنشاء",
+    "move": "نقل",
     "saveChanges": "حفظ التغييرات",
     "saveAndContinue": "حفظ ومتابعة التعديل",
     "delete": "حذف",
@@ -73,5 +78,70 @@
   "back": "رجوع",
   "skip": "تخطي",
   "inherited": "موروث",
-  "default": "افتراضي"
+  "default": "افتراضي",
+  "media": {
+    "title": "مكتبة الوسائط",
+    "description": "إدارة ورفع وتنظيم وتأمين ملفات الوسائط الخاصة بمشروعك",
+    "searchPlaceholder": "بحث بالاسم أو الوسم...",
+    "allFiles": "جميع الملفات",
+    "rootFolder": "المجلد الرئيسي",
+    "newFolder": "مجلد جديد",
+    "folderName": "اسم المجلد",
+    "enterFolderName": "أدخل اسم المجلد",
+    "createFolder": "إنشاء المجلد",
+    "deleteFolder": "حذف المجلد",
+    "deleteFolderConfirm": "هل أنت متأكد من حذف هذا المجلد الفارغ؟",
+    "folderCreated": "تم إنشاء المجلد بنجاح",
+    "folderDeleted": "تم حذف المجلد بنجاح",
+    "emptyFolder": "مجلد فارغ",
+    "moveToFolder": "نقل إلى مجلد",
+    "selectDestinationFolder": "اختر المجلد الوجهة",
+    "movedToFolder": "تم نقل الملفات بنجاح",
+    "accessControl": "التحكم بالوصول والروابط",
+    "publicAccess": "الوصول العام",
+    "signedUrl": "رابط موقّع مؤقت",
+    "generateSignedUrl": "توليد رابط موقّع",
+    "expiry": "مدة الصلاحية",
+    "expiry1h": "ساعة واحدة",
+    "expiry24h": "24 ساعة",
+    "expiry7d": "7 أيام",
+    "copyUrl": "نسخ الرابط",
+    "urlCopied": "تم نسخ الرابط إلى الحافظة",
+    "variants": "نسخ الصور المحسنة (Variants)",
+    "preview": {
+      "name": "اسم الملف",
+      "type": "النوع",
+      "size": "الحجم",
+      "visibility": "الخصوصية",
+      "uploaded": "تاريخ الرفع",
+      "dimensions": "الأبعاد",
+      "prev": "السابق",
+      "next": "التالي",
+      "noPreview": "لا تتوفر معاينة لهذا الملف"
+    },
+    "visibility": {
+      "public": "عام",
+      "private": "خاص",
+      "restricted": "مقيّد"
+    },
+    "actions": {
+      "upload": "رفع ملفات",
+      "delete": "حذف",
+      "download": "تحميل",
+      "preview": "معاينة",
+      "selectAll": "تحديد الكل",
+      "bulkActions": "إجراءات جماعية"
+    },
+    "toasts": {
+      "uploaded": "تم رفع الملف بنجاح",
+      "deleted": "تم حذف الملف بنجاح",
+      "bulkDeleted": "تم حذف {count} ملف بنجاح",
+      "visibilityUpdated": "تم تحديث مستوى الخصوصية بنجاح"
+    },
+    "noProject": {
+      "title": "لم يتم تحديد مشروع",
+      "description": "يرجى اختيار مشروع لإدارة وسائطه",
+      "goToProjects": "الذهاب للمشاريع"
+    }
+  }
 }

@@ -39,6 +39,7 @@ import { useTenantId } from "@repo/hooks";
 import { StatSkeleton } from "@repo/ui";
 import { useTranslations } from "@repo/localization";
 import { getStoreUrl } from "@repo/utils";
+import { OnboardingGate } from "@/components/onboarding";
 
 const { Title, Text } = Typography;
 
@@ -151,8 +152,9 @@ export default function HomePage() {
   const openApps = appCatalog.filter((a) => a.isActive);
 
   return (
-    <div className="s2s-stagger" style={{ display: "flex", flexDirection: "column", gap: 28, paddingBottom: 32 }}>
-      {/* Hero Welcome Banner */}
+    <OnboardingGate>
+      <div className="s2s-stagger" style={{ display: "flex", flexDirection: "column", gap: 28, paddingBottom: 32 }}>
+        {/* Hero Welcome Banner */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -563,6 +565,7 @@ export default function HomePage() {
           </motion.div>
         </Col>
       </Row>
-    </div>
+      </div>
+    </OnboardingGate>
   );
 }

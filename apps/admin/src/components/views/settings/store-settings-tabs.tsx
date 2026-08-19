@@ -6,6 +6,7 @@ import {
   ShoppingOutlined,
   KeyOutlined,
   TranslationOutlined,
+  DollarOutlined,
 } from "@ant-design/icons";
 import type { ProjectDetailDto } from "@repo/shared-types";
 import type { StoreDto } from "@/api/store-settings";
@@ -13,8 +14,9 @@ import { useTranslations } from "@repo/localization";
 import EcommerceTab from "./tabs/ecommerce-tab";
 import ApiKeysTab from "./tabs/api-keys-tab";
 import LanguagesTab from "./tabs/languages-tab";
+import CurrenciesTab from "./tabs/currencies-tab";
 
-const SETTINGS_TABS = ["ecommerce", "api-keys", "languages"] as const;
+const SETTINGS_TABS = ["ecommerce", "api-keys", "languages", "currencies"] as const;
 export type StoreSettingsTabKey = (typeof SETTINGS_TABS)[number];
 
 interface StoreSettingsTabsProps {
@@ -80,6 +82,24 @@ export default function StoreSettingsTabs({ project, store }: StoreSettingsTabsP
         </span>
       ),
       children: <LanguagesTab project={project} />,
+    },
+    {
+      key: "currencies" as const,
+      label: (
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+        >
+          <DollarOutlined />
+          <bdi>{t("settings.tabs.currencies")}</bdi>
+        </span>
+      ),
+      children: <CurrenciesTab project={project} />,
     },
   ];
 

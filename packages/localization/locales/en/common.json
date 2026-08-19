@@ -14,9 +14,12 @@
     "brands": "Brands",
     "tags": "Tags",
     "attributes": "Attributes",
+    "media": "Media",
     "pricing": "Pricing",
     "priceLists": "Price Lists",
     "productPrices": "Product Prices",
+    "discounts": "Discounts",
+    "taxes": "Taxes",
     "orders": "Orders",
     "ordersList": "Orders",
     "returns": "Returns",
@@ -38,6 +41,8 @@
   "actions": {
     "back": "Back",
     "cancel": "Cancel",
+    "create": "Create",
+    "move": "Move",
     "saveChanges": "Save changes",
     "saveAndContinue": "Save & Continue Editing",
     "delete": "Delete",
@@ -73,5 +78,70 @@
   "back": "Back",
   "skip": "Skip to Variants",
   "inherited": "Inherited",
-  "default": "Default"
+  "default": "Default",
+  "media": {
+    "title": "Media Library",
+    "description": "Manage, organize, and secure media assets for your project",
+    "searchPlaceholder": "Search by name or tag...",
+    "allFiles": "All Files",
+    "rootFolder": "Root Folder",
+    "newFolder": "New Folder",
+    "folderName": "Folder Name",
+    "enterFolderName": "Enter folder name",
+    "createFolder": "Create Folder",
+    "deleteFolder": "Delete Folder",
+    "deleteFolderConfirm": "Are you sure you want to delete this empty folder?",
+    "folderCreated": "Folder created successfully",
+    "folderDeleted": "Folder deleted successfully",
+    "emptyFolder": "Empty folder",
+    "moveToFolder": "Move to Folder",
+    "selectDestinationFolder": "Select destination folder",
+    "movedToFolder": "Files moved successfully",
+    "accessControl": "Access Control & Links",
+    "publicAccess": "Public Access",
+    "signedUrl": "Temporary Signed URL",
+    "generateSignedUrl": "Generate Signed URL",
+    "expiry": "Expiration Time",
+    "expiry1h": "1 Hour",
+    "expiry24h": "24 Hours",
+    "expiry7d": "7 Days",
+    "copyUrl": "Copy URL",
+    "urlCopied": "URL copied to clipboard",
+    "variants": "Optimized Image Variants",
+    "preview": {
+      "name": "File Name",
+      "type": "Type",
+      "size": "Size",
+      "visibility": "Visibility",
+      "uploaded": "Uploaded At",
+      "dimensions": "Dimensions",
+      "prev": "Previous",
+      "next": "Next",
+      "noPreview": "No preview available for this file"
+    },
+    "visibility": {
+      "public": "Public",
+      "private": "Private",
+      "restricted": "Restricted"
+    },
+    "actions": {
+      "upload": "Upload Files",
+      "delete": "Delete",
+      "download": "Download",
+      "preview": "Preview",
+      "selectAll": "Select All",
+      "bulkActions": "Bulk Actions"
+    },
+    "toasts": {
+      "uploaded": "File uploaded successfully",
+      "deleted": "File deleted successfully",
+      "bulkDeleted": "{count} files deleted successfully",
+      "visibilityUpdated": "Visibility updated successfully"
+    },
+    "noProject": {
+      "title": "No Project Selected",
+      "description": "Please select a project to manage its media assets",
+      "goToProjects": "Go to Projects"
+    }
+  }
 }

@@ -140,7 +140,7 @@ export function OrganizationSection({ product }: { product?: ProductDetail }) {
                 optionFilterProp="label"
                 loading={brands.isLoading}
                 options={brandOptions}
-                placeholder="Select or search a brand"
+                placeholder={t("catalog.products.create.selectBrand") || "Select or search a brand"}
               />
             </Form.Item>
           </Col>
@@ -153,7 +153,7 @@ export function OrganizationSection({ product }: { product?: ProductDetail }) {
                 loading={categories.isLoading}
                 allowClear
                 treeDefaultExpandAll
-                placeholder="Select categories"
+                placeholder={t("catalog.products.create.selectCategories") || "Select categories"}
               />
             </Form.Item>
           </Col>
@@ -166,7 +166,7 @@ export function OrganizationSection({ product }: { product?: ProductDetail }) {
                 optionFilterProp="label"
                 loading={tags.isLoading}
                 options={tagOptions}
-                placeholder="Select tags"
+                placeholder={t("catalog.products.create.selectTags") || "Select tags"}
               />
             </Form.Item>
           </Col>

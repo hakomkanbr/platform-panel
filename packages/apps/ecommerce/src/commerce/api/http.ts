@@ -78,6 +78,8 @@ export async function patch<T>(url: string, body?: unknown, config?: AxiosReques
   return unwrap<T>(res);
 }
 
+export const http = { get, post, put, del, patch };
+
 export function getApiErrorMessage(error: unknown): string {
   if (error instanceof ApiError) return error.message;
 

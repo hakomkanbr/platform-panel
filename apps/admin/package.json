@@ -23,6 +23,7 @@
     "@repo/forms": "workspace:*",
     "@repo/hooks": "workspace:*",
     "@repo/localization": "workspace:*",
+    "@repo/media": "workspace:*",
     "@repo/navigation": "workspace:*",
     "@repo/permissions": "workspace:*",
     "@repo/providers": "workspace:*",

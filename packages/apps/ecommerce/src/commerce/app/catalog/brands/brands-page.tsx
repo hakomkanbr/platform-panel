@@ -13,12 +13,14 @@ import {
   Typography,
 } from "antd";
 import type { TableColumnsType } from "antd";
-import { CrownOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { CrownOutlined, DeleteOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm } from "@repo/ui";
 import { formatDateTime } from "@repo/utils";
 import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
+import { ImagePicker, type CdnFile } from "@repo/media";
+import { generateSlug, slugRule } from "../../../utils/slug";
 import { useBrands, useDeleteBrand, useSaveBrand, useSetBrandStatus } from "../../../hooks/useBrands";
 import { useCommerce } from "../../../context/CommerceContext";
 import { useProjectLanguages } from "../../../hooks/useLanguages";
@@ -34,8 +36,11 @@ export function BrandsPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [logoPickerOpen, setLogoPickerOpen] = useState(false);
   const [editing, setEditing] = useState<Brand | null>(null);
+  const [isSlugCustomized, setIsSlugCustomized] = useState(false);
   const [form] = Form.useForm();
+  const currentLogoUrl = Form.useWatch("logoUrl", form);
   
   const { projectId } = useCommerce();
   const { data: languages } = useProjectLanguages(projectId);
@@ -53,12 +58,24 @@ export function BrandsPage() {
 
   const rows = (data?.data ?? []) as BrandRow[];
 
+  const handleValuesChange = (changedValues: any) => {
+    if (changedValues.name !== undefined && !isSlugCustomized) {
+      const generated = generateSlug(changedValues.name);
+      form.setFieldValue("slug", generated);
+      form.validateFields(["slug"]).catch(() => {});
+    }
+    if (changedValues.slug !== undefined) {
+      setIsSlugCustomized(true);
+    }
+  };
+
   const openCreate = () => {
     setEditing(null);
     form.resetFields();
     if (defaultLanguage) {
       form.setFieldValue("languageId", defaultLanguage.id);
     }
+    setIsSlugCustomized(false);
     setDrawerOpen(true);
   };
 
@@ -75,6 +92,7 @@ export function BrandsPage() {
       // @ts-ignore
       languageId: brand.languageId ?? defaultLanguage?.id,
     });
+    setIsSlugCustomized(true);
     setDrawerOpen(true);
   };
 
@@ -87,7 +105,7 @@ export function BrandsPage() {
         id: editing?.id,
         body: {
           name: values.name as string,
-          slug: values.slug as string | undefined,
+          slug: (values.slug as string) || generateSlug(values.name as string),
           description: values.description as string | undefined,
           logoUrl: values.logoUrl as string | undefined,
           websiteUrl: values.websiteUrl as string | undefined,
@@ -256,7 +274,7 @@ export function BrandsPage() {
         onFinish={onFinish}
         submitLabel={editing ? t("common.actions.saveChanges") : t("catalog.brands.submitCreate")}
       >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={onFinish} onValuesChange={handleValuesChange}>
           <Form.Item name="languageId" label={t("common.fields.language")} rules={[{ required: true }]}>
             <Select
               loading={!languages && projectId ? true : undefined}
@@ -270,14 +288,83 @@ export function BrandsPage() {
           <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
             <Input placeholder={t("catalog.brands.placeholderName")} />
           </Form.Item>
-          <Form.Item name="slug" label={t("common.fields.slug")}>
-            <Input placeholder={t("catalog.brands.placeholderSlug")} />
+          <Form.Item name="slug" label={t("common.fields.slug")} rules={[slugRule(t)]}>
+            <Input
+              placeholder={t("catalog.brands.placeholderSlug")}
+              suffix={
+                <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate"}>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<SyncOutlined />}
+                    style={{ color: "var(--text-secondary)" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentName = form.getFieldValue("name") || "";
+                      const generated = generateSlug(currentName);
+                      form.setFieldValue("slug", generated);
+                      setIsSlugCustomized(false);
+                      form.validateFields(["slug"]).catch(() => {});
+                    }}
+                  />
+                </Tooltip>
+              }
+            />
           </Form.Item>
           <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />
           </Form.Item>
-          <Form.Item name="logoUrl" label={t("catalog.brands.logoUrl")}>
-            <Input placeholder={t("catalog.brands.placeholderUrl")} />
+          <Form.Item label={t("catalog.brands.logoUrl")}>
+            <Space direction="vertical" style={{ width: "100%" }} size={8}>
+              <Form.Item name="logoUrl" style={{ marginBottom: 0 }}>
+                <Input placeholder={t("catalog.brands.placeholderUrl")} allowClear />
+              </Form.Item>
+              <Space align="center">
+                {currentLogoUrl && (
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 8,
+                      overflow: "hidden",
+                      border: "1px solid var(--border-light)",
+                      background: "#fafafa",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src={currentLogoUrl}
+                      alt="Brand Logo Preview"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
+                <Button
+                  type="dashed"
+                  onClick={() => setLogoPickerOpen(true)}
+                  icon={<CrownOutlined />}
+                >
+                  {currentLogoUrl
+                    ? t("catalog.brands.changeLogo") || "Change from Media Library"
+                    : t("catalog.brands.selectLogo") || "Choose from Media Library"}
+                </Button>
+                {currentLogoUrl && (
+                  <Button
+                    type="text"
+                    danger
+                    size="small"
+                    onClick={() => form.setFieldValue("logoUrl", "")}
+                  >
+                    {t("common.actions.clear") || "Clear"}
+                  </Button>
+                )}
+              </Space>
+            </Space>
           </Form.Item>
           <Form.Item name="websiteUrl" label={t("catalog.brands.website")}>
             <Input placeholder={t("catalog.brands.placeholderWebsite")} />
@@ -294,6 +381,18 @@ export function BrandsPage() {
           )}
         </Form>
       </DrawerForm>
+
+      <ImagePicker
+        open={logoPickerOpen}
+        onClose={() => setLogoPickerOpen(false)}
+        onChange={(files: CdnFile[]) => {
+          if (files[0]?.url) {
+            form.setFieldValue("logoUrl", files[0].url);
+          }
+          setLogoPickerOpen(false);
+        }}
+        multiple={false}
+      />
     </CommerceShell>
   );
 }

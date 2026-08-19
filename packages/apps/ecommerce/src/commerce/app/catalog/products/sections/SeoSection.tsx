@@ -8,6 +8,7 @@ import type { ProductDetail } from "../../../../types/catalog";
 import { useUpdateProductTranslation } from "../../../../hooks/useProducts";
 import { useProjectLanguages } from "../../../../hooks/useLanguages";
 import { useCommerce } from "../../../../context/CommerceContext";
+import { slugRule } from "../../../../utils/slug";
 
 const { Text, Title } = Typography;
 
@@ -97,7 +98,12 @@ export function SeoSection({ product }: { product?: ProductDetail }) {
               </div>
             )}
             
-            <Form.Item name="slug" label={t("catalog.products.create.slug") || "URL Slug"} extra={t("catalog.products.create.helpers.slug") || "The last part of the product URL. Customers will see this in the browser."}>
+            <Form.Item
+              name="slug"
+              label={t("catalog.products.create.slug") || "URL Slug"}
+              extra={t("catalog.products.create.helpers.slug") || "The last part of the product URL. Customers will see this in the browser."}
+              rules={[slugRule(t)]}
+            >
               <Input placeholder={t("catalog.products.create.placeholderSlug")} />
             </Form.Item>
             

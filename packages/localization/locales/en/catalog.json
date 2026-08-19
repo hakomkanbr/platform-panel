@@ -96,6 +96,7 @@
       "selectTags": "Select tags",
       "code": "Code",
       "slug": "Slug",
+      "autoGenerateSlug": "Auto-generate from name",
       "price": "Price",
       "sku": "SKU",
       "barcode": "Barcode",
@@ -207,13 +208,14 @@
     },
     "tabs": {
       "media": {
+        "addFromLibrary": "Add from Media Library",
         "pasteUrl": "Paste media URL...",
         "add": "Add",
-        "added": "Media added",
+        "added": "Media added successfully",
         "removed": "Media removed",
-        "removeConfirm": "Remove media?",
-        "emptyTitle": "No media",
-        "emptyDescription": "Add product images by URL to build the gallery."
+        "removeConfirm": "Remove this image from product?",
+        "emptyTitle": "No Media",
+        "emptyDescription": "Add product images from the Media Library or direct URLs to showcase to customers."
       },
       "options": {
         "new": "New option",
@@ -359,6 +361,8 @@
     "selectHint": "Select a category from the tree to edit it, or create a new one.",
     "sortOrder": "Sort order",
     "imageUrl": "Image URL",
+    "selectImage": "Choose from Media Library",
+    "changeImage": "Change from Media Library",
     "parentCategory": "Parent category",
     "noParent": "No parent (top level)",
     "addChild": "Add child",

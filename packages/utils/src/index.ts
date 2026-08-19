@@ -16,4 +16,7 @@ export {
   truncate,
   titleCase,
   getStoreUrl,
+  SUPPORTED_CURRENCIES,
+  getCurrencyInfo,
+  type CurrencyInfo,
 } from './format';

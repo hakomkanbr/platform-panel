@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { Form, Row, Col, Input, InputNumber, Switch, Card, Typography } from "antd";
 import { useTranslations } from "@repo/localization";
+import { getCurrencyInfo } from "@repo/utils";
 import { useProductWorkspace } from "../ProductWorkspaceContext";
 import type { ProductDetail } from "../../../../types/catalog";
 import { useUpdateProduct } from "../../../../hooks/useProducts";
@@ -14,6 +15,11 @@ export function FulfillmentSection({ product }: { product?: ProductDetail }) {
   const [form] = Form.useForm();
   const { productId, productType, markSectionDirty, registerSaveHandler } = useProductWorkspace();
   const updateProduct = useUpdateProduct();
+
+  const currentCurrency = (product?.pricing?.currencyId && !product.pricing.currencyId.includes("-"))
+    ? product.pricing.currencyId
+    : (product?.currency ?? "SAR");
+  const currencyPrefix = getCurrencyInfo(currentCurrency)?.symbol ?? currentCurrency;
 
   useEffect(() => {
     if (product) {
@@ -139,7 +145,7 @@ export function FulfillmentSection({ product }: { product?: ProductDetail }) {
             <>
               <Col xs={24} sm={12}>
                 <Form.Item name="deposit" label={t("catalog.products.create.deposit") || "Security Deposit"}>
-                  <InputNumber min={0} prefix="$" style={{ width: "100%" }} />
+                  <InputNumber min={0} prefix={currencyPrefix} style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
             </>

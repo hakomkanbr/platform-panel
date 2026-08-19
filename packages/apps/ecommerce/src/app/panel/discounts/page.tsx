@@ -17,7 +17,7 @@ import { discountsApi } from "@/lib/api/discounts";
 import { productsApi } from "@/lib/api/products";
 import { categoriesApi } from "@/lib/api/categories";
 import { DiscountType, DiscountTargetType, DiscountPriority } from "@/types/discount";
-import type { Discount, PaginatedList } from "@/types";
+import type { Discount, DiscountFormData, PaginatedList } from "@/types";
 
 const { Title, Text } = Typography;
 

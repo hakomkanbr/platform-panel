@@ -39,7 +39,10 @@ export function useProduct(id: string | null) {
 export function useCreateProduct() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: ProductUpsertBody) => productsApi.create(body),
+    mutationFn: (body: ProductWorkspaceBody | ProductUpsertBody) =>
+      "name" in body
+        ? productsApi.createWorkspace(body as ProductWorkspaceBody)
+        : productsApi.create(body as ProductUpsertBody),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["catalog", "products"] });
     },

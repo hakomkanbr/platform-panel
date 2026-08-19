@@ -13,12 +13,13 @@ import {
   Typography,
 } from "antd";
 import type { TableColumnsType } from "antd";
-import { DeleteOutlined, PlusOutlined, TagsOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, SyncOutlined, TagsOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm } from "@repo/ui";
 import { formatDateTime } from "@repo/utils";
 import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
+import { generateSlug, slugRule } from "../../../utils/slug";
 import { useDeleteTag, useSaveTag, useSetTagStatus, useTags } from "../../../hooks/useTags";
 import { useCommerce } from "../../../context/CommerceContext";
 import { useProjectLanguages } from "../../../hooks/useLanguages";
@@ -35,6 +36,7 @@ export function TagsPage() {
   const [status, setStatus] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editing, setEditing] = useState<Tag | null>(null);
+  const [isSlugCustomized, setIsSlugCustomized] = useState(false);
   const [form] = Form.useForm();
   
   const { projectId } = useCommerce();
@@ -53,12 +55,24 @@ export function TagsPage() {
 
   const rows = (data?.data ?? []) as TagRow[];
 
+  const handleValuesChange = (changedValues: any) => {
+    if (changedValues.name !== undefined && !isSlugCustomized) {
+      const generated = generateSlug(changedValues.name);
+      form.setFieldValue("slug", generated);
+      form.validateFields(["slug"]).catch(() => {});
+    }
+    if (changedValues.slug !== undefined) {
+      setIsSlugCustomized(true);
+    }
+  };
+
   const openCreate = () => {
     setEditing(null);
     form.resetFields();
     if (defaultLanguage) {
       form.setFieldValue("languageId", defaultLanguage.id);
     }
+    setIsSlugCustomized(false);
     setDrawerOpen(true);
   };
 
@@ -72,6 +86,7 @@ export function TagsPage() {
       // @ts-ignore
       languageId: tag.languageId ?? defaultLanguage?.id,
     });
+    setIsSlugCustomized(true);
     setDrawerOpen(true);
   };
 
@@ -84,7 +99,7 @@ export function TagsPage() {
         id: editing?.id,
         body: {
           name: values.name as string,
-          slug: values.slug as string | undefined,
+          slug: (values.slug as string) || generateSlug(values.name as string),
           status: (values.status as number) ?? 1,
           languageId: selectedLanguageId,
           cultureCode: selectedCulture,
@@ -226,7 +241,7 @@ export function TagsPage() {
         onFinish={onFinish}
         submitLabel={editing ? t("common.actions.saveChanges") : t("catalog.tags.submitCreate")}
       >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={onFinish} onValuesChange={handleValuesChange}>
           <Form.Item name="languageId" label={t("common.fields.language")} rules={[{ required: true }]}>
             <Select
               loading={!languages && projectId ? true : undefined}
@@ -240,8 +255,28 @@ export function TagsPage() {
           <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
             <Input placeholder={t("catalog.tags.placeholderName")} />
           </Form.Item>
-          <Form.Item name="slug" label={t("common.fields.slug")}>
-            <Input placeholder={t("catalog.tags.placeholderSlug")} />
+          <Form.Item name="slug" label={t("common.fields.slug")} rules={[slugRule(t)]}>
+            <Input
+              placeholder={t("catalog.tags.placeholderSlug")}
+              suffix={
+                <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate"}>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<SyncOutlined />}
+                    style={{ color: "var(--text-secondary)" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentName = form.getFieldValue("name") || "";
+                      const generated = generateSlug(currentName);
+                      form.setFieldValue("slug", generated);
+                      setIsSlugCustomized(false);
+                      form.validateFields(["slug"]).catch(() => {});
+                    }}
+                  />
+                </Tooltip>
+              }
+            />
           </Form.Item>
           <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />

@@ -18,13 +18,16 @@ export interface PriceListReadModel {
   description?: string | null;
   status: PriceListStatus;
   taxMode: TaxMode;
-  currencyId: Id;
+  currencyId: string;
+  currencyCode?: string;
   priority: number;
   isActive: boolean;
   effectiveFrom: string;
   effectiveTo?: string | null;
   publishedAt?: string | null;
   archivedAt?: string | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
   versionNumber: number;
   translations: PriceListTranslationReadModel[];
   customerGroupIds: Id[];
@@ -61,7 +64,7 @@ export interface CreatePriceListCommand {
   name: string;
   description?: string | null;
   taxMode: TaxMode;
-  currencyId: Id;
+  currencyId?: string;
   priority?: number;
   effectiveFrom?: string | null;
   effectiveTo?: string | null;
@@ -71,7 +74,7 @@ export interface UpdatePriceListRequest {
   name: string;
   description?: string | null;
   taxMode: TaxMode;
-  currencyId: Id;
+  currencyId: string;
   priority: number;
   effectiveFrom: string;
   effectiveTo?: string | null;
@@ -126,7 +129,8 @@ export interface ProductPriceReadModel {
   id: Id;
   productId: Id;
   variantId?: Id | null;
-  currencyId: Id;
+  currencyId: string;
+  currencyCode?: string;
   priceListId?: Id | null;
   customerGroupId?: Id | null;
   channelId?: Id | null;
@@ -187,7 +191,7 @@ export interface CreateProductPriceCommand {
   priceListId?: Id | null;
   productId?: Id | null;
   variantId?: Id | null;
-  currencyId?: Id | null;
+  currencyId?: string | null;
   baseAmount: number;
   compareAtAmount?: number | null;
   minAmount?: number | null;

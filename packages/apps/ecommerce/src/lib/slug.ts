@@ -1,14 +1,8 @@
+import { generateSlug } from "../commerce/utils/slug";
+
 function slug(text: any) {
-  return String(text)
-    .toLocaleLowerCase("tr-TR")
-    .replaceAll("ğ", "g")
-    .replaceAll("ü", "u")
-    .replaceAll("ş", "s")
-    .replaceAll("ı", "i")
-    .replaceAll("ö", "o")
-    .replaceAll("ç", "c")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
+  return generateSlug(text);
 }
 
-export default slug;
+export { generateSlug };
+export default slug;

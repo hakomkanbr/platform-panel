@@ -83,6 +83,7 @@
       "selectTags": "Etiketleri seçin",
       "code": "Kod",
       "slug": "Slug",
+      "autoGenerateSlug": "İsimden otomatik oluştur",
       "price": "Fiyat",
       "sku": "SKU",
       "barcode": "Barkod",
@@ -150,13 +151,14 @@
     },
     "tabs": {
       "media": {
+        "addFromLibrary": "Medya Kütüphanesinden Ekle",
         "pasteUrl": "Medya URL'sini yapıştırın...",
         "add": "Ekle",
-        "added": "Medya eklendi",
+        "added": "Medya başarıyla eklendi",
         "removed": "Medya kaldırıldı",
-        "removeConfirm": "Medya kaldırılsın mı?",
-        "emptyTitle": "Medya yok",
-        "emptyDescription": "Galeriyi oluşturmak için ürün görsellerini URL ile ekleyin."
+        "removeConfirm": "Bu görseli üründen kaldırmak istiyor musunuz?",
+        "emptyTitle": "Medya Yok",
+        "emptyDescription": "Müşterilere sergilemek için Medya Kütüphanesinden veya doğrudan URL ile ürün görselleri ekleyin."
       },
       "options": {
         "new": "Yeni seçenek",
@@ -247,6 +249,8 @@
     "selectHint": "Düzenlemek için ağaçtan bir kategori seçin veya yeni bir tane oluşturun.",
     "sortOrder": "Sıralama",
     "imageUrl": "Görsel URL'si",
+    "selectImage": "Medya Kütüphanesinden Seç",
+    "changeImage": "Medya Kütüphanesinden Değiştir",
     "parentCategory": "Üst kategori",
     "noParent": "Üst kategori yok (üst düzey)",
     "addChild": "Alt kategori ekle",

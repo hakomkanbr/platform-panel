@@ -10,3 +10,4 @@ export { type Coupon, type CouponFormData } from './coupon';
 export { type Comment } from './comment';
 export { type Warehouse, type WarehouseFormData, type InventoryItem, type InventoryFormData, type InventorySummary, type InventoryListParams, type StockMovement, StockMovementType } from './inventory';
 export { type ApiKeyDto, type ApiKeyGeneratedResponse, type CreateApiKeyRequest, type UpdateApiKeyRequest, type RegenerateApiKeyResponse, API_KEY_SCOPE_OPTIONS } from './api-keys';
+export { type TaxClass, type TaxClassDetail, type TaxRate, type TaxClassFormData, type TaxRateFormData, type TaxCalculationParams, type TaxCalculationResult, type AppliedTaxDetail, type TaxClassSearchParams, type TaxRateSearchParams } from './tax';

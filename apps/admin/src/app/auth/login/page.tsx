@@ -98,7 +98,7 @@ function LoginPageContent() {
     } finally {
       setLoading(false);
     }
-  }, [email, password, router, redirectUrl, t]);
+  }, [email, password, router, redirectUrl, t, login]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleLogin();
@@ -108,25 +108,13 @@ function LoginPageContent() {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      style={{
-        background: "#FFFFFF",
-        borderRadius: 20,
-        padding: "40px 36px",
-        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.06)",
-        border: "1px solid #E5E7EB",
-      }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div style={{ marginBottom: 28, textAlign: "start" }}>
-        <img
-          src="/assets/images/logo-png.png"
-          alt="Logo"
-          style={{ height: 48, marginBottom: 24, objectFit: "contain" }}
-        />
-        <Title level={2} style={{ margin: 0, fontSize: 26, fontWeight: 800, color: "#1F2937", letterSpacing: "-0.03em" }}>
+      <div className="auth-header-section">
+        <Title level={2} className="auth-main-title">
           {t("auth.login.welcomeBack")}
         </Title>
-        <Text style={{ fontSize: 14, color: "#6B7280", marginTop: 4, display: "block" }}>
+        <Text className="auth-subtitle">
           {t("auth.login.subtitle")}
         </Text>
       </div>
@@ -135,52 +123,39 @@ function LoginPageContent() {
         <motion.div
           key={shakeKey}
           initial={{ opacity: 0, y: -8, x: 0 }}
-          animate={{ opacity: 1, y: 0, x: [0, -10, 10, -10, 10, 0] }}
+          animate={{ opacity: 1, y: 0, x: [0, -8, 8, -8, 8, 0] }}
           transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-          style={{
-            padding: "12px 16px",
-            borderRadius: 12,
-            background: "#FEF2F2",
-            border: "1px solid #FECACA",
-            color: "#DC2626",
-            fontSize: 13,
-            fontWeight: 500,
-            marginBottom: 20,
-            textAlign: "center",
-          }}
+          className="auth-error-banner"
         >
           {error}
         </motion.div>
       )}
 
       {/* Email Input */}
-      <div style={{ marginBottom: 18 }}>
-        <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+      <div className="auth-form-group">
+        <label className="auth-label">
           {t("auth.login.emailLabel")}
         </label>
         <Input
           size="large"
+          type="email"
+          autoComplete="email"
           placeholder={t("auth.login.emailPlaceholder")}
-          prefix={<MailOutlined style={{ color: "#9CA3AF", fontSize: 16 }} />}
+          prefix={<MailOutlined style={{ color: "#9CA3AF", fontSize: 16, marginInlineEnd: 4 }} />}
           value={email}
           onChange={(e) => {
             setEmail(e.target.value);
             setError(null);
           }}
           onKeyDown={handleKeyDown}
-          style={{
-            borderRadius: 10,
-            height: 46,
-            fontSize: 14,
-            border: "1.5px solid #E5E7EB",
-          }}
+          className="auth-input-custom"
         />
       </div>
 
       {/* Password Input */}
-      <div style={{ marginBottom: 18 }}>
+      <div className="auth-form-group">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-          <label style={{ fontSize: 13, fontWeight: 600, color: "#374151", margin: 0 }}>
+          <label className="auth-label" style={{ marginBottom: 0 }}>
             {t("auth.login.passwordLabel")}
           </label>
           <Link
@@ -193,12 +168,14 @@ function LoginPageContent() {
         <Input
           size="large"
           type={showPassword ? "text" : "password"}
+          autoComplete="current-password"
           placeholder="••••••••••••"
-          prefix={<LockOutlined style={{ color: "#9CA3AF", fontSize: 16 }} />}
+          prefix={<LockOutlined style={{ color: "#9CA3AF", fontSize: 16, marginInlineEnd: 4 }} />}
           suffix={
             <span
               onClick={() => setShowPassword(!showPassword)}
-              style={{ cursor: "pointer", color: "#9CA3AF", display: "flex" }}
+              style={{ cursor: "pointer", color: "#9CA3AF", display: "flex", padding: 4 }}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
             </span>
@@ -209,17 +186,12 @@ function LoginPageContent() {
             setError(null);
           }}
           onKeyDown={handleKeyDown}
-          style={{
-            borderRadius: 10,
-            height: 46,
-            fontSize: 14,
-            border: "1.5px solid #E5E7EB",
-          }}
+          className="auth-input-custom"
         />
       </div>
 
       {/* Remember me */}
-      <div style={{ marginBottom: 24, display: "flex", alignItems: "center" }}>
+      <div className="auth-action-row">
         <Checkbox
           checked={remember}
           onChange={(e) => setRemember(e.target.checked)}
@@ -235,23 +207,7 @@ function LoginPageContent() {
         disabled={loading}
         whileHover={loading ? {} : { scale: 1.01 }}
         whileTap={loading ? {} : { scale: 0.99 }}
-        style={{
-          width: "100%",
-          height: 48,
-          borderRadius: 12,
-          fontSize: 15,
-          fontWeight: 700,
-          border: "none",
-          background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
-          color: "#FFFFFF",
-          cursor: loading ? "not-allowed" : "pointer",
-          boxShadow: "0 4px 14px rgba(247, 147, 30, 0.35)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 10,
-          transition: "all 0.2s ease",
-        }}
+        className="auth-submit-btn"
       >
         {loading ? (
           <>
@@ -261,7 +217,7 @@ function LoginPageContent() {
         ) : (
           <>
             <span>{t("auth.login.signIn")}</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "scaleX(var(--auth-dir-scale, 1))" }}>
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
@@ -275,7 +231,7 @@ function LoginPageContent() {
           display: "flex",
           alignItems: "center",
           gap: 16,
-          margin: "24px 0",
+          margin: "22px 0",
         }}
       >
         <div style={{ flex: 1, height: 1, background: "#E5E7EB" }} />
@@ -283,31 +239,16 @@ function LoginPageContent() {
         <div style={{ flex: 1, height: 1, background: "#E5E7EB" }} />
       </div>
 
-      {/* Social SSO Buttons */}
+      {/* Social SSO Button */}
       <div>
         <button
           type="button"
           disabled
-          style={{
-            width: "100%",
-            height: 42,
-            borderRadius: 10,
-            border: "1.5px solid #E5E7EB",
-            background: "#F9FAFB",
-            color: "#9CA3AF",
-            fontSize: 13,
-            fontWeight: 600,
-            cursor: "not-allowed",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            opacity: 0.7,
-            transition: "all 0.2s ease",
-          }}
+          className="auth-secondary-btn"
+          style={{ cursor: "not-allowed", opacity: 0.75 }}
         >
           <GoogleOutlined style={{ fontSize: 16, color: "#9CA3AF" }} />
-          {t("auth.login.google")}
+          <span>{t("auth.login.google")}</span>
         </button>
       </div>
 
@@ -315,7 +256,7 @@ function LoginPageContent() {
       <div style={{ textAlign: "center", marginTop: 24 }}>
         <Text style={{ color: "#6B7280", fontSize: 13 }}>
           {t("auth.login.needWorkspace")}{" "}
-          <Link href="/auth/register" style={{ color: "#F7931E", fontWeight: 600, textDecoration: "none" }}>
+          <Link href="/auth/register" style={{ color: "#F7931E", fontWeight: 700, textDecoration: "none" }}>
             {t("auth.login.createAccount")}
           </Link>
         </Text>

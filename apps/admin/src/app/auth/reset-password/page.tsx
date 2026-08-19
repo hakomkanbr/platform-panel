@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useMemo, Suspense } from "react";
-import { Button, Input, Typography, Spin } from "antd";
+import { Input, Typography, Spin } from "antd";
 import {
   LockOutlined,
   EyeInvisibleOutlined,
@@ -14,7 +14,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authApi } from "@repo/auth";
 import { useTranslations } from "@repo/localization";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 function getPasswordStrength(password: string) {
   let score = 0;
@@ -77,25 +77,25 @@ function ResetPasswordPageContent() {
 
   if (!token) {
     return (
-      <div style={{ textAlign: "center", padding: "16px 0" }}>
+      <div style={{ textAlign: "center", padding: "12px 0" }}>
         <div
           style={{
-            margin: "0 auto 14px",
-            width: 48,
-            height: 48,
+            margin: "0 auto 16px",
+            width: 54,
+            height: 54,
             borderRadius: "50%",
-            background: "#fef2f2",
+            background: "#FEF2F2",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
           <svg
-            width="24"
-            height="24"
+            width="26"
+            height="26"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#dc2626"
+            stroke="#EF4444"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -105,36 +105,24 @@ function ResetPasswordPageContent() {
             <line x1="9" y1="9" x2="15" y2="15" />
           </svg>
         </div>
-        <Text
-          style={{
-            color: "#374151",
-            fontSize: 15,
-            fontWeight: 600,
-            display: "block",
-          }}
-        >
+        <Title level={3} className="auth-main-title" style={{ fontSize: 18, textAlign: "center" }}>
           {t("auth.reset.invalidOrExpired")}
-        </Text>
+        </Title>
         <div
           style={{
-            color: "#6b7280",
+            color: "#6B7280",
             fontSize: 13,
             marginTop: 6,
-            marginBottom: 18,
+            marginBottom: 20,
             lineHeight: 1.5,
           }}
         >
           {t("auth.reset.invalidLinkDesc")}
         </div>
-        <Link href="/auth/forgot-password">
-          <Button
-            type="primary"
-            size="large"
-            className="auth-btn-gradient"
-            style={{ width: "auto", paddingInline: 20 }}
-          >
+        <Link href="/auth/forgot-password" style={{ textDecoration: "none" }}>
+          <button className="auth-submit-btn" style={{ width: "auto", padding: "0 24px", margin: "0 auto" }}>
             {t("auth.reset.requestNewLink")}
-          </Button>
+          </button>
         </Link>
       </div>
     );
@@ -147,20 +135,30 @@ function ResetPasswordPageContent() {
           key="success"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          style={{ textAlign: "center", padding: "8px 0" }}
+          style={{ textAlign: "center", padding: "12px 0" }}
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="auth-check-icon"
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: "50%",
+              background: "#F0FDF4",
+              border: "1.5px solid #BBF7D0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+            }}
           >
             <svg
-              width="28"
-              height="28"
+              width="30"
+              height="30"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#22c55e"
+              stroke="#10B981"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -168,43 +166,22 @@ function ResetPasswordPageContent() {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </motion.div>
-          <Text
-            style={{
-              color: "#374151",
-              fontSize: 16,
-              fontWeight: 600,
-              display: "block",
-            }}
-          >
+          <Title level={3} className="auth-main-title" style={{ fontSize: 20, textAlign: "center" }}>
             {t("auth.reset.resetSuccessful")}
-          </Text>
-          <div style={{ color: "#6b7280", fontSize: 13, marginTop: 6 }}>
+          </Title>
+          <div style={{ color: "#6B7280", fontSize: 13, marginTop: 6 }}>
             {t("auth.reset.redirecting")}
           </div>
         </motion.div>
       ) : (
         <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div style={{ textAlign: "center", marginBottom: 20 }}>
-            <Text
-              style={{
-                color: "#374151",
-                fontSize: 16,
-                fontWeight: 600,
-                display: "block",
-              }}
-            >
+          <div className="auth-header-section" style={{ textAlign: "center", marginBottom: 22 }}>
+            <Title level={2} className="auth-main-title">
               {t("auth.reset.title")}
-            </Text>
-            <div
-              style={{
-                color: "#6b7280",
-                fontSize: 13,
-                marginTop: 4,
-                lineHeight: 1.5,
-              }}
-            >
+            </Title>
+            <Text className="auth-subtitle">
               {t("auth.reset.subtitle")}
-            </div>
+            </Text>
           </div>
 
           <AnimatePresence>
@@ -213,42 +190,43 @@ function ResetPasswordPageContent() {
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="auth-error"
+                className="auth-error-banner"
               >
                 {error}
               </motion.div>
             )}
           </AnimatePresence>
 
-          <div style={{ marginBottom: 16 }}>
+          <div className="auth-form-group">
             <label className="auth-label">{t("auth.reset.newPassword")}</label>
             <Input.Password
               size="large"
               placeholder={t("auth.reset.enterNewPassword")}
-              className="auth-input-wrapper"
               prefix={
-                <LockOutlined style={{ color: "#9ca3af", fontSize: 16 }} />
+                <LockOutlined style={{ color: "#9CA3AF", fontSize: 16, marginInlineEnd: 4 }} />
               }
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
+              className="auth-input-custom"
             />
             {password && (
               <div style={{ marginTop: 8 }}>
-                <div style={{ display: "flex", gap: 4, marginBottom: 3 }}>
+                <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
                   {[1, 2, 3, 4].map((i) => (
-                    <motion.div
+                    <div
                       key={i}
-                      animate={{
+                      style={{
                         flex: 1,
-                        height: 3,
+                        height: 4,
                         borderRadius: 2,
                         background:
                           strength.score / 25 >= i
                             ? strength.color
-                            : "#e5e7eb",
+                            : "#E5E7EB",
+                        transition: "background 0.3s ease",
                       }}
                     />
                   ))}
@@ -257,7 +235,7 @@ function ResetPasswordPageContent() {
                   style={{
                     color: strength.color,
                     fontSize: 11,
-                    fontWeight: 500,
+                    fontWeight: 600,
                   }}
                 >
                   {t(`auth.reset.${strength.labelKey}`)}
@@ -266,25 +244,25 @@ function ResetPasswordPageContent() {
             )}
           </div>
 
-          <div style={{ marginBottom: 20 }}>
+          <div className="auth-form-group">
             <label className="auth-label">{t("auth.reset.confirmPassword")}</label>
             <Input.Password
               size="large"
               placeholder={t("auth.reset.repeatNewPassword")}
-              className="auth-input-wrapper"
               prefix={
-                <LockOutlined style={{ color: "#9ca3af", fontSize: 16 }} />
+                <LockOutlined style={{ color: "#9CA3AF", fontSize: 16, marginInlineEnd: 4 }} />
               }
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
+              className="auth-input-custom"
             />
             {confirmPassword && password !== confirmPassword && (
               <Text
                 style={{
-                  color: "#ef4444",
+                  color: "#EF4444",
                   fontSize: 11,
                   marginTop: 4,
                   display: "block",
@@ -297,91 +275,89 @@ function ResetPasswordPageContent() {
 
           <div
             style={{
-              padding: 12,
-              borderRadius: 8,
-              background: "#fafafa",
+              padding: "12px 14px",
+              borderRadius: 10,
+              background: "#F9FAFB",
+              border: "1px solid #F3F4F6",
               marginBottom: 20,
             }}
           >
             <Text
               style={{
-                color: "#6b7280",
-                fontSize: 11,
-                fontWeight: 500,
-                marginBottom: 6,
+                color: "#4B5563",
+                fontSize: 12,
+                fontWeight: 600,
+                marginBottom: 8,
                 display: "block",
               }}
             >
               {t("auth.reset.requirements")}
             </Text>
-            {[
-              { key: "reqChars", test: (p: string) => p.length >= 8 },
-              { key: "reqUppercase", test: (p: string) => /[A-Z]/.test(p) },
-              { key: "reqNumber", test: (p: string) => /[0-9]/.test(p) },
-              { key: "reqSpecial", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
-            ].map((req) => (
-              <div
-                key={req.key}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "2px 0",
-                }}
-              >
-                {req.test(password) ? (
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#22c55e"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#d1d5db"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                )}
-                <Text
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 12px" }}>
+              {[
+                { key: "reqChars", test: (p: string) => p.length >= 8 },
+                { key: "reqUppercase", test: (p: string) => /[A-Z]/.test(p) },
+                { key: "reqNumber", test: (p: string) => /[0-9]/.test(p) },
+                { key: "reqSpecial", test: (p: string) => /[^A-Za-z0-9]/.test(p) },
+              ].map((req) => (
+                <div
+                  key={req.key}
                   style={{
-                    color: req.test(password) ? "#22c55e" : "#6b7280",
-                    fontSize: 12,
-                    transition: "color 0.2s",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
                   }}
                 >
-                  {t(`auth.reset.${req.key}`)}
-                </Text>
-              </div>
-            ))}
+                  {req.test(password) ? (
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#10B981"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <div style={{ width: 12, height: 12, borderRadius: "50%", border: "1.5px solid #D1D5DB" }} />
+                  )}
+                  <Text
+                    style={{
+                      color: req.test(password) ? "#10B981" : "#6B7280",
+                      fontSize: 11,
+                      fontWeight: req.test(password) ? 600 : 400,
+                      transition: "color 0.2s",
+                    }}
+                  >
+                    {t(`auth.reset.${req.key}`)}
+                  </Text>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-            <Button
-              type="primary"
-              size="large"
-              onClick={handleSubmit}
-              loading={loading}
-              disabled={loading}
-              className="auth-btn-gradient"
-            >
-              {t("auth.reset.submit")} <ArrowRightOutlined />
-            </Button>
-          </motion.div>
+          <motion.button
+            onClick={handleSubmit}
+            disabled={loading}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            className="auth-submit-btn"
+          >
+            {loading ? (
+              <>
+                <Spin size="small" style={{ color: "#fff" }} />
+                <span>{t("auth.reset.submit")}</span>
+              </>
+            ) : (
+              <>
+                <span>{t("auth.reset.submit")}</span>
+                <ArrowRightOutlined />
+              </>
+            )}
+          </motion.button>
         </motion.div>
       )}
     </AnimatePresence>
@@ -390,7 +366,7 @@ function ResetPasswordPageContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div style={{ textAlign: 'center', padding: 48 }}><Spin size="large" /></div>}>
+    <Suspense fallback={<div style={{ textAlign: "center", padding: 48 }}><Spin size="large" /></div>}>
       <ResetPasswordPageContent />
     </Suspense>
   );

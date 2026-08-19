@@ -14,9 +14,12 @@
     "brands": "Markalar",
     "tags": "Etiketler",
     "attributes": "Özellikler",
+    "media": "Medya",
     "pricing": "Fiyatlandırma",
     "priceLists": "Fiyat Listeleri",
     "productPrices": "Ürün Fiyatları",
+    "discounts": "İndirimler",
+    "taxes": "Vergiler",
     "orders": "Siparişler",
     "ordersList": "Siparişler",
     "returns": "İadeler",
@@ -38,6 +41,8 @@
   "actions": {
     "back": "Geri",
     "cancel": "İptal",
+    "create": "Oluştur",
+    "move": "Taşı",
     "saveChanges": "Değişiklikleri kaydet",
     "delete": "Sil",
     "edit": "Düzenle",
@@ -60,5 +65,70 @@
     "nameRequired": "Ad zorunludur",
     "keyRequired": "Anahtar zorunludur",
     "currency": "Para birimi"
+  },
+  "media": {
+    "title": "Medya Kütüphanesi",
+    "description": "Projeniz için medya varlıklarını yönetin ve düzenleyin",
+    "searchPlaceholder": "İsme veya etikete göre ara...",
+    "allFiles": "Tüm Dosyalar",
+    "rootFolder": "Ana Klasör",
+    "newFolder": "Yeni Klasör",
+    "folderName": "Klasör Adı",
+    "enterFolderName": "Klasör adını girin",
+    "createFolder": "Klasör Oluştur",
+    "deleteFolder": "Klasörü Sil",
+    "deleteFolderConfirm": "Bu boş klasörü silmek istediğinize emin misiniz?",
+    "folderCreated": "Klasör başarıyla oluşturuldu",
+    "folderDeleted": "Klasör başarıyla silindi",
+    "emptyFolder": "Boş klasör",
+    "moveToFolder": "Klasöre Taşı",
+    "selectDestinationFolder": "Hedef klasörü seçin",
+    "movedToFolder": "Dosyalar başarıyla taşındı",
+    "accessControl": "Erişim Kontrolü ve Bağlantılar",
+    "publicAccess": "Genel Erişim",
+    "signedUrl": "İmzalı Bağlantı",
+    "generateSignedUrl": "İmzalı Bağlantı Oluştur",
+    "expiry": "Geçerlilik Süresi",
+    "expiry1h": "1 Saat",
+    "expiry24h": "24 Saat",
+    "expiry7d": "7 Gün",
+    "copyUrl": "Bağlantıyı Kopyala",
+    "urlCopied": "Bağlantı panoya kopyalandı",
+    "variants": "Optimize Edilmiş Varyantlar",
+    "preview": {
+      "name": "Dosya Adı",
+      "type": "Tür",
+      "size": "Boyut",
+      "visibility": "Görünürlük",
+      "uploaded": "Yükleme Tarihi",
+      "dimensions": "Boyutlar",
+      "prev": "Önceki",
+      "next": "Sonraki",
+      "noPreview": "Önizleme mevcut değil"
+    },
+    "visibility": {
+      "public": "Genel",
+      "private": "Özel",
+      "restricted": "Kısıtlı"
+    },
+    "actions": {
+      "upload": "Dosya Yükle",
+      "delete": "Sil",
+      "download": "İndir",
+      "preview": "Önizleme",
+      "selectAll": "Tümünü Seç",
+      "bulkActions": "Toplu İşlemler"
+    },
+    "toasts": {
+      "uploaded": "Dosya başarıyla yüklendi",
+      "deleted": "Dosya başarıyla silindi",
+      "bulkDeleted": "{count} dosya başarıyla silindi",
+      "visibilityUpdated": "Görünürlük başarıyla güncellendi"
+    },
+    "noProject": {
+      "title": "Proje Seçilmedi",
+      "description": "Medya varlıklarını yönetmek için lütfen bir proje seçin",
+      "goToProjects": "Projeler'e Git"
+    }
   }
 }

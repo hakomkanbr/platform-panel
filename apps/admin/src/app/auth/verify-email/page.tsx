@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef, Suspense } from "react";
-import { Button, Typography, Spin } from "antd";
+import { Typography, Spin } from "antd";
 import {
   MailOutlined,
   ReloadOutlined,
@@ -13,7 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { authApi } from "@repo/auth";
 import { useTranslations } from "@repo/localization";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 function VerifyEmailPageContent() {
   const router = useRouter();
@@ -33,7 +33,7 @@ function VerifyEmailPageContent() {
         if (result.success && result.data?.verified) {
           setVerified(true);
           if (intervalRef.current) clearInterval(intervalRef.current);
-          setTimeout(() => router.push("/tenant"), 1500);
+          setTimeout(() => router.push("/admin"), 1500);
         }
       } catch {}
     }, 3000);
@@ -44,8 +44,8 @@ function VerifyEmailPageContent() {
 
   useEffect(() => {
     if (countdown > 0) {
-      const t = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(t);
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
     }
   }, [countdown]);
 
@@ -69,20 +69,30 @@ function VerifyEmailPageContent() {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 15 }}
-          style={{ textAlign: "center", padding: "8px 0" }}
+          style={{ textAlign: "center", padding: "12px 0" }}
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="auth-check-icon"
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: "50%",
+              background: "#F0FDF4",
+              border: "1.5px solid #BBF7D0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+            }}
           >
             <svg
-              width="28"
-              height="28"
+              width="30"
+              height="30"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#22c55e"
+              stroke="#10B981"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -90,17 +100,10 @@ function VerifyEmailPageContent() {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </motion.div>
-          <Text
-            style={{
-              color: "#374151",
-              fontSize: 16,
-              fontWeight: 600,
-              display: "block",
-            }}
-          >
+          <Title level={3} className="auth-main-title" style={{ fontSize: 20, textAlign: "center" }}>
             {t("auth.verify.emailVerified")}
-          </Text>
-          <div style={{ color: "#6b7280", fontSize: 13, marginTop: 6 }}>
+          </Title>
+          <div style={{ color: "#6B7280", fontSize: 13, marginTop: 6 }}>
             {t("auth.verify.redirectingDashboard")}
           </div>
         </motion.div>
@@ -113,92 +116,81 @@ function VerifyEmailPageContent() {
         >
           <motion.div
             animate={{ y: [0, -5, 0] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
             style={{
-              width: 56,
-              height: 56,
-              borderRadius: 14,
+              width: 60,
+              height: 60,
+              borderRadius: 16,
               background: "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              margin: "0 auto 14px",
-              boxShadow: "0 6px 20px rgba(247,147,30,0.25)",
+              margin: "0 auto 16px",
+              boxShadow: "0 8px 24px rgba(247, 147, 30, 0.3)",
             }}
           >
-            <MailOutlined style={{ fontSize: 24, color: "#fff" }} />
+            <MailOutlined style={{ fontSize: 26, color: "#FFFFFF" }} />
           </motion.div>
 
-          <Text
-            style={{
-              color: "#374151",
-              fontSize: 16,
-              fontWeight: 600,
-              display: "block",
-            }}
-          >
+          <Title level={2} className="auth-main-title" style={{ fontSize: 22, textAlign: "center" }}>
             {t("auth.verify.checkInbox")}
-          </Text>
+          </Title>
           <div
             style={{
-              color: "#6b7280",
+              color: "#6B7280",
               fontSize: 13,
               marginTop: 6,
-              lineHeight: 1.5,
+              lineHeight: 1.6,
             }}
           >
             {t("auth.verify.sentTo")}{" "}
-            <Text style={{ color: "#374151", fontWeight: 600 }}>{email}</Text>
+            <Text style={{ color: "#1F2937", fontWeight: 700 }}>{email}</Text>
           </div>
 
           <div
             style={{
               margin: "18px 0",
-              padding: 12,
-              borderRadius: 8,
-              background: "#fafafa",
-              color: "#6b7280",
+              padding: "12px 14px",
+              borderRadius: 10,
+              background: "#F9FAFB",
+              border: "1px solid #F3F4F6",
+              color: "#6B7280",
               fontSize: 12,
               lineHeight: 1.5,
+              textAlign: "start",
             }}
           >
             {t("auth.verify.noEmail")}
           </div>
 
-          <Button
-            type="primary"
-            size="large"
-            icon={<ReloadOutlined />}
+          <button
             onClick={handleResend}
-            loading={resending}
             disabled={countdown > 0 || resending}
+            className="auth-submit-btn"
             style={{
-              width: "100%",
-              height: 40,
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 500,
-              background:
-                countdown > 0
-                  ? "#9ca3af"
-                  : "linear-gradient(135deg, #F7931E 0%, #E67E00 100%)",
-              border: "none",
-              transition: "background 0.2s",
+              background: countdown > 0 ? "#9CA3AF" : undefined,
+              boxShadow: countdown > 0 ? "none" : undefined,
             }}
           >
-            {countdown > 0
-              ? t("auth.verify.resendIn", { seconds: countdown })
-              : t("auth.verify.resendVerification")}
-          </Button>
+            {resending ? (
+              <Spin size="small" style={{ color: "#fff" }} />
+            ) : (
+              <ReloadOutlined />
+            )}
+            <span>
+              {countdown > 0
+                ? t("auth.verify.resendIn", { seconds: countdown })
+                : t("auth.verify.resendVerification")}
+            </span>
+          </button>
 
-          <div style={{ marginTop: 14 }}>
+          <div style={{ marginTop: 18, textAlign: "center" }}>
             <Link
               href="/auth/login"
-              className="auth-link"
-              style={{ fontSize: 13, fontWeight: 400 }}
+              style={{ color: "#6B7280", fontSize: 13, fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              <ArrowRightOutlined style={{ marginRight: 4 }} />
-              {t("auth.verify.backToLogin")}
+              <span>{t("auth.verify.backToLogin")}</span>
+              <ArrowRightOutlined style={{ fontSize: 12 }} />
             </Link>
           </div>
         </motion.div>
@@ -209,7 +201,7 @@ function VerifyEmailPageContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div style={{ textAlign: 'center', padding: 48 }}><Spin size="large" /></div>}>
+    <Suspense fallback={<div style={{ textAlign: "center", padding: 48 }}><Spin size="large" /></div>}>
       <VerifyEmailPageContent />
     </Suspense>
   );

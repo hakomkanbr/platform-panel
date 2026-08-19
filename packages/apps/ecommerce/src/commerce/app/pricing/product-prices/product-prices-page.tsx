@@ -16,12 +16,13 @@ import {
   Select,
   Space,
   Table,
+  Tag,
   Typography,
 } from "antd";
 import type { TableColumnsType } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm, EmptyState } from "@repo/ui";
-import { formatCurrency, formatDateTime } from "@repo/utils";
+import { formatCurrency, formatDateTime, SUPPORTED_CURRENCIES, getCurrencyInfo, type CurrencyInfo } from "@repo/utils";
 import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
@@ -39,6 +40,7 @@ import {
 } from "../../../hooks/useProductPrices";
 import { usePriceLists } from "../../../hooks/usePriceLists";
 import { useProducts } from "../../../hooks/useProducts";
+import { useTenantCurrencySettings } from "../../../hooks/useCurrencies";
 import { getApiErrorMessage } from "../../../api/http";
 
 const { Text } = Typography;
@@ -57,6 +59,9 @@ export function ProductPricesPage() {
   const [detailId, setDetailId] = useState<string | null>(null);
   const [form] = Form.useForm();
 
+  const tenantCurrencyQuery = useTenantCurrencySettings();
+  const baseCurrencyCode = tenantCurrencyQuery.data?.baseCurrencyCode || "SAR";
+
   const priceLists = usePriceLists({ page: 1, pageSize: 100 });
 
   const { data, isLoading, isError, error, refetch } = useProductPrices({
@@ -73,6 +78,7 @@ export function ProductPricesPage() {
 
   const openCreate = () => {
     form.resetFields();
+    form.setFieldsValue({ currencyId: baseCurrencyCode });
     setDrawerOpen(true);
   };
 
@@ -100,30 +106,68 @@ export function ProductPricesPage() {
     }
   };
 
+  const products = useProducts({ page: 1, pageSize: 100 });
+  const productsList = products.data?.data ?? [];
+
   const columns: TableColumnsType<PriceRow> = [
     {
       title: t("pricing.productPrices.productColumn"),
       dataIndex: "productId",
-      render: (v) => <Text strong>{v ?? "\u2014"}</Text>,
+      render: (v) => {
+        const prod = productsList.find((p) => p.id === v);
+        return (
+          <Space direction="vertical" size={2}>
+            <Text strong>{prod?.name ?? v ?? "—"}</Text>
+            {prod?.code && <Text type="secondary" style={{ fontSize: 11 }}>{prod.code}</Text>}
+          </Space>
+        );
+      },
     },
-    { title: t("pricing.productPrices.priceListColumn"), dataIndex: "priceListId", render: (v) => v ?? "\u2014" },
-    { title: t("pricing.productPrices.currencyColumn"), dataIndex: "currencyId", render: (v) => v ?? "\u2014" },
+    {
+      title: t("pricing.productPrices.priceListColumn"),
+      dataIndex: "priceListId",
+      render: (v) => {
+        const pl = (priceLists.data?.data ?? []).find((p) => p.id === v);
+        return pl ? <Tag color="blue">{pl.name}</Tag> : (v ? <Text type="secondary" style={{ fontSize: 11 }}>{v}</Text> : <Text type="secondary">—</Text>);
+      },
+    },
+    {
+      title: t("pricing.productPrices.currencyColumn"),
+      key: "currency",
+      render: (_, r) => {
+        const code = r.currencyCode || (r.currencyId && !r.currencyId.includes("-") ? r.currencyId : baseCurrencyCode);
+        const info = getCurrencyInfo(code);
+        const isBase = code.toUpperCase() === baseCurrencyCode.toUpperCase();
+        return (
+          <Space size={4}>
+            <Tag color="cyan">{info ? `${info.flag} ${info.code}` : code}</Tag>
+            {isBase && <Tag color="gold" style={{ fontSize: 10 }}>{t("settings.currencies.base") || "الأساسية"}</Tag>}
+          </Space>
+        );
+      },
+    },
     {
       title: t("pricing.productPrices.basePriceColumn"),
       dataIndex: "basePrice",
-      render: (v, r) => <Text strong>{formatCurrency(v, r.currencyId)}</Text>,
+      render: (v, r) => {
+        const code = r.currencyCode || (r.currencyId && !r.currencyId.includes("-") ? r.currencyId : baseCurrencyCode);
+        return <Text strong style={{ color: "var(--color-primary, #1890ff)" }}>{formatCurrency(v, code)}</Text>;
+      },
     },
     {
       title: t("pricing.productPrices.compareAtColumn"),
       dataIndex: "compareAtPrice",
-      render: (v, r) => formatCurrency(v, r.currencyId),
+      render: (v, r) => {
+        const code = r.currencyCode || (r.currencyId && !r.currencyId.includes("-") ? r.currencyId : baseCurrencyCode);
+        return v ? <del style={{ color: "var(--text-secondary)" }}>{formatCurrency(v, code)}</del> : <Text type="secondary">—</Text>;
+      },
     },
     { title: t("pricing.productPrices.statusColumn"), dataIndex: "status", width: 110, render: (v) => <StatusTag value={v} /> },
     {
       title: t("pricing.productPrices.updatedColumn"),
       dataIndex: "updatedAt",
       width: 150,
-      render: (v) => <span style={{ color: "var(--text-secondary)" }}>{formatDateTime(v)}</span>,
+      render: (v) => <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>{formatDateTime(v)}</span>,
     },
   ];
 
@@ -232,13 +276,49 @@ function PriceFormFields({
   isCreate,
 }: {
   form: ReturnType<typeof Form.useForm>[0];
-  priceLists: { id: string; name: string }[];
+  priceLists: { id: string; name: string; currencyId?: string; currencyCode?: string }[];
   isCreate?: boolean;
 }) {
   const t = useTranslations();
   const [productSearch, setProductSearch] = useState("");
   const products = useProducts({ page: 1, pageSize: 50, search: productSearch || undefined });
   const priceListId = Form.useWatch("priceListId", form);
+
+  const tenantCurrencyQuery = useTenantCurrencySettings();
+  const baseCurrencyCode = tenantCurrencyQuery.data?.baseCurrencyCode || "SAR";
+  const enabledCurrencies = tenantCurrencyQuery.data?.enabledCurrencies ?? [];
+
+  const currencyOptions = useMemo(() => {
+    if (enabledCurrencies.length > 0) {
+      return enabledCurrencies.map((c) => {
+        const isBase = c.currencyCode.toUpperCase() === baseCurrencyCode.toUpperCase();
+        return {
+          value: c.currencyCode,
+          label: `${c.flagIcon || "🏳️"} ${c.currencyCode} — ${c.nameAr || c.nameEn} ${isBase ? `⭐ (${t("settings.currencies.base") || "العملة الأساسية"})` : ""}`,
+        };
+      });
+    }
+
+    return SUPPORTED_CURRENCIES.map((c: CurrencyInfo) => {
+      const isBase = c.code.toUpperCase() === baseCurrencyCode.toUpperCase();
+      return {
+        value: c.code,
+        label: `${c.flag} ${c.code} — ${c.nameAr} (${c.nameEn}) ${isBase ? `⭐ (${t("settings.currencies.base") || "العملة الأساسية"})` : ""}`,
+      };
+    });
+  }, [enabledCurrencies, baseCurrencyCode, t]);
+
+  React.useEffect(() => {
+    if (isCreate && priceListId) {
+      const matched = priceLists.find((p) => p.id === priceListId);
+      if (matched) {
+        const cCode = matched.currencyCode || (matched.currencyId && !matched.currencyId.includes("-") ? matched.currencyId : null);
+        if (cCode) {
+          form.setFieldValue("currencyId", cCode);
+        }
+      }
+    }
+  }, [priceListId, priceLists, isCreate, form]);
 
   return (
     <Row gutter={16}>
@@ -270,8 +350,10 @@ function PriceFormFields({
           <Form.Item name="currencyId" label={t("pricing.productPrices.currencyCode")}>
             <Select
               allowClear
-              placeholder="USD"
-              options={["USD", "EUR", "GBP", "AED", "SAR", "TRY"].map((c) => ({ value: c, label: c }))}
+              showSearch
+              optionFilterProp="label"
+              placeholder={t("pricing.productPrices.currencyCode")}
+              options={currencyOptions}
             />
           </Form.Item>
         </Col>

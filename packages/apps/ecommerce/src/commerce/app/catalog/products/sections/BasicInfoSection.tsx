@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Form, Row, Col, Input, Select, Radio, Card, Typography } from "antd";
+import { Form, Row, Col, Input, Select, Radio, Card, Typography, Tooltip, Button } from "antd";
+import { SyncOutlined } from "@ant-design/icons";
 import dynamic from "next/dynamic";
 import { useTranslations } from "@repo/localization";
 import { useProductWorkspace } from "../ProductWorkspaceContext";
@@ -10,6 +11,7 @@ import type { ProductDetail } from "../../../../types/catalog";
 import { useProjectLanguages } from "../../../../hooks/useLanguages";
 import { useCommerce } from "../../../../context/CommerceContext";
 import { useUpdateProduct, useUpdateProductTranslation } from "../../../../hooks/useProducts";
+import { generateSlug, slugRule } from "../../../../utils/slug";
 
 const { Text } = Typography;
 
@@ -28,6 +30,7 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
   const { productId, productType, setProductType, markSectionDirty, registerSaveHandler } = useProductWorkspace();
   const { projectId } = useCommerce();
   const { data: languages } = useProjectLanguages(projectId);
+  const [isSlugCustomized, setIsSlugCustomized] = useState(false);
 
   const defaultLanguageId = languages?.find((l) => l.isDefault)?.id ?? languages?.[0]?.id;
   const languageOptions = (languages && languages.length > 0)
@@ -53,12 +56,16 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
         shortDescription: shortDesc,
         description: detailedDesc,
       });
+      if (product.slug) {
+        setIsSlugCustomized(true);
+      }
       if (product.type) setProductType(product.type);
     } else {
       form.setFieldsValue({
         languageId: defaultLanguageId,
         type: 1
       });
+      setIsSlugCustomized(false);
       setProductType(1);
     }
   }, [product, form, defaultLanguageId, setProductType]);
@@ -109,6 +116,14 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
     markSectionDirty("basicInfo");
     if (changedValues.type !== undefined) {
       setProductType(changedValues.type);
+    }
+    if (changedValues.name !== undefined && !isSlugCustomized) {
+      const generated = generateSlug(changedValues.name);
+      form.setFieldValue("slug", generated);
+      form.validateFields(["slug"]).catch(() => {});
+    }
+    if (changedValues.slug !== undefined) {
+      setIsSlugCustomized(true);
     }
   };
 
@@ -167,8 +182,37 @@ export function BasicInfoSection({ product }: { product?: ProductDetail }) {
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
-            <Form.Item name="slug" label={t("catalog.products.create.slug") || "Slug"} extra={t("catalog.products.create.helpers.slug")} rules={[{ required: true, message: t("catalog.products.create.nameRequired") }]}>
-              <Input placeholder={t("catalog.products.create.placeholderSlug")} />
+            <Form.Item
+              name="slug"
+              label={t("catalog.products.create.slug") || "Slug"}
+              extra={t("catalog.products.create.helpers.slug")}
+              rules={[
+                { required: true, message: t("catalog.products.create.slugRequired") || "Slug is required" },
+                slugRule(t),
+              ]}
+            >
+              <Input
+                placeholder={t("catalog.products.create.placeholderSlug") || "product-slug"}
+                suffix={
+                  <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate from product name"}>
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<SyncOutlined />}
+                      style={{ color: "var(--text-secondary)" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const currentName = form.getFieldValue("name") || "";
+                        const generated = generateSlug(currentName);
+                        form.setFieldValue("slug", generated);
+                        setIsSlugCustomized(false);
+                        markSectionDirty("basicInfo");
+                        form.validateFields(["slug"]).catch(() => {});
+                      }}
+                    />
+                  </Tooltip>
+                }
+              />
             </Form.Item>
           </Col>
           <Col xs={24}>

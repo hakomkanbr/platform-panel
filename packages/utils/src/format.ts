@@ -4,21 +4,62 @@ function parseDate(value?: string | number | Date | null): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+export interface CurrencyInfo {
+  code: string;
+  nameAr: string;
+  nameEn: string;
+  symbol: string;
+  flag: string;
+}
+
+export const SUPPORTED_CURRENCIES: CurrencyInfo[] = [
+  { code: "SAR", nameAr: "ريال سعودي", nameEn: "Saudi Riyal", symbol: "ر.س", flag: "🇸🇦" },
+  { code: "TRY", nameAr: "ليرة تركية", nameEn: "Turkish Lira", symbol: "₺", flag: "🇹🇷" },
+  { code: "USD", nameAr: "دولار أمريكي", nameEn: "US Dollar", symbol: "$", flag: "🇺🇸" },
+  { code: "AED", nameAr: "درهم إماراتي", nameEn: "UAE Dirham", symbol: "د.إ", flag: "🇦🇪" },
+  { code: "EUR", nameAr: "يورو", nameEn: "Euro", symbol: "€", flag: "🇪🇺" },
+  { code: "KWD", nameAr: "دينار كويتي", nameEn: "Kuwaiti Dinar", symbol: "د.ك", flag: "🇰🇼" },
+  { code: "QAR", nameAr: "ريال قطري", nameEn: "Qatari Riyal", symbol: "ر.ق", flag: "🇶🇦" },
+  { code: "BHD", nameAr: "دينار بحريني", nameEn: "Bahraini Dinar", symbol: "د.ب", flag: "🇧🇭" },
+  { code: "OMR", nameAr: "ريال عماني", nameEn: "Omani Rial", symbol: "ر.ع", flag: "🇴🇲" },
+  { code: "JOD", nameAr: "دينار أردني", nameEn: "Jordanian Dinar", symbol: "د.أ", flag: "🇯🇴" },
+  { code: "EGP", nameAr: "جنيه مصري", nameEn: "Egyptian Pound", symbol: "ج.م", flag: "🇪🇬" },
+  { code: "GBP", nameAr: "جنيه إسترليني", nameEn: "British Pound", symbol: "£", flag: "🇬🇧" },
+];
+
+export function getCurrencyInfo(code?: string | null): CurrencyInfo | undefined {
+  if (!code) return undefined;
+  const clean = code.trim().toUpperCase();
+  return SUPPORTED_CURRENCIES.find((c) => c.code === clean);
+}
+
+const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export function formatCurrency(
   amount?: number | string | null,
-  currency = "USD",
+  currency = "SAR",
   locale = "en-US",
 ): string {
   const value = Number(amount ?? 0);
   if (!Number.isFinite(value)) return "\u2014";
+
+  // Clean and normalize currency code if a GUID or invalid string was passed
+  let cleanCurrency = (currency || "SAR").trim();
+  if (GUID_REGEX.test(cleanCurrency) || cleanCurrency.length !== 3) {
+    cleanCurrency = "SAR";
+  } else {
+    cleanCurrency = cleanCurrency.toUpperCase();
+  }
+
   try {
     return new Intl.NumberFormat(locale, {
       style: "currency",
-      currency,
+      currency: cleanCurrency,
       maximumFractionDigits: 2,
     }).format(value);
   } catch {
-    return `${value.toFixed(2)} ${currency}`;
+    const info = getCurrencyInfo(cleanCurrency);
+    return `${value.toFixed(2)} ${info?.symbol ?? cleanCurrency}`;
   }
 }
 

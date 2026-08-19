@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Button,
@@ -11,21 +9,24 @@ import {
   Popconfirm,
   Select,
   Space,
+  Tag,
   Tooltip,
 } from "antd";
 import type { TableColumnsType } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm } from "@repo/ui";
-import { formatDateTime } from "@repo/utils";
+import { formatDateTime, SUPPORTED_CURRENCIES, getCurrencyInfo, type CurrencyInfo } from "@repo/utils";
 import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
 import { enumLabel } from "../../../types/enums";
 import { useDeletePriceList, usePriceLists, useSavePriceList } from "../../../hooks/usePriceLists";
+import { useProductPrices } from "../../../hooks/useProductPrices";
+import { useTenantCurrencySettings, useExchangeRates } from "../../../hooks/useCurrencies";
 import { getApiErrorMessage } from "../../../api/http";
 import type { PriceListReadModel } from "../../../types/pricing";
 
-type PriceListRow = PriceListReadModel & Record<string, unknown>;
+type PriceListRow = PriceListReadModel;
 
 export function PriceListsPage() {
   const router = useRouter();
@@ -38,6 +39,34 @@ export function PriceListsPage() {
   const [editing, setEditing] = useState<PriceListReadModel | null>(null);
   const [form] = Form.useForm();
 
+  // Tenant currency configuration & exchange rates
+  const tenantCurrencyQuery = useTenantCurrencySettings();
+  const exchangeRatesQuery = useExchangeRates();
+
+  const baseCurrencyCode = tenantCurrencyQuery.data?.baseCurrencyCode || "SAR";
+  const enabledCurrencies = tenantCurrencyQuery.data?.enabledCurrencies ?? [];
+
+  // Currency select options prioritizing tenant enabled currencies & marking Base Currency
+  const currencyOptions = useMemo(() => {
+    if (enabledCurrencies.length > 0) {
+      return enabledCurrencies.map((c) => {
+        const isBase = c.currencyCode.toUpperCase() === baseCurrencyCode.toUpperCase();
+        return {
+          value: c.currencyCode,
+          label: `${c.flagIcon || "🏳️"} ${c.currencyCode} — ${c.nameAr || c.nameEn} ${isBase ? `⭐ (${t("settings.currencies.base") || "العملة الأساسية"})` : ""}`,
+        };
+      });
+    }
+
+    return SUPPORTED_CURRENCIES.map((c: CurrencyInfo) => {
+      const isBase = c.code.toUpperCase() === baseCurrencyCode.toUpperCase();
+      return {
+        value: c.code,
+        label: `${c.flag} ${c.code} — ${c.nameAr} (${c.nameEn}) ${isBase ? `⭐ (${t("settings.currencies.base") || "العملة الأساسية"})` : ""}`,
+      };
+    });
+  }, [enabledCurrencies, baseCurrencyCode, t]);
+
   const { data, isLoading, isError, error, refetch } = usePriceLists({
     page,
     pageSize,
@@ -47,49 +76,68 @@ export function PriceListsPage() {
   const save = useSavePriceList();
   const remove = useDeletePriceList();
 
-  const rows = (data?.data ?? []) as PriceListRow[];
+  const productPricesQuery = useProductPrices({ pageSize: 500 });
+  const productPrices = (productPricesQuery.data?.data ?? []) as { priceListId?: string }[];
+  const productCountMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of productPrices) {
+      if (p.priceListId) {
+        map.set(p.priceListId, (map.get(p.priceListId) ?? 0) + 1);
+      }
+    }
+    return map;
+  }, [productPrices]);
 
   const openCreate = () => {
     setEditing(null);
     form.resetFields();
-    form.setFieldsValue({ status: "draft", taxMode: 2 });
+    form.setFieldsValue({ taxMode: 1, priority: 0, currencyId: baseCurrencyCode });
     setDrawerOpen(true);
   };
 
-  const openEdit = (priceList: PriceListReadModel) => {
-    setEditing(priceList);
+  const openEdit = (record: PriceListReadModel) => {
+    setEditing(record);
+    const cleanCurrency = record.currencyCode || (record.currencyId && !record.currencyId.includes("-") ? record.currencyId : baseCurrencyCode);
     form.setFieldsValue({
-      code: priceList.code,
-      name: priceList.name,
-      description: priceList.description,
-      taxMode: priceList.taxMode,
-      currencyId: priceList.currencyId,
-      priority: priceList.priority,
-      status: priceList.status,
+      name: record.name,
+      code: record.code,
+      description: record.description,
+      taxMode: record.taxMode,
+      priority: record.priority ?? 0,
+      currencyId: cleanCurrency,
     });
     setDrawerOpen(true);
   };
 
   const onFinish = async (values: Record<string, unknown>) => {
     try {
-      await save.mutateAsync({
-        id: editing?.id,
-        body: {
-          code: values.code as string,
-          name: values.name as string,
-          description: values.description as string | undefined,
-          cultureCode: values.cultureCode as string | undefined ?? "en-US",
-          taxMode: values.taxMode as number | undefined,
-          currencyId: values.currency as number | undefined ?? "4f7d8a31-2d4e-4b9c-a8f6-9e1d73c5b4a2",
-          languageId: values.languageId as string | undefined ?? "4f7d8a31-2d4e-4b9c-a8f6-9e1d73c5b4a2",
-          priority: values.priority as number | undefined,
-          isDefault: values.isDefault as boolean | undefined,
-          metadata: (values.metadata as { key: string; value: string }[] | undefined)?.filter((m) => m.key.trim()),
-        },
-      });
-      message.success(editing ? t("pricing.priceLists.updated") : t("pricing.priceLists.created"));
+      if (editing) {
+        await save.mutateAsync({
+          id: editing.id,
+          body: {
+            name: values.name as string,
+            description: values.description as string | undefined,
+            taxMode: values.taxMode as number,
+            priority: (values.priority as number) ?? 0,
+            currencyId: (values.currencyId as string) || baseCurrencyCode,
+          },
+        });
+        message.success(t("pricing.priceLists.updated"));
+      } else {
+        await save.mutateAsync({
+          body: {
+            name: values.name as string,
+            code: values.code as string | undefined,
+            description: values.description as string | undefined,
+            taxMode: values.taxMode as number,
+            priority: (values.priority as number) ?? 0,
+            currencyId: (values.currencyId as string) || baseCurrencyCode,
+          },
+        });
+        message.success(t("pricing.priceLists.created"));
+      }
       setDrawerOpen(false);
-      setEditing(null);
+      refetch();
     } catch (e) {
       message.error(getApiErrorMessage(e));
     }
@@ -113,6 +161,28 @@ export function PriceListsPage() {
       render: (v) => <StatusTag value={v} />,
     },
     {
+      title: t("pricing.priceLists.currency"),
+      key: "currency",
+      width: 160,
+      render: (_, record) => {
+        const code = record.currencyCode || (record.currencyId && !record.currencyId.includes("-") ? record.currencyId : baseCurrencyCode);
+        const info = getCurrencyInfo(code);
+        const isBase = code.toUpperCase() === baseCurrencyCode.toUpperCase();
+        return (
+          <Space size={4}>
+            <Tag color="cyan">
+              {info ? `${info.flag} ${info.code}` : code}
+            </Tag>
+            {isBase && (
+              <Tag color="gold" style={{ fontSize: 10 }}>
+                {t("settings.currencies.base") || "الأساسية"}
+              </Tag>
+            )}
+          </Space>
+        );
+      },
+    },
+    {
       title: t("pricing.priceLists.taxColumn"),
       dataIndex: "taxMode",
       width: 120,
@@ -126,15 +196,34 @@ export function PriceListsPage() {
     },
     {
       title: t("pricing.priceLists.productsColumn"),
-      dataIndex: "productCount",
-      width: 100,
-      render: (v) => v ?? 0,
+      dataIndex: "id",
+      width: 110,
+      render: (id: string, record) => {
+        const count = productCountMap.get(id) ?? (record as unknown as { productCount?: number }).productCount ?? 0;
+        return (
+          <Tag color={count > 0 ? "blue" : "default"}>
+            {count}
+          </Tag>
+        );
+      },
     },
     {
       title: t("pricing.priceLists.updatedColumn"),
       dataIndex: "updatedAt",
       width: 160,
-      render: (v) => <span style={{ color: "var(--text-secondary)" }}>{formatDateTime(v)}</span>,
+      render: (v, record) => {
+        const lastDate =
+          v ??
+          record.createdAt ??
+          record.versions?.[record.versions.length - 1]?.changedAt ??
+          record.publishedAt ??
+          record.effectiveFrom;
+        return (
+          <span style={{ color: "var(--text-secondary)", fontSize: 12 }}>
+            {lastDate ? formatDateTime(lastDate) : "—"}
+          </span>
+        );
+      },
     },
     {
       title: "",
@@ -178,7 +267,7 @@ export function PriceListsPage() {
     >
       <DataTable<PriceListRow>
         columns={columns}
-        dataSource={rows}
+        dataSource={data?.data ?? []}
         rowKey="id"
         loading={isLoading}
         error={error ? new Error(getApiErrorMessage(error)) : undefined}
@@ -192,21 +281,17 @@ export function PriceListsPage() {
         }}
         searchable
         searchPlaceholder={t("pricing.priceLists.searchPlaceholder")}
-        onSearch={(term) => {
+        onSearch={(term: string) => {
           setSearch(term);
           setPage(1);
         }}
         filters={
           <Select
-            value={status}
-            options={[
-              { value: "", label: t("common.actions.allStatuses") },
-              { value: "draft", label: t("catalog.status.draft") },
-              { value: "active", label: t("catalog.status.active") },
-              { value: "inactive", label: t("catalog.status.inactive") },
-            ]}
-            onChange={(v) => {
-              setStatus(v);
+            placeholder={t("pricing.priceLists.statusFilter")}
+            allowClear
+            value={status || undefined}
+            onChange={(v: string | null) => {
+              setStatus(v ?? "");
               setPage(1);
             }}
             style={{ width: 160 }}
@@ -239,31 +324,26 @@ export function PriceListsPage() {
           <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />
           </Form.Item>
-          <Space size={16}>
-            <Form.Item name="taxMode" label={t("pricing.priceLists.taxMode")}>
+          <Form.Item name="currencyId" label={t("pricing.priceLists.currency")} rules={[{ required: true }]}>
+            <Select
+              showSearch
+              optionFilterProp="label"
+              options={currencyOptions}
+            />
+          </Form.Item>
+          <Space size={16} style={{ width: "100%", display: "flex" }}>
+            <Form.Item name="taxMode" label={t("pricing.priceLists.taxMode")} style={{ flex: 1 }}>
               <Select
-                style={{ width: 180 }}
                 options={[
                   { value: 1, label: t("pricing.priceLists.inclusive") },
                   { value: 2, label: t("pricing.priceLists.exclusive") },
                 ]}
               />
             </Form.Item>
-            <Form.Item name="priority" label={t("pricing.priceLists.priority")}>
-              <InputNumber min={0} style={{ width: 140 }} />
+            <Form.Item name="priority" label={t("pricing.priceLists.priority")} style={{ flex: 1 }}>
+              <InputNumber min={0} style={{ width: "100%" }} />
             </Form.Item>
           </Space>
-          {editing && (
-            <Form.Item name="status" label={t("common.fields.status")}>
-              <Select
-                options={[
-                  { value: "draft", label: t("catalog.status.draft") },
-                  { value: "active", label: t("catalog.status.active") },
-                  { value: "inactive", label: t("catalog.status.inactive") },
-                ]}
-              />
-            </Form.Item>
-          )}
         </Form>
       </DrawerForm>
     </CommerceShell>

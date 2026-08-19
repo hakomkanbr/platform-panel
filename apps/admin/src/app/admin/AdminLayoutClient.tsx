@@ -4,6 +4,7 @@ import React from "react";
 import { AdminShell } from "@repo/shell";
 import { useProjects } from "@repo/hooks";
 import { useTenantId } from "@repo/hooks";
+import { MediaProvider } from "@repo/media";
 import type { IUserProps } from "@repo/shared-types";
 import { allApplications } from "@/lib/app-registry";
 
@@ -29,7 +30,9 @@ function AdminShellWrapper({ children, user }: AdminLayoutClientProps) {
       projectsLoading={projectsLoading}
       applications={allApplications}
     >
-      {children}
+      <MediaProvider showEmptyState={false}>
+        {children}
+      </MediaProvider>
     </AdminShell>
   );
 }

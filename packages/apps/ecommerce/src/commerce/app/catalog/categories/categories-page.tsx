@@ -13,15 +13,18 @@ import {
   Row,
   Select,
   Space,
+  Tooltip,
   Tree,
   Typography,
 } from "antd";
 import type { DataNode, TreeProps } from "antd/es/tree";
-import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined, SyncOutlined } from "@ant-design/icons";
 import { AsyncBoundary, DrawerForm } from "@repo/ui";
 import { useTranslations } from "@repo/localization";
+import { ImagePicker, type CdnFile } from "@repo/media";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { StatusTag } from "../../../components/StatusTag";
+import { generateSlug, slugRule } from "../../../utils/slug";
 import {
   useCategoryTree,
   useDeleteCategory,
@@ -49,10 +52,13 @@ export function CategoriesPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [form] = Form.useForm();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [imagePickerOpen, setImagePickerOpen] = useState(false);
   const [editing, setEditing] = useState<Category | null>(null);
   const [parentId, setParentId] = useState<string | undefined>(undefined);
   const [languageInitialized, setLanguageInitialized] = useState(false);
   const [treeLanguageId, setTreeLanguageId] = useState<string | undefined>(undefined);
+  const [isSlugCustomized, setIsSlugCustomized] = useState(false);
+  const currentImageUrl = Form.useWatch("imageUrl", form);
 
   useEffect(() => {
     if (defaultLanguage && !treeLanguageId) {
@@ -84,14 +90,27 @@ export function CategoriesPage() {
         imageUrl: selected.imageUrl,
         languageId: treeLanguageId || defaultLanguage?.id,
       });
+      setIsSlugCustomized(true);
     }
   }, [selected, drawerOpen, form, treeLanguageId, defaultLanguage]);
+
+  const handleValuesChange = (changedValues: any) => {
+    if (changedValues.name !== undefined && !isSlugCustomized) {
+      const generated = generateSlug(changedValues.name);
+      form.setFieldValue("slug", generated);
+      form.validateFields(["slug"]).catch(() => {});
+    }
+    if (changedValues.slug !== undefined) {
+      setIsSlugCustomized(true);
+    }
+  };
 
   const openCreate = (parent?: string) => {
     setEditing(null);
     setParentId(parent);
     form.resetFields();
     form.setFieldValue("languageId", treeLanguageId || defaultLanguage?.id);
+    setIsSlugCustomized(false);
     setDrawerOpen(true);
   };
 
@@ -107,6 +126,7 @@ export function CategoriesPage() {
       status: category.status,
       languageId: treeLanguageId || defaultLanguage?.id,
     });
+    setIsSlugCustomized(true);
     setDrawerOpen(true);
   };
 
@@ -121,7 +141,7 @@ export function CategoriesPage() {
         id: editing?.id,
         body: {
           name: values.name as string,
-          slug: values.slug as string | undefined,
+          slug: (values.slug as string) || generateSlug(values.name as string),
           description: values.description as string | undefined,
           sortOrder: values.sortOrder as number | undefined,
           imageUrl: values.imageUrl as string | undefined,
@@ -280,7 +300,7 @@ export function CategoriesPage() {
                   {t("catalog.categories.selectHint")}
                 </Text>
               ) : (
-                <Form form={form} layout="vertical" onFinish={onFinish}>
+                <Form form={form} layout="vertical" onFinish={onFinish} onValuesChange={handleValuesChange}>
                   <Row gutter={16}>
                     <Col xs={24}>
                       <Form.Item name="languageId" label={t("common.fields.language")}>
@@ -300,8 +320,28 @@ export function CategoriesPage() {
                       </Form.Item>
                     </Col>
                     <Col xs={24} sm={12}>
-                      <Form.Item name="slug" label={t("common.fields.slug")}>
-                        <Input />
+                      <Form.Item name="slug" label={t("common.fields.slug")} rules={[slugRule(t)]}>
+                        <Input
+                          placeholder={t("catalog.categories.placeholderSlug")}
+                          suffix={
+                            <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate"}>
+                              <Button
+                                type="text"
+                                size="small"
+                                icon={<SyncOutlined />}
+                                style={{ color: "var(--text-secondary)" }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const currentName = form.getFieldValue("name") || "";
+                                  const generated = generateSlug(currentName);
+                                  form.setFieldValue("slug", generated);
+                                  setIsSlugCustomized(false);
+                                  form.validateFields(["slug"]).catch(() => {});
+                                }}
+                              />
+                            </Tooltip>
+                          }
+                        />
                       </Form.Item>
                     </Col>
                     <Col xs={24}>
@@ -325,8 +365,57 @@ export function CategoriesPage() {
                       </Form.Item>
                     </Col>
                     <Col xs={24}>
-                      <Form.Item name="imageUrl" label={t("catalog.categories.imageUrl")}>
-                        <Input placeholder={t("catalog.categories.placeholderUrl")} />
+                      <Form.Item label={t("catalog.categories.imageUrl")}>
+                        <Space direction="vertical" style={{ width: "100%" }} size={8}>
+                          <Form.Item name="imageUrl" style={{ marginBottom: 0 }}>
+                            <Input placeholder={t("catalog.categories.placeholderUrl")} allowClear />
+                          </Form.Item>
+                          <Space align="center">
+                            {currentImageUrl && (
+                              <div
+                                style={{
+                                  width: 48,
+                                  height: 48,
+                                  borderRadius: 8,
+                                  overflow: "hidden",
+                                  border: "1px solid var(--border-light)",
+                                  background: "#fafafa",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <img
+                                  src={currentImageUrl}
+                                  alt="Category Image Preview"
+                                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                  onError={(e) => {
+                                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <Button
+                              type="dashed"
+                              onClick={() => setImagePickerOpen(true)}
+                              icon={<PlusOutlined />}
+                            >
+                              {currentImageUrl
+                                ? t("catalog.categories.changeImage") || "Change from Media Library"
+                                : t("catalog.categories.selectImage") || "Choose from Media Library"}
+                            </Button>
+                            {currentImageUrl && (
+                              <Button
+                                type="text"
+                                danger
+                                size="small"
+                                onClick={() => form.setFieldValue("imageUrl", "")}
+                              >
+                                {t("common.actions.clear") || "Clear"}
+                              </Button>
+                            )}
+                          </Space>
+                        </Space>
                       </Form.Item>
                     </Col>
                   </Row>
@@ -375,7 +464,7 @@ export function CategoriesPage() {
         onFinish={onFinish}
         submitLabel={editing ? t("common.actions.saveChanges") : t("catalog.categories.submitCreate")}
       >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={onFinish} onValuesChange={handleValuesChange}>
           <Form.Item name="languageId" label={t("common.fields.language")}>
             <Select
               loading={!languages && projectId ? true : undefined}
@@ -398,8 +487,28 @@ export function CategoriesPage() {
           <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
             <Input placeholder={t("catalog.categories.placeholderName")} />
           </Form.Item>
-          <Form.Item name="slug" label={t("common.fields.slug")}>
-            <Input placeholder={t("catalog.categories.placeholderSlug")} />
+          <Form.Item name="slug" label={t("common.fields.slug")} rules={[slugRule(t)]}>
+            <Input
+              placeholder={t("catalog.categories.placeholderSlug")}
+              suffix={
+                <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate"}>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<SyncOutlined />}
+                    style={{ color: "var(--text-secondary)" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentName = form.getFieldValue("name") || "";
+                      const generated = generateSlug(currentName);
+                      form.setFieldValue("slug", generated);
+                      setIsSlugCustomized(false);
+                      form.validateFields(["slug"]).catch(() => {});
+                    }}
+                  />
+                </Tooltip>
+              }
+            />
           </Form.Item>
           <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />
@@ -407,8 +516,72 @@ export function CategoriesPage() {
           <Form.Item name="sortOrder" label={t("catalog.categories.sortOrder")}>
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
+          <Form.Item label={t("catalog.categories.imageUrl")}>
+            <Space direction="vertical" style={{ width: "100%" }} size={8}>
+              <Form.Item name="imageUrl" style={{ marginBottom: 0 }}>
+                <Input placeholder={t("catalog.categories.placeholderUrl")} allowClear />
+              </Form.Item>
+              <Space align="center">
+                {currentImageUrl && (
+                  <div
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 8,
+                      overflow: "hidden",
+                      border: "1px solid var(--border-light)",
+                      background: "#fafafa",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src={currentImageUrl}
+                      alt="Category Image Preview"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
+                <Button
+                  type="dashed"
+                  onClick={() => setImagePickerOpen(true)}
+                  icon={<PlusOutlined />}
+                >
+                  {currentImageUrl
+                    ? t("catalog.categories.changeImage") || "Change from Media Library"
+                    : t("catalog.categories.selectImage") || "Choose from Media Library"}
+                </Button>
+                {currentImageUrl && (
+                  <Button
+                    type="text"
+                    danger
+                    size="small"
+                    onClick={() => form.setFieldValue("imageUrl", "")}
+                  >
+                    {t("common.actions.clear") || "Clear"}
+                  </Button>
+                )}
+              </Space>
+            </Space>
+          </Form.Item>
         </Form>
       </DrawerForm>
+
+      <ImagePicker
+        open={imagePickerOpen}
+        onClose={() => setImagePickerOpen(false)}
+        onChange={(files: CdnFile[]) => {
+          if (files[0]?.url) {
+            form.setFieldValue("imageUrl", files[0].url);
+          }
+          setImagePickerOpen(false);
+        }}
+        multiple={false}
+      />
     </CommerceShell>
   );
 }

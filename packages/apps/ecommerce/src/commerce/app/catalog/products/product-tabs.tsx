@@ -22,6 +22,7 @@ import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { EmptyState, DrawerForm } from "@repo/ui";
 import { formatCurrency } from "@repo/utils";
 import { useTranslations } from "@repo/localization";
+import { ImagePicker, MediaProvider, type CdnFile } from "@repo/media";
 import { enumLabel, enumOptions } from "../../../types/enums";
 import type {
   MediaItem,
@@ -60,29 +61,40 @@ function ErrorHint({ error }: { error: unknown }) {
 export function ProductMediaTab({ productId }: { productId: string }) {
   const t = useTranslations();
   const { markSectionDirty, registerSaveHandler } = useProductWorkspace();
-  const { data, isLoading, isError, error, refetch } =
-    useProductMedia(productId);
+  const { data, isLoading, isError, error, refetch } = useProductMedia(productId);
   const save = useSaveProductDetail("media", productId);
   const remove = useDeleteProductDetail("media", productId);
 
-  const [url, setUrl] = useState("");
-  const [type, setType] = useState(1);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [localItems, setLocalItems] = useState<MediaItem[]>([]);
 
   useEffect(() => {
     if (data) setLocalItems(data);
   }, [data]);
 
-  const add = async () => {
-    if (!url.trim()) return;
+  /**
+   * Called when the user confirms selection in the ImagePicker modal.
+   * Maps CDN files → product media API calls (stores full URL).
+   */
+  const handleMediaSelected = async (files: CdnFile[]) => {
+    if (!files.length) return;
     try {
       markSectionDirty("media", "uploading");
-      await save.mutateAsync({
-        body: { mediaUrl: url.trim(), mediaType: type },
-      });
-      message.success(t("catalog.products.tabs.media.added") || "Media added");
-      setUrl("");
+      for (const file of files) {
+        await save.mutateAsync({
+          body: {
+            mediaUrl: file.url ?? "",
+            mediaType: 1, // IMAGE
+            altText: file.originalName,
+            isPrimary: localItems.length === 0, // first image becomes primary
+          },
+        });
+      }
+      message.success(
+        t("catalog.products.tabs.media.added") || `${files.length} image(s) added`,
+      );
       markSectionDirty("media", "clean");
+      refetch();
     } catch (e) {
       message.error(getApiErrorMessage(e));
       markSectionDirty("media", "clean");
@@ -93,9 +105,7 @@ export function ProductMediaTab({ productId }: { productId: string }) {
     try {
       markSectionDirty("media", "uploading");
       await remove.mutateAsync(id);
-      message.success(
-        t("catalog.products.tabs.media.removed") || "Media removed",
-      );
+      message.success(t("catalog.products.tabs.media.removed") || "Media removed");
       markSectionDirty("media", "clean");
     } catch (e) {
       message.error(getApiErrorMessage(e));
@@ -104,55 +114,31 @@ export function ProductMediaTab({ productId }: { productId: string }) {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 24,
-        padding: "20px 0",
-      }}
-    >
-      <div
-        style={{
-          padding: "40px 20px",
-          border: "2px dashed #d9d9d9",
-          borderRadius: 12,
-          textAlign: "center",
-          backgroundColor: "#fafafa",
-        }}
-      >
-        <div style={{ fontSize: 32, color: "#1677ff", marginBottom: 16 }}>
-          <PlusOutlined />
-        </div>
-        <Typography.Title level={5}>
-          Drag and drop your images here
-        </Typography.Title>
-        <Text type="secondary">
-          or click to browse from your computer (Mock UI)
-        </Text>
-        <div
-          style={{
-            marginTop: 24,
-            display: "flex",
-            justifyContent: "center",
-            gap: 8,
-          }}
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, padding: "20px 0" }}>
+      {/* ── Add Media Button ── */}
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setPickerOpen(true)}
+          loading={save.isPending}
         >
-          <Input
-            value={url}
-            placeholder="Or paste an image URL here..."
-            onChange={(e) => setUrl(e.target.value)}
-            onPressEnter={add}
-            style={{ width: 300 }}
-          />
-          <Button type="primary" onClick={add} disabled={!url.trim()}>
-            Add Media
-          </Button>
-        </div>
+          {t("catalog.products.tabs.media.addFromLibrary") || "Add from Media Library"}
+        </Button>
       </div>
 
+      {/* ── ImagePicker Modal (from @repo/media) ── */}
+      <ImagePicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onChange={handleMediaSelected}
+        multiple
+      />
+
+      {/* ── Error hint ── */}
       {isError && <ErrorHint error={error} />}
 
+      {/* ── Media Grid ── */}
       {localItems.length === 0 && !isLoading ? (
         <EmptyState
           title={t("catalog.products.tabs.media.emptyTitle") || "No Media"}
@@ -212,23 +198,14 @@ export function ProductMediaTab({ productId }: { productId: string }) {
                 {item.type === 1 ? (
                   <img
                     src={item.url}
-                    alt={
-                      item.altText || t("catalog.media.altFallback") || "Media"
-                    }
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
+                    alt={item.altText || t("catalog.media.altFallback") || "Media"}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).style.visibility =
-                        "hidden";
+                      (e.currentTarget as HTMLImageElement).style.visibility = "hidden";
                     }}
                   />
                 ) : (
-                  <Text type="secondary">
-                    {enumLabel("mediaType", item.type, t)}
-                  </Text>
+                  <Text type="secondary">{enumLabel("mediaType", item.type, t)}</Text>
                 )}
               </div>
               <div
@@ -239,7 +216,14 @@ export function ProductMediaTab({ productId }: { productId: string }) {
                   alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 12, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
                   {item.altText || "Image"}
                 </Text>
                 <Popconfirm
@@ -249,12 +233,7 @@ export function ProductMediaTab({ productId }: { productId: string }) {
                   }
                   onConfirm={() => removeMedia(item.id as string)}
                 >
-                  <Button
-                    type="text"
-                    danger
-                    size="small"
-                    icon={<DeleteOutlined />}
-                  />
+                  <Button type="text" danger size="small" icon={<DeleteOutlined />} />
                 </Popconfirm>
               </div>
             </div>

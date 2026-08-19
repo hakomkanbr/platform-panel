@@ -8,6 +8,8 @@ import { PricingOverviewPage } from "./pricing-overview";
 import { PriceListsPage } from "./price-lists/price-lists-page";
 import { PriceListDetailPage } from "./price-lists/price-list-detail-page";
 import { ProductPricesPage } from "./product-prices/product-prices-page";
+import { DiscountsPage } from "./discounts/discounts-page";
+import { TaxesPage } from "./taxes/taxes-page";
 
 export function PricingApp() {
   const route = useAppRoute("pricing");
@@ -22,6 +24,8 @@ export function PricingApp() {
     return <PriceListDetailPage id={second} />;
   }
   if (first === "product-prices") return <ProductPricesPage />;
+  if (first === "discounts") return <DiscountsPage />;
+  if (first === "taxes") return <TaxesPage />;
 
   return (
     <div style={{ padding: 48 }}>
@@ -32,3 +36,4 @@ export function PricingApp() {
     </div>
   );
 }
+

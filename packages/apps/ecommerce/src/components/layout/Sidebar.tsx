@@ -12,6 +12,7 @@ import {
   CommentOutlined,
   GiftOutlined,
   PercentageOutlined,
+  AccountBookOutlined,
   SettingOutlined,
   CrownOutlined,
 } from "@ant-design/icons";
@@ -44,6 +45,7 @@ const allMenuItems: (MenuItem | { type: "divider" })[] = [
   { type: "divider" as const },
   { key: "/panel/discounts", icon: <PercentageOutlined />, label: "Discounts" },
   { key: "/panel/coupons", icon: <GiftOutlined />, label: "Coupons" },
+  { key: "/panel/taxes", icon: <AccountBookOutlined />, label: "Taxes" },
   { key: "/panel/comments", icon: <CommentOutlined />, label: "Comments" },
   { type: "divider" as const },
   {

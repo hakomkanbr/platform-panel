@@ -137,6 +137,13 @@ export const platformNavigation: NavigationItem[] = [
     ],
   },
   {
+    key: "media",
+    label: "Media",
+    labelKey: "common.nav.media",
+    path: "/admin/media",
+    icon: <PictureOutlined />,
+  },
+  {
     key: "pricing",
     label: "Pricing",
     labelKey: "common.nav.pricing",
@@ -152,25 +159,19 @@ export const platformNavigation: NavigationItem[] = [
       },
       {
         key: "discounts",
-        label: (
-          <>
-            Discounts <SoonBadge />
-          </>
-        ),
+        label: "Discounts",
+        labelKey: "common.nav.discounts",
         path: "/admin/pricing/discounts",
         icon: <PercentageOutlined />,
-        disabled: true,
+        disabled: false,
       },
       {
         key: "taxes",
-        label: (
-          <>
-            Taxes <SoonBadge />
-          </>
-        ),
+        label: "Taxes",
+        labelKey: "common.nav.taxes",
         path: "/admin/pricing/taxes",
         icon: <AccountBookOutlined />,
-        disabled: true,
+        disabled: false,
       },
     ],
   },

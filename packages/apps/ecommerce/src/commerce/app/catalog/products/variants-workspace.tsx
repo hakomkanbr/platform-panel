@@ -24,7 +24,7 @@ import {
 import type { TableColumnsType } from "antd";
 import { DeleteOutlined, PlusOutlined, ArrowRightOutlined, SettingOutlined } from "@ant-design/icons";
 import { EmptyState, DrawerForm } from "@repo/ui";
-import { formatCurrency } from "@repo/utils";
+import { formatCurrency, getCurrencyInfo } from "@repo/utils";
 import { useTranslations } from "@repo/localization";
 import { enumLabel, enumOptions } from "../../../types/enums";
 import type { ProductOption, ProductOptionReadModel, Variant } from "../../../types/catalog";
@@ -36,6 +36,7 @@ import {
   useSaveProductDetail,
   useGenerateProductVariants,
   useDeleteProductOptionValue,
+  useProduct,
 } from "../../../hooks/useProducts";
 import { productsApi } from "../../../api/catalog/products";
 import { getApiErrorMessage } from "../../../api/http";
@@ -69,6 +70,12 @@ export function ProductVariantsWorkspace({
 }) {
   const t = useTranslations();
   const [currentStep, setCurrentStep] = useState(0);
+
+  const { data: product } = useProduct(productId);
+  const currentCurrency = (product?.pricing?.currencyId && !product.pricing.currencyId.includes("-"))
+    ? product.pricing.currencyId
+    : (product?.currency ?? "SAR");
+  const currencyPrefix = getCurrencyInfo(currentCurrency)?.symbol ?? currentCurrency;
 
   // Options Hooks
   const { data: optionsData, isLoading: isLoadingOptions } = useProductOptions(productId);
@@ -352,7 +359,7 @@ export function ProductVariantsWorkspace({
             </Col>
             <Col xs={24} sm={12} md={6}>
               <Form.Item name="price" label={t("catalog.products.variants.priceOverride") || "Price Override"}>
-                <InputNumber prefix="$" style={{ width: '100%' }} />
+                <InputNumber prefix={currencyPrefix} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={6}>

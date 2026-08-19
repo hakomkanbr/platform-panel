@@ -10,6 +10,7 @@ import enPricing from "../../locales/en/pricing.json";
 import enSettings from "../../locales/en/settings.json";
 import enOrders from "../../locales/en/orders.json";
 import enCustomers from "../../locales/en/customers.json";
+import enMedia from "../../locales/en/media.json";
 
 import arCommon from "../../locales/ar/common.json";
 import arNavigation from "../../locales/ar/navigation.json";
@@ -22,6 +23,7 @@ import arPricing from "../../locales/ar/pricing.json";
 import arSettings from "../../locales/ar/settings.json";
 import arOrders from "../../locales/ar/orders.json";
 import arCustomers from "../../locales/ar/customers.json";
+import arMedia from "../../locales/ar/media.json";
 
 import trCommon from "../../locales/tr/common.json";
 import trNavigation from "../../locales/tr/navigation.json";
@@ -34,6 +36,7 @@ import trPricing from "../../locales/tr/pricing.json";
 import trSettings from "../../locales/tr/settings.json";
 import trOrders from "../../locales/tr/orders.json";
 import trCustomers from "../../locales/tr/customers.json";
+import trMedia from "../../locales/tr/media.json";
 
 function asMessages(source: unknown): Messages {
   if (typeof source === "object" && source !== null) {
@@ -60,6 +63,7 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     settings: asMessages(enSettings),
     orders: asMessages(enOrders),
     customers: asMessages(enCustomers),
+    media: asMessages(enMedia),
   },
   ar: {
     common: asMessages(arCommon),
@@ -73,6 +77,7 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     settings: asMessages(arSettings),
     orders: asMessages(arOrders),
     customers: asMessages(arCustomers),
+    media: asMessages(arMedia),
   },
   tr: {
     common: asMessages(trCommon),
@@ -86,6 +91,7 @@ export const GLOBAL_DICTIONARIES: LocaleDictionaryMap = {
     settings: asMessages(trSettings),
     orders: asMessages(trOrders),
     customers: asMessages(trCustomers),
+    media: asMessages(trMedia),
   },
 };
 

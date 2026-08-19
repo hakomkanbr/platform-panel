@@ -13,14 +13,16 @@ import {
   Space,
   Switch,
   Table,
+  Tooltip,
   Typography,
 } from "antd";
 import type { TableColumnsType } from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusOutlined, SyncOutlined } from "@ant-design/icons";
 import { DataTable, DrawerForm, EmptyState } from "@repo/ui";
 import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { enumLabel, enumOptions } from "../../../types/enums";
+import { generateSlug, slugRule } from "../../../utils/slug";
 import {
   useAttributeGroup,
   useAttributeGroups,
@@ -50,6 +52,7 @@ export function AttributesPage() {
   const [groupDetailOpen, setGroupDetailOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [editingGroup, setEditingGroup] = useState<AttributeGroup | null>(null);
+  const [isGroupKeyCustomized, setIsGroupKeyCustomized] = useState(false);
   const [groupForm] = Form.useForm();
 
   const groupQuery = useAttributeGroup(selectedGroupId);
@@ -58,13 +61,37 @@ export function AttributesPage() {
 
   const [defDrawerOpen, setDefDrawerOpen] = useState(false);
   const [editingDefinition, setEditingDefinition] = useState<AttributeDefinition | null>(null);
+  const [isDefKeyCustomized, setIsDefKeyCustomized] = useState(false);
   const [defForm] = Form.useForm();
 
   const groups = (data?.data ?? []) as GroupRow[];
 
+  const handleGroupValuesChange = (changedValues: any) => {
+    if (changedValues.name !== undefined && !isGroupKeyCustomized) {
+      const generated = generateSlug(changedValues.name);
+      groupForm.setFieldValue("key", generated);
+      groupForm.validateFields(["key"]).catch(() => {});
+    }
+    if (changedValues.key !== undefined) {
+      setIsGroupKeyCustomized(true);
+    }
+  };
+
+  const handleDefValuesChange = (changedValues: any) => {
+    if (changedValues.name !== undefined && !isDefKeyCustomized) {
+      const generated = generateSlug(changedValues.name);
+      defForm.setFieldValue("key", generated);
+      defForm.validateFields(["key"]).catch(() => {});
+    }
+    if (changedValues.key !== undefined) {
+      setIsDefKeyCustomized(true);
+    }
+  };
+
   const openCreateGroup = () => {
     setEditingGroup(null);
     groupForm.resetFields();
+    setIsGroupKeyCustomized(false);
     setGroupDrawerOpen(true);
   };
 
@@ -76,6 +103,7 @@ export function AttributesPage() {
       description: group.description,
       displayOrder: group.displayOrder,
     });
+    setIsGroupKeyCustomized(true);
     setGroupDrawerOpen(true);
   };
 
@@ -89,7 +117,7 @@ export function AttributesPage() {
       await saveGroup.mutateAsync({
         id: editingGroup?.id,
         body: {
-          key: values.key as string,
+          key: (values.key as string) || generateSlug(values.name as string),
           name: values.name as string,
           description: values.description as string | undefined,
           displayOrder: values.displayOrder as number | undefined,
@@ -107,6 +135,7 @@ export function AttributesPage() {
     setEditingDefinition(null);
     defForm.resetFields();
     defForm.setFieldsValue({ isRequired: false, isSearchable: true, isFilterable: true, isVisibleOnStorefront: true });
+    setIsDefKeyCustomized(false);
     setDefDrawerOpen(true);
   };
 
@@ -124,6 +153,7 @@ export function AttributesPage() {
       displayOrder: definition.displayOrder,
       values: definition.values ?? [],
     });
+    setIsDefKeyCustomized(true);
     setDefDrawerOpen(true);
   };
 
@@ -133,7 +163,7 @@ export function AttributesPage() {
       await saveDefinition.mutateAsync({
         definitionId: editingDefinition?.id,
         body: {
-          key: values.key as string,
+          key: (values.key as string) || generateSlug(values.name as string),
           name: values.name as string,
           valueType: values.valueType as number,
           unit: values.unit as string | undefined,
@@ -262,12 +292,32 @@ export function AttributesPage() {
         onFinish={onFinishGroup}
         submitLabel={editingGroup ? t("common.actions.saveChanges") : t("catalog.attributes.submitCreateGroup")}
       >
-        <Form form={groupForm} layout="vertical" onFinish={onFinishGroup}>
+        <Form form={groupForm} layout="vertical" onFinish={onFinishGroup} onValuesChange={handleGroupValuesChange}>
           <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
             <Input placeholder={t("catalog.attributes.placeholderName")} />
           </Form.Item>
-          <Form.Item name="key" label={t("catalog.attributes.keyColumn")} rules={[{ required: true, message: t("catalog.attributes.keyRequired") }]}>
-            <Input placeholder={t("catalog.attributes.placeholderKey")} />
+          <Form.Item name="key" label={t("catalog.attributes.keyColumn")} rules={[{ required: true, message: t("catalog.attributes.keyRequired") }, slugRule(t)]}>
+            <Input
+              placeholder={t("catalog.attributes.placeholderKey")}
+              suffix={
+                <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate"}>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<SyncOutlined />}
+                    style={{ color: "var(--text-secondary)" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentName = groupForm.getFieldValue("name") || "";
+                      const generated = generateSlug(currentName);
+                      groupForm.setFieldValue("key", generated);
+                      setIsGroupKeyCustomized(false);
+                      groupForm.validateFields(["key"]).catch(() => {});
+                    }}
+                  />
+                </Tooltip>
+              }
+            />
           </Form.Item>
           <Form.Item name="description" label={t("common.fields.description")}>
             <Input.TextArea rows={2} />
@@ -322,13 +372,33 @@ export function AttributesPage() {
         onFinish={onFinishDefinition}
         submitLabel={editingDefinition ? t("common.actions.saveChanges") : t("catalog.attributes.submitCreateDefinition")}
       >
-        <Form form={defForm} layout="vertical" onFinish={onFinishDefinition}>
+        <Form form={defForm} layout="vertical" onFinish={onFinishDefinition} onValuesChange={handleDefValuesChange}>
           <Space direction="vertical" style={{ width: "100%" }} size={0}>
             <Form.Item name="name" label={t("common.fields.name")} rules={[{ required: true, message: t("common.fields.nameRequired") }]}>
               <Input placeholder={t("catalog.attributes.placeholderMaterial")} />
             </Form.Item>
-            <Form.Item name="key" label={t("catalog.attributes.keyColumn")} rules={[{ required: true, message: t("catalog.attributes.keyRequired") }]}>
-              <Input placeholder={t("catalog.attributes.placeholderMaterialKey")} />
+            <Form.Item name="key" label={t("catalog.attributes.keyColumn")} rules={[{ required: true, message: t("catalog.attributes.keyRequired") }, slugRule(t)]}>
+              <Input
+                placeholder={t("catalog.attributes.placeholderMaterialKey")}
+                suffix={
+                  <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate"}>
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<SyncOutlined />}
+                      style={{ color: "var(--text-secondary)" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const currentName = defForm.getFieldValue("name") || "";
+                        const generated = generateSlug(currentName);
+                        defForm.setFieldValue("key", generated);
+                        setIsDefKeyCustomized(false);
+                        defForm.validateFields(["key"]).catch(() => {});
+                      }}
+                    />
+                  </Tooltip>
+                }
+              />
             </Form.Item>
             <Form.Item name="valueType" label={t("catalog.attributes.valueType")} initialValue={1}>
               <Select options={enumOptions("attributeValueType", t)} />

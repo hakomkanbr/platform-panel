@@ -14,10 +14,12 @@ import {
   Select,
   Space,
   Switch,
+  Tooltip,
   TreeSelect,
   Typography,
 } from "antd";
-import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, SaveOutlined, SyncOutlined } from "@ant-design/icons";
+import { useTranslations } from "@repo/localization";
 import { CommerceShell } from "../../../components/CommerceShell";
 import { MetadataFormList } from "../../../components/MetadataFormList";
 import { enumOptions } from "../../../types/enums";
@@ -29,6 +31,7 @@ import { useCommerce } from "../../../context/CommerceContext";
 import { useProjectLanguages } from "../../../hooks/useLanguages";
 import { getApiErrorMessage } from "../../../api/http";
 import type { CategoryReadModel } from "../../../types/catalog";
+import { generateSlug, slugRule } from "../../../utils/slug";
 
 const { Text } = Typography;
 
@@ -59,10 +62,12 @@ function toTreeData(categories: CategoryReadModel[]): CategoryTreeNode[] {
 }
 
 export function ProductCreatePage() {
+  const t = useTranslations();
   const router = useRouter();
   const [form] = Form.useForm();
   const createMutation = useCreateProduct();
   const [saving, setSaving] = useState(false);
+  const [isSlugCustomized, setIsSlugCustomized] = useState(false);
 
   const { projectId } = useCommerce();
   const categories = useCategoryTree();
@@ -88,6 +93,17 @@ export function ProductCreatePage() {
     if (languages && !isFormReady) setIsFormReady(true);
   }, [defaultLanguage, form, languageInitialized, isFormReady, languages]);
 
+  const handleValuesChange = (changedValues: any) => {
+    if (changedValues.name !== undefined && !isSlugCustomized) {
+      const generated = generateSlug(changedValues.name);
+      form.setFieldValue("slug", generated);
+      form.validateFields(["slug"]).catch(() => {});
+    }
+    if (changedValues.slug !== undefined) {
+      setIsSlugCustomized(true);
+    }
+  };
+
   const onFinish = async (values: Record<string, unknown>) => {
     setSaving(true);
     const selectedLanguageId = (values.languageId as string) || defaultLanguage?.id;
@@ -98,12 +114,12 @@ export function ProductCreatePage() {
     try {
       const created = await createMutation.mutateAsync({
         name: values.name as string,
-        code: (values.code as string) || undefined,
-        slug: (values.slug as string) || undefined,
+        code: (values.code as string) || (values.slug as string) || "PROD",
+        slug: (values.slug as string) || generateSlug(values.name as string),
         description: (values.description as string) || undefined,
         shortDescription: (values.shortDescription as string) || undefined,
-        type: values.type as number | undefined,
-        structure: values.structure as number | undefined,
+        type: (values.type as number) || 1,
+        structure: (values.structure as number) || 1,
         sku: (values.sku as string) || undefined,
         barcode: (values.barcode as string) || undefined,
         cultureCode: selectedCulture,
@@ -152,6 +168,7 @@ export function ProductCreatePage() {
         form={form}
         layout="vertical"
         onFinish={onFinish}
+        onValuesChange={handleValuesChange}
         initialValues={{ currency: "USD", isTrackStock: true, isVisible: true }}
       >
         <Row gutter={[24, 24]}>
@@ -170,8 +187,35 @@ export function ProductCreatePage() {
                     </Form.Item>
                   </Col>
                   <Col xs={24} sm={12}>
-                    <Form.Item name="slug" label="Slug">
-                      <Input placeholder="classic-cotton-tshirt" />
+                    <Form.Item
+                      name="slug"
+                      label="Slug"
+                      rules={[
+                        { required: true, message: "Slug is required" },
+                        slugRule(t),
+                      ]}
+                    >
+                      <Input
+                        placeholder="classic-cotton-tshirt"
+                        suffix={
+                          <Tooltip title={t("catalog.products.create.autoGenerateSlug") || "Auto-generate from product name"}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<SyncOutlined />}
+                              style={{ color: "var(--text-secondary)" }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const currentName = form.getFieldValue("name") || "";
+                                const generated = generateSlug(currentName);
+                                form.setFieldValue("slug", generated);
+                                setIsSlugCustomized(false);
+                                form.validateFields(["slug"]).catch(() => {});
+                              }}
+                            />
+                          </Tooltip>
+                        }
+                      />
                     </Form.Item>
                   </Col>
                   <Col xs={24}>
@@ -216,7 +260,7 @@ export function ProductCreatePage() {
                       <Select
                         allowClear
                         showSearch
-                        placeholder="Select brand"
+                        placeholder={t("catalog.products.create.selectBrand") || "Select brand"}
                         optionFilterProp="label"
                         loading={brands.isLoading}
                         options={(brands.data?.data ?? []).map((b) => ({ value: b.id, label: b.name || b.translations?.[0]?.name || b.id }))}
@@ -229,7 +273,7 @@ export function ProductCreatePage() {
                         multiple
                         treeCheckable
                         treeData={categoryTreeData}
-                        placeholder="Select categories"
+                        placeholder={t("catalog.products.create.selectCategories") || "Select categories"}
                         loading={categories.isLoading}
                         allowClear
                         treeDefaultExpandAll
@@ -244,7 +288,7 @@ export function ProductCreatePage() {
                         showSearch
                         optionFilterProp="label"
                         loading={tags.isLoading}
-                        placeholder="Select tags"
+                        placeholder={t("catalog.products.create.selectTags") || "Select tags"}
                         options={(tags.data?.data ?? []).map((t) => ({ value: t.id, label: t.name || t.translations?.[0]?.name || t.id }))}
                       />
                     </Form.Item>

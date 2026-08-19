@@ -1,0 +1,126 @@
+{
+  "title": "مكتبة الوسائط",
+  "description": "إدارة ورفع وتنظيم وتأمين ملفات الوسائط الخاصة بمشروعك.",
+  "searchPlaceholder": "ابحث عن الملفات بالاسم أو الوسم...",
+  "allFiles": "جميع الملفات",
+  "rootFolder": "المجلد الرئيسي",
+  "newFolder": "مجلد جديد",
+  "folderName": "اسم المجلد",
+  "enterFolderName": "أدخل اسم المجلد (مثال: products, banners)",
+  "createFolder": "إنشاء المجلد",
+  "deleteFolder": "حذف المجلد",
+  "deleteFolderConfirm": "هل أنت متأكد من حذف هذا المجلد الفارغ؟",
+  "folderCreated": "تم إنشاء المجلد بنجاح",
+  "folderDeleted": "تم حذف المجلد بنجاح",
+  "emptyFolder": "مجلد فارغ",
+  "folders": "مجلدات",
+  "files": "ملفات",
+  "selected": "محدد",
+  "moveToFolder": "نقل إلى مجلد",
+  "selectDestinationFolder": "اختر المجلد الوجهة",
+  "movedToFolder": "تم نقل الملفات بنجاح",
+  "deleteConfirm": "هل أنت متأكد من حذف الملفات المحددة؟",
+  "accessControl": "التحكم بالوصول والروابط",
+  "publicAccess": "الوصول العام",
+  "signedUrl": "رابط موقّع مؤقت",
+  "generateSignedUrl": "توليد رابط موقّع",
+  "expiry": "مدة الصلاحية",
+  "expiry1h": "ساعة واحدة",
+  "expiry24h": "24 ساعة",
+  "expiry7d": "7 أيام",
+  "copyUrl": "نسخ الرابط",
+  "urlCopied": "تم نسخ الرابط إلى الحافظة",
+  "variants": "نسخ الصور المحسنة (Variants)",
+  "kinds": {
+    "images": "الصور",
+    "videos": "مقاطع الفيديو",
+    "audio": "الصوتيات",
+    "pdf": "ملفات PDF",
+    "documents": "المستندات"
+  },
+  "filters": {
+    "type": "نوع الملف",
+    "visibility": "الظهور",
+    "grid": "شبكة",
+    "list": "قائمة"
+  },
+  "visibility": {
+    "public": "عام",
+    "private": "خاص",
+    "restricted": "مقيد"
+  },
+  "stats": {
+    "total": "الملفات",
+    "totalSize": "الحجم الكلي"
+  },
+  "actions": {
+    "upload": "رفع ملفات",
+    "preview": "معاينة",
+    "delete": "حذف",
+    "download": "تنزيل",
+    "confirmDelete": "حذف هذا الملف؟",
+    "confirmBulkDelete": "حذف الملفات المحددة؟"
+  },
+  "bulk": {
+    "selected": "{count} محدد",
+    "preview": "معاينة الأول",
+    "public": "جعله عامًا",
+    "private": "جعله خاصًا",
+    "delete": "حذف"
+  },
+  "empty": {
+    "noFiles": "لا توجد ملفات أو مجلدات بعد",
+    "description": "ارفع أول ملف لك أو أنشئ مجلداً للبدء."
+  },
+  "toasts": {
+    "bulkDeleted": "تم حذف {count} ملف بنجاح",
+    "visibilityUpdated": "تم تحديث مستوى الخصوصية بنجاح",
+    "deleted": "تم حذف الملف بنجاح",
+    "uploaded": "تم رفع الملفات بنجاح"
+  },
+  "errors": {
+    "actionFailed": "تعذر إكمال العملية."
+  },
+  "list": {
+    "name": "الاسم",
+    "type": "النوع",
+    "size": "الحجم",
+    "visibility": "الظهور",
+    "created": "تاريخ الإنشاء"
+  },
+  "picker": {
+    "title": "اختر الوسائط",
+    "select": "اختر {count}",
+    "searchPlaceholder": "ابحث عن الملفات...",
+    "gridView": "شبكة",
+    "listView": "قائمة",
+    "uploadDone": "تم رفع {count} ملف",
+    "total": "{count} ملف"
+  },
+  "imagePicker": {
+    "title": "اختر صورة"
+  },
+  "preview": {
+    "name": "الاسم",
+    "type": "النوع",
+    "size": "الحجم",
+    "visibility": "الخصوصية",
+    "uploaded": "تاريخ الرفع",
+    "dimensions": "الأبعاد",
+    "noPreview": "لا توجد معاينة متاحة",
+    "prev": "السابق",
+    "next": "التالي"
+  },
+  "uploader": {
+    "drop": "رفع الملفات",
+    "dropTitle": "انقر أو اسحب الملفات هنا",
+    "dropHint": "صور، مقاطع فيديو، مستندات، PDF (حتى 8 ميجابايت في طلب واحد)",
+    "retry": "إعادة المحاولة",
+    "done": "تم"
+  },
+  "noProject": {
+    "title": "لم يتم اختيار مشروع",
+    "description": "اختر مشروعًا للوصول إلى مكتبة الوسائط الخاصة به.",
+    "goToProjects": "الانتقال إلى المشاريع"
+  }
+}

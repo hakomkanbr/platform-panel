@@ -1,0 +1,126 @@
+{
+  "title": "Medya Kütüphanesi",
+  "description": "Projeniz için medya varlıklarını yönetin ve düzenleyin.",
+  "searchPlaceholder": "İsme veya etikete göre ara...",
+  "allFiles": "Tüm Dosyalar",
+  "rootFolder": "Ana Klasör",
+  "newFolder": "Yeni Klasör",
+  "folderName": "Klasör Adı",
+  "enterFolderName": "Klasör adını girin (örn. products, banners)",
+  "createFolder": "Klasör Oluştur",
+  "deleteFolder": "Klasörü Sil",
+  "deleteFolderConfirm": "Bu boş klasörü silmek istediğinize emin misiniz?",
+  "folderCreated": "Klasör başarıyla oluşturuldu",
+  "folderDeleted": "Klasör başarıyla silindi",
+  "emptyFolder": "Boş klasör",
+  "folders": "klasör",
+  "files": "dosya",
+  "selected": "seçildi",
+  "moveToFolder": "Klasöre Taşı",
+  "selectDestinationFolder": "Hedef klasörü seçin",
+  "movedToFolder": "Dosyalar başarıyla taşındı",
+  "deleteConfirm": "Seçili dosyaları silmek istediğinize emin misiniz?",
+  "accessControl": "Erişim Kontrolü ve Bağlantılar",
+  "publicAccess": "Genel Erişim",
+  "signedUrl": "İmzalı Bağlantı",
+  "generateSignedUrl": "İmzalı Bağlantı Oluştur",
+  "expiry": "Geçerlilik Süresi",
+  "expiry1h": "1 Saat",
+  "expiry24h": "24 Saat",
+  "expiry7d": "7 Gün",
+  "copyUrl": "Bağlantıyı Kopyala",
+  "urlCopied": "Bağlantı panoya kopyalandı",
+  "variants": "Optimize Edilmiş Varyantlar",
+  "kinds": {
+    "images": "Görseller",
+    "videos": "Videolar",
+    "audio": "Sesler",
+    "pdf": "PDF",
+    "documents": "Belgeler"
+  },
+  "filters": {
+    "type": "Dosya türü",
+    "visibility": "Görünürlük",
+    "grid": "Izgara",
+    "list": "Liste"
+  },
+  "visibility": {
+    "public": "Genel",
+    "private": "Özel",
+    "restricted": "Kısıtlı"
+  },
+  "stats": {
+    "total": "Dosya",
+    "totalSize": "Toplam boyut"
+  },
+  "actions": {
+    "upload": "Dosya Yükle",
+    "preview": "Önizle",
+    "delete": "Sil",
+    "download": "İndir",
+    "confirmDelete": "Bu dosya silinsin mi?",
+    "confirmBulkDelete": "Seçili dosyalar silinsin mi?"
+  },
+  "bulk": {
+    "selected": "{count} seçildi",
+    "preview": "İlkini önizle",
+    "public": "Genel yap",
+    "private": "Özel yap",
+    "delete": "Sil"
+  },
+  "empty": {
+    "noFiles": "Henüz dosya veya klasör yok",
+    "description": "Başlamak için ilk dosyanızı yükleyin veya bir klasör oluşturun."
+  },
+  "toasts": {
+    "bulkDeleted": "{count} dosya silindi",
+    "visibilityUpdated": "Görünürlük başarıyla güncellendi",
+    "deleted": "Dosya başarıyla silindi",
+    "uploaded": "Dosya(lar) başarıyla yüklendi"
+  },
+  "errors": {
+    "actionFailed": "İşlem tamamlanamadı."
+  },
+  "list": {
+    "name": "Ad",
+    "type": "Tür",
+    "size": "Boyut",
+    "visibility": "Görünürlük",
+    "created": "Oluşturulma"
+  },
+  "picker": {
+    "title": "Medya seç",
+    "select": "{count} seç",
+    "searchPlaceholder": "Dosya ara...",
+    "gridView": "Izgara",
+    "listView": "Liste",
+    "uploadDone": "{count} dosya yüklendi",
+    "total": "{count} dosya"
+  },
+  "imagePicker": {
+    "title": "Görsel seç"
+  },
+  "preview": {
+    "name": "Ad",
+    "type": "Tür",
+    "size": "Boyut",
+    "visibility": "Görünürlük",
+    "uploaded": "Yüklenme",
+    "dimensions": "Boyutlar",
+    "noPreview": "Önizleme yok",
+    "prev": "Önceki",
+    "next": "Sonraki"
+  },
+  "uploader": {
+    "drop": "Dosya yükle",
+    "dropTitle": "Dosyaları tıklayın veya buraya sürükleyin",
+    "dropHint": "Görseller, videolar, belgeler, PDF (tek istekte 8 MB'a kadar)",
+    "retry": "Tekrar dene",
+    "done": "Tamam"
+  },
+  "noProject": {
+    "title": "Proje seçilmedi",
+    "description": "Medya kütüphanesine erişmek için bir proje seçin.",
+    "goToProjects": "Projelere git"
+  }
+}
