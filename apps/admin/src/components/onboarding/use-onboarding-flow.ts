@@ -105,10 +105,11 @@ export function useOnboardingFlow() {
 
   // Queries
   const {
-    data: projects = [],
+    data: projectsData,
     isLoading: isProjectsLoading,
     refetch: refetchProjects,
   } = useProjects(tenantId);
+  const projects = useMemo(() => projectsData ?? [], [projectsData]);
 
   const createProjectMutation = useCreateProject();
   const canConsumeMutation = useCanConsume();
@@ -131,7 +132,7 @@ export function useOnboardingFlow() {
   });
 
   const {
-    data: languages = [],
+    data: languagesData,
     isLoading: isLanguagesLoading,
     refetch: refetchLanguages,
   } = useQuery({
@@ -140,12 +141,17 @@ export function useOnboardingFlow() {
     enabled: !!activeProjectId,
     retry: 1,
   });
+  const languages = useMemo(() => languagesData ?? [], [languagesData]);
 
-  const { data: currencyCatalog = [], isLoading: isCatalogLoading } = useQuery({
+  const { data: currencyCatalogData, isLoading: isCatalogLoading } = useQuery({
     queryKey: ["currency-catalog"],
     queryFn: () => currenciesService.getCatalog(true),
     staleTime: 5 * 60 * 1000,
   });
+  const currencyCatalog = useMemo(
+    () => currencyCatalogData ?? [],
+    [currencyCatalogData],
+  );
 
   const {
     data: currencySettings,
