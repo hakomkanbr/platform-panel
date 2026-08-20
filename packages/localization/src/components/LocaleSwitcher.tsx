@@ -37,6 +37,7 @@ export function LocaleSwitcher() {
     >
       <Button
         type="text"
+        className="s2s-locale-switcher"
         icon={<GlobalOutlined style={{ fontSize: 16, color: "#6B7280" }} />}
         style={{
           display: "flex",

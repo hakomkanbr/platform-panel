@@ -97,17 +97,17 @@ export default function CreateUpdateWebSiteView({
             <ECard title={title}>
               <WriteError errors={errors} />
               <Row gutter={[16, 16]}>
-                <Col xs={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item name="name" label="Title">
                     <Input placeholder={"Title"} />
                   </Form.Item>
                 </Col>
-                <Col xs={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item name="description" label="Description">
                     <Input placeholder={"Description"} />
                   </Form.Item>
                 </Col>
-                <Col xs={12}>
+                <Col xs={24} sm={12}>
                   <Form.Item name="link" label="Link">
                     <Input addonBefore={selectBefore} defaultValue="Your Site Link" />
                   </Form.Item>

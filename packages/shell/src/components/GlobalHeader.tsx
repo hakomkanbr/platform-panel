@@ -226,11 +226,13 @@ export function GlobalHeader({
       >
         {/* Left Section: App Navigation */}
         <div
+          className="s2s-header-left"
           style={{
             display: "flex",
             alignItems: "center",
             gap: 12,
             flex: 1,
+            minWidth: 0,
           }}
         >
           {/* Mobile menu toggle */}
@@ -247,21 +249,24 @@ export function GlobalHeader({
                 alignItems: "center",
                 justifyContent: "center",
                 color: "#6B7280",
+                flexShrink: 0,
               }}
             />
           )}
 
-          <WorkspaceSelector
-            workspaces={workspaces}
-            activeWorkspaceId={activeWorkspaceId}
-            onWorkspaceChange={onWorkspaceChange}
-          />
+          <div className="s2s-header-selects">
+            <WorkspaceSelector
+              workspaces={workspaces}
+              activeWorkspaceId={activeWorkspaceId}
+              onWorkspaceChange={onWorkspaceChange}
+            />
 
-          <ProjectSelector
-            projects={projects}
-            loading={projectsLoading}
-            onProjectChange={onProjectChange}
-          />
+            <ProjectSelector
+              projects={projects}
+              loading={projectsLoading}
+              onProjectChange={onProjectChange}
+            />
+          </div>
 
           {/* {applications && <ApplicationSelector applications={applications} />} */}
         </div>
@@ -342,11 +347,13 @@ export function GlobalHeader({
 
         {/* Right Section: Actions */}
         <div
+          className="s2s-header-right"
           style={{
             display: "flex",
             alignItems: "center",
             gap: 8,
             flex: 1,
+            minWidth: 0,
             justifyContent: "flex-end",
           }}
         >
@@ -357,6 +364,7 @@ export function GlobalHeader({
             >
               <Button
                 type="default"
+                className="s2s-visit-store-btn"
                 icon={<ShopOutlined style={{ color: "#F7931E", fontSize: 16 }} />}
                 onClick={() => window.open(getStoreUrl(activeSlug), "_blank")}
                 style={{
@@ -424,21 +432,23 @@ export function GlobalHeader({
           ) : null}
 
           {/* Quick Actions */}
-          <Tooltip title="Toggle Fullscreen">
-            <Button
-              type="text"
-              icon={isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
-              onClick={toggleFullscreen}
-              style={{
-                width: 36,
-                height: 36,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#6B7280",
-              }}
-            />
-          </Tooltip>
+          {!isMobile && (
+            <Tooltip title="Toggle Fullscreen">
+              <Button
+                type="text"
+                icon={isFullscreen ? <CompressOutlined /> : <ExpandOutlined />}
+                onClick={toggleFullscreen}
+                style={{
+                  width: 36,
+                  height: 36,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#6B7280",
+                }}
+              />
+            </Tooltip>
+          )}
 
           <Tooltip title="Toggle theme">
             <Button
@@ -477,12 +487,17 @@ export function GlobalHeader({
 
           <Divider
             type="vertical"
+            className="s2s-header-divider"
             style={{ height: 28, margin: "0 4px", background: "#E5E7EB" }}
           />
 
-          <LocaleSwitcher />
+          <div className="s2s-header-locale">
+            <LocaleSwitcher />
+          </div>
 
-          {headerExtras}
+          <div className="s2s-header-extras">
+            {headerExtras}
+          </div>
 
           {/* User Menu */}
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
@@ -519,6 +534,7 @@ export function GlobalHeader({
                 }}
               />
               <span
+                className="s2s-header-username"
                 style={{
                   fontSize: 13,
                   fontWeight: 500,

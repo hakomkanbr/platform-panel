@@ -315,6 +315,32 @@ body {
   height: calc(100vh - 24px) !important;
 }
 
+.s2s-sidebar-floating.s2s-sidebar-mobile {
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border-left: none !important;
+  border-right: none !important;
+  height: 100vh !important;
+}
+
+/* ===== Content Wrapper ===== */
+.s2s-content-wrap {
+  padding: 24px 32px;
+}
+
+.s2s-content-wrap .ant-layout-content {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.s2s-commerce-shell {
+  padding: 24px 32px;
+}
+
+.s2s-legacy-layout .ant-layout-header {
+  padding: 0 12px !important;
+}
+
 .s2s-sidebar-floating .ant-layout-sider-children {
   height: 100% !important;
   display: flex !important;
@@ -539,18 +565,79 @@ body {
 .s2s-stagger > *:nth-child(7) { animation-delay: 0.14s; }
 .s2s-stagger > *:nth-child(8) { animation-delay: 0.16s; }
 
-/* ===== Responsive ===== */
+/* ===== Responsive (Tablet & Mobile) ===== */
+@media (max-width: 1200px) {
+  .s2s-content-wrap {
+    padding: 20px 24px;
+  }
+}
+
 @media (max-width: 768px) {
   .modern-layout .ant-layout-content {
     margin: 0 !important;
   }
 
-  .modern-layout .ant-layout-header {
-    padding: 0 16px !important;
+  body {
+    overflow-x: hidden;
   }
 
+  .modern-layout .ant-layout-header {
+    padding: 0 12px !important;
+    gap: 4px;
+  }
+
+  .s2s-content-wrap {
+    padding: 16px 14px;
+  }
+
+  .s2s-commerce-shell {
+    padding: 16px 12px !important;
+  }
+
+  .s2s-legacy-layout {
+    margin-left: 0 !important;
+  }
+
+  /* Dashboard hero banner adapts to phones */
+  .platform-hero > div {
+    padding: 24px 20px !important;
+    border-radius: 16px !important;
+  }
+
+  .platform-hero h1 {
+    font-size: 24px !important;
+  }
+
+  .platform-hero p {
+    font-size: 13px !important;
+  }
+
+  /* Descriptions labels take less room on phones */
+  .s2s-content-wrap .ant-descriptions-item-label,
+  .s2s-content-wrap .ant-descriptions-bordered .ant-descriptions-item-label {
+    max-width: 40vw !important;
+    white-space: normal !important;
+  }
+
+  .s2s-content-wrap .ant-descriptions-item-label,
+  .s2s-content-wrap .ant-descriptions-item-content {
+    overflow-wrap: break-word;
+  }
+
+  /* Settings cards inside Keep compact */
+  .s2s-content-wrap > .ant-card,
+  .s2s-content-wrap .ant-card-body {
+    padding-inline: 14px;
+  }
+
+  /* ---- Compact global header on mobile ---- */
+
   .s2s-page-header h1 {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .s2s-page-header {
+    margin-bottom: 16px;
   }
 
   .s2s-kpi-card .kpi-value {
@@ -559,6 +646,199 @@ body {
 
   .s2s-card {
     padding: 16px;
+  }
+
+  /* ---- Compact global header on mobile ---- */
+  .modern-header .s2s-header-left,
+  .modern-header .s2s-header-right {
+    gap: 4px;
+  }
+
+  .modern-header .s2s-header-selects {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .modern-header .s2s-header-select {
+    min-width: 0 !important;
+    max-width: 130px !important;
+  }
+
+  .modern-header .s2s-workspace-select {
+    display: none !important;
+  }
+
+  .modern-header .s2s-header-extras,
+  .modern-header .s2s-header-divider {
+    display: none !important;
+  }
+
+  .modern-header .s2s-locale-switcher {
+    font-size: 0 !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    padding-inline: 6px !important;
+  }
+
+  .modern-header .s2s-locale-switcher .anticon {
+    font-size: 16px !important;
+  }
+
+  .modern-header .s2s-header-right .s2s-visit-store-btn {
+    width: 36px !important;
+    min-width: 36px !important;
+    padding-inline: 0 !important;
+  }
+
+  /* ---- Tables: allow horizontal scroll on any table ---- */
+  .s2s-content-wrap .ant-table-content {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .s2s-content-wrap .ant-table-wrapper {
+    overflow-x: auto;
+  }
+
+  /* ---- Tabs: scrollable & compact on mobile ---- */
+  .ant-tabs-top > .ant-tabs-nav,
+  .ant-tabs-bottom > .ant-tabs-nav {
+    margin: 0 0 12px;
+    overflow-x: auto;
+  }
+
+  .ant-tabs-nav-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .ant-tabs-nav-list {
+    min-width: max-content !important;
+  }
+
+  /* ---- Buttons with big padding should stay usable ---- */
+  .ant-btn-lg {
+    padding-inline: 14px !important;
+  }
+
+  /* ---- Full-width toolbar controls on mobile ---- */
+  .s2s-toolbar-search {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .s2s-toolbar-select {
+    width: 100% !important;
+  }
+
+  /* ---- Ant pagination fits small screens ---- */
+  .ant-pagination {
+    gap: 4px !important;
+  }
+
+  .ant-pagination .ant-pagination-total-text {
+    margin-inline-end: 6px !important;
+  }
+
+  .ant-pagination .ant-pagination-options {
+    margin-inline-start: 4px !important;
+  }
+
+  .ant-pagination .ant-pagination-options-size-changer {
+    min-width: 100px !important;
+  }
+
+  /* ---- Keep cards & modals within the screen ---- */
+  .ant-modal {
+    max-width: calc(100vw - 24px) !important;
+    top: 32px;
+    padding-bottom: 16px;
+  }
+
+  .ant-modal .ant-modal-content {
+    padding: 18px;
+  }
+
+  .ant-upload-list-item-container,
+  .ant-input-group,
+  .ant-input-affix-wrapper {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .s2s-content-wrap {
+    padding: 12px 10px;
+  }
+
+  /* Free up header space on very small phones */
+  .modern-header .s2s-header-right .s2s-visit-store-btn {
+    display: none !important;
+  }
+
+  .modern-header .s2s-header-username {
+    display: none !important;
+  }
+
+  .modern-header .s2s-header-select {
+    max-width: 120px !important;
+  }
+
+  .s2s-page-header h1 {
+    font-size: 20px;
+  }
+
+  .s2s-page-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .s2s-page-header > div:last-child {
+    flex-wrap: wrap;
+  }
+
+  .s2s-kpi-card .kpi-value {
+    font-size: 24px;
+  }
+
+  .s2s-page-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+
+  .ant-modal .ant-modal-content {
+    padding: 14px;
+  }
+
+  .ant-pagination .ant-pagination-total-text {
+    display: none !important;
+  }
+
+  .ant-pagination .ant-pagination-options {
+    margin-inline-start: 0 !important;
+  }
+
+  .ant-form .ant-row .ant-form-item-label,
+  .ant-form-item-label > label {
+    font-size: 13px;
+  }
+
+  /* Full-width utility buttons on mobile */
+  .s2s-btn-block-mobile {
+    width: 100% !important;
+  }
+
+  /* Ensure currency/number combos don't overflow */
+  .ant-input-group-addon {
+    padding-inline: 6px;
+  }
+
+  .ant-divider-horizontal {
+    margin: 12px 0;
   }
 }
 

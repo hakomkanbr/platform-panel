@@ -7,6 +7,7 @@ import {
   Card,
   Empty,
   Input,
+  message,
   Select,
   Space,
   Spin,
@@ -27,6 +28,8 @@ import { useTranslations } from "@repo/localization";
 import { motion } from "framer-motion";
 import { PageTransition, AnimatedCard } from "@repo/ui";
 import CreateApiKeyDialog from "@/components/api-keys/create-api-key-dialog";
+import { storeSettingsApi } from "@/api/store-settings";
+import { getApiErrorMessage } from "@repo/apps-ecommerce/commerce/api/http";
 import type { ProjectDto } from "@repo/shared-types";
 
 const { Title, Text } = Typography;
@@ -44,12 +47,51 @@ export default function MarketplacePage() {
   const [search, setSearch] = useState("");
   const [ownerProjectId, setOwnerProjectId] = useState<string | undefined>();
   const [createKeyOpen, setCreateKeyOpen] = useState(false);
+  const [provisioningProjectId, setProvisioningProjectId] = useState<
+    string | undefined
+  >();
 
   useEffect(() => {
     if (!ownerProjectId && projects.length > 0) {
       setOwnerProjectId(projects[0].id);
     }
   }, [projects, ownerProjectId]);
+
+  // Backfill: marketplace members must have a registered store in the
+  // ecommerce/Store service, otherwise they never appear in the marketplace
+  // storefront. This re-registers any member that is missing its store (e.g.
+  // projects added before this provisioning existed).
+  useEffect(() => {
+    if (projectsLoading || projects.length === 0) return;
+    let cancelled = false;
+
+    const backfillStores = async () => {
+      for (const project of projects) {
+        if (cancelled || !project.isMarketplaceMember) continue;
+        try {
+          const existing =
+            await storeSettingsApi.getStoreByProject(project.id);
+          if (!existing) {
+            await storeSettingsApi.createStore(project.id, {
+              name: project.name,
+              slug: project.slug,
+              description: project.description || "",
+            });
+          }
+        } catch (error) {
+          console.warn(
+            `[Marketplace] Could not register store for "${project.name}":`,
+            error,
+          );
+        }
+      }
+    };
+
+    void backfillStores();
+    return () => {
+      cancelled = true;
+    };
+  }, [projects, projectsLoading]);
 
   const filtered = useMemo(() => {
     if (!search) return projects;
@@ -60,8 +102,32 @@ export default function MarketplacePage() {
     );
   }, [projects, search]);
 
-  const handleToggle = (project: ProjectDto, enabled: boolean) => {
-    setMarketplaceMember.mutate({ projectId: project.id, enabled, tenantId });
+  const handleToggle = async (project: ProjectDto, enabled: boolean) => {
+    // Adding a project to the marketplace must also register its store in the
+    // ecommerce/Store service. The marketplace storefront lists stores from
+    // that service, so without this the new store never shows up there — no
+    // matter how long you wait.
+    setProvisioningProjectId(project.id);
+    try {
+      if (enabled) {
+        const existingStore =
+          await storeSettingsApi.getStoreByProject(project.id);
+        if (!existingStore) {
+          await storeSettingsApi.createStore(project.id, {
+            name: project.name,
+            slug: project.slug,
+            description: project.description || "",
+          });
+        }
+      }
+      setMarketplaceMember.mutate({ projectId: project.id, enabled, tenantId });
+    } catch (error) {
+      message.error(
+        `Failed to register "${project.name}" in the marketplace store: ${getApiErrorMessage(error)}`,
+      );
+    } finally {
+      setProvisioningProjectId(undefined);
+    }
   };
 
   const ownerProjectName = projects.find((p) => p.id === ownerProjectId)?.name;
@@ -133,13 +199,14 @@ export default function MarketplacePage() {
             message={t("dashboard.marketplace.infoTitle")}
             description={t("dashboard.marketplace.infoDesc")}
           />
-          <Space align="center">
+          <Space align="center" wrap style={{ width: "100%" }}>
             <Input
               placeholder={t("dashboard.marketplace.searchPlaceholder")}
               prefix={<SearchOutlined />}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ width: 300, borderRadius: 6 }}
+              className="s2s-toolbar-search"
+              style={{ maxWidth: "100%", width: 300, borderRadius: 6 }}
               allowClear
             />
             <Text type="secondary">
@@ -182,6 +249,8 @@ export default function MarketplacePage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 12,
                     padding: "16px 20px",
                     borderBottom:
                       idx < filtered.length - 1
@@ -259,7 +328,10 @@ export default function MarketplacePage() {
                         type="primary"
                         size="small"
                         icon={<PlusOutlined />}
-                        loading={setMarketplaceMember.isPending}
+                        loading={
+                          setMarketplaceMember.isPending ||
+                          provisioningProjectId === project.id
+                        }
                         style={{ borderRadius: 8 }}
                         onClick={() => handleToggle(project, true)}
                       >

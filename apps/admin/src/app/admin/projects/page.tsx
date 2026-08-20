@@ -132,6 +132,8 @@ export default function ProjectCenterPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: 16,
           marginBottom: 24,
         }}
       >
@@ -209,6 +211,8 @@ export default function ProjectCenterPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 12,
                     padding: "16px 20px",
                     borderBottom:
                       idx < projects.length - 1
@@ -269,8 +273,8 @@ export default function ProjectCenterPage() {
                       </Space>
                     </Space>
                   </Link>
-                  <Space size={8}>
-                    <Text type="secondary" style={{ fontSize: 12, marginRight: 8 }}>
+                  <Space size={8} wrap style={{ justifyContent: "flex-end" }}>
+                    <Text type="secondary" style={{ fontSize: 12, marginRight: 4 }}>
                       {dayjs(project.createdAt).format("MMM DD, YYYY")}
                     </Text>
 

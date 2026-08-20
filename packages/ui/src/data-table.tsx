@@ -125,7 +125,7 @@ export function DataTable<T extends object>({
         loading={loading}
         rowSelection={rowSelection}
         pagination={paginationConfig}
-        scroll={scroll}
+        scroll={scroll ?? { x: true }}
         size="middle"
         className={className}
         onRow={

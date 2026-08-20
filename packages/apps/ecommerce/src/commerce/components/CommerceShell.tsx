@@ -27,7 +27,7 @@ export const CommerceShell: React.FC<CommerceShellProps> = ({
   contentPadding = 24,
 }) => {
   return (
-    <div style={{ padding: `${contentPadding}px 32px` }}>
+    <div className="s2s-commerce-shell" style={{ padding: `${contentPadding}px 32px` }}>
       {breadcrumbs && breadcrumbs.length > 0 && (
         <div style={{ marginBottom: 16 }}>
           <EBreadcrumb items={breadcrumbs} showBackground={false} />

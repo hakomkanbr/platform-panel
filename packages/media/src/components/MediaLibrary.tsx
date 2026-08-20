@@ -226,10 +226,13 @@ export const MediaLibrary: React.FC<MediaLibraryProps> = ({ title, description, 
 
       {/* Breadcrumb Folder Navigation */}
       <div
+        className="s2s-media-breadcrumb"
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: 8,
           padding: "12px 16px",
           background: "var(--fill-quaternary, #f9fafb)",
           borderRadius: 8,

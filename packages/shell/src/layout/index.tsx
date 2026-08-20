@@ -141,22 +141,22 @@ const AdminShellInner: React.FC<{
           trigger={null}
           collapsible
           collapsed={collapsed}
-          width={sidebarWidth}
+          width={isMobile ? `min(${sidebarWidth}px, 85vw)` : sidebarWidth}
           collapsedWidth={isMobile ? 0 : sidebarCollapsedWidth}
-          className="s2s-sidebar-floating"
+          className={`s2s-sidebar-floating${isMobile ? " s2s-sidebar-mobile" : ""}`}
           style={{
             position: "fixed",
-            top: 12,
-            bottom: 12,
-            height: "calc(100vh - 24px)",
+            top: isMobile ? 0 : 12,
+            bottom: isMobile ? 0 : 12,
+            height: isMobile ? "100vh" : "calc(100vh - 24px)",
             zIndex: 1000,
             background: "#FFFFFF",
-            borderRadius: 16,
+            borderRadius: isMobile ? 0 : 16,
             border: "1px solid #E5E7EB",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.04)",
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             overflow: "hidden",
-            ...(isRTL ? { right: 12 } : { left: 12 }),
+            ...(isRTL ? { right: isMobile ? 0 : 12 } : { left: isMobile ? 0 : 12 }),
           }}
         >
           <GlobalSidebar />
@@ -183,7 +183,7 @@ const AdminShellInner: React.FC<{
               </>
             }
           />
-          <div style={{ padding: "24px 32px" }}>
+          <div className="s2s-content-wrap">
             <ModernContent>{children}</ModernContent>
           </div>
         </Layout>

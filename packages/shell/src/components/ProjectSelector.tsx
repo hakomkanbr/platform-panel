@@ -81,6 +81,7 @@ export function ProjectSelector({
       placeholder="Select project..."
       onChange={handleChange}
       allowClear
+      className="s2s-header-select s2s-project-select"
       style={{ minWidth: 200, maxWidth: 300 }}
       size="middle"
       optionLabelProp="label"

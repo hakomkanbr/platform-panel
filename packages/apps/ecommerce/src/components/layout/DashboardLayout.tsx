@@ -49,6 +49,7 @@ export default function DashboardLayout({
     <Layout style={{ minHeight: "100vh" }}>
       <Sidebar collapsed={collapsed} onCollapse={setCollapsed} />
       <Layout
+        className="s2s-legacy-layout"
         style={{
           marginLeft: collapsed ? 60 : 243,
           transition: "margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
