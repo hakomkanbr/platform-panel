@@ -7,6 +7,7 @@ import { getCurrencyInfo } from "@repo/utils";
 import { useProductWorkspace } from "../ProductWorkspaceContext";
 import type { ProductDetail } from "../../../../types/catalog";
 import { useUpdateProduct } from "../../../../hooks/useProducts";
+import { useStores } from "../../../../hooks/useStores";
 
 const { Text } = Typography;
 
@@ -15,10 +16,12 @@ export function FulfillmentSection({ product }: { product?: ProductDetail }) {
   const [form] = Form.useForm();
   const { productId, productType, markSectionDirty, registerSaveHandler } = useProductWorkspace();
   const updateProduct = useUpdateProduct();
+  const stores = useStores();
+  const storeCurrency = stores.data?.data?.[0]?.settings?.currencyCode || "TRY";
 
   const currentCurrency = (product?.pricing?.currencyId && !product.pricing.currencyId.includes("-"))
     ? product.pricing.currencyId
-    : (product?.currency ?? "SAR");
+    : (product?.currency && !product.currency.includes("-") ? product.currency : storeCurrency);
   const currencyPrefix = getCurrencyInfo(currentCurrency)?.symbol ?? currentCurrency;
 
   useEffect(() => {

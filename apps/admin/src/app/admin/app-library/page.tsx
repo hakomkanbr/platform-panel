@@ -312,14 +312,11 @@ export default function AppLibraryPage() {
           placeholder="Search applications..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="s2s-toolbar-search"
           style={{
             width: 320,
-            maxWidth: "100%",
             height: 44,
             borderRadius: 12,
             border: "1px solid var(--border)",
-            flex: "1 1 260px",
           }}
         />
         <Radio.Group
@@ -365,8 +362,7 @@ export default function AppLibraryPage() {
         <Select
           placeholder="Select project (optional)"
           allowClear
-          className="s2s-toolbar-select"
-          style={{ width: 240, maxWidth: "100%", borderRadius: 12 }}
+          style={{ width: 240, borderRadius: 12 }}
           value={selectedProjectId}
           onChange={(val) => setSelectedProjectId(val)}
           options={projects.map((p) => ({ label: p.name, value: p.id }))}

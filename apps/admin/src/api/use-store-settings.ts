@@ -38,6 +38,30 @@ export function useCreateStore() {
   });
 }
 
+export function useUpdateStore() {
+  const queryClient = useQueryClient();
+  return useMutation<
+    StoreDto,
+    Error,
+    {
+      storeId: string;
+      projectId: string;
+      request: import("@/api/store-settings").UpdateStoreRequest;
+    }
+  >({
+    mutationFn: ({ storeId, projectId, request }) =>
+      storeSettingsApi.updateStore(storeId, projectId, request),
+    onSuccess: (store) => {
+      queryClient.invalidateQueries({
+        queryKey: ["store-settings", store.projectId],
+      });
+    },
+    onError: (error) => {
+      message.error(`Failed to update store: ${error.message}`);
+    },
+  });
+}
+
 export function useUpdateStoreSettings() {
   const queryClient = useQueryClient();
   return useMutation<

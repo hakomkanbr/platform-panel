@@ -100,26 +100,26 @@ export default function CreateUpdateUsersView({
             <ECard title={title}>
               <WriteError errors={errors} />
               <Row gutter={[16, 16]}>
-                <Col xs={24} sm={12}>
+                <Col xs={12}>
                   <Form.Item name="userName" label="User Name">
                     <Input placeholder={"User Name"} />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12}>
+                <Col xs={12}>
                   <Form.Item name="email" label="Email" rules={[{ type: 'email' }, {
                     required: true
                   }]}>
                     <Input placeholder="Email" />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12}>
+                <Col xs={12}>
                   <Form.Item name="phoneNumber" label="Phone Number">
                     <Input placeholder="Phone Number" />
                   </Form.Item>
                 </Col>
                 {
                   user?.token?.role != IRoleType.User && (
-                    <Col xs={24} sm={12}>
+                    <Col xs={12}>
                       <Form.Item name="sId" label="WebSite">
                         <SingleSiteSelect />
                       </Form.Item>
@@ -128,7 +128,7 @@ export default function CreateUpdateUsersView({
                 }
 
                 <Divider />
-                <Col xs={24} sm={12}>
+                <Col xs={12}>
                   <Form.Item
                     name="password"
                     label="Password"
@@ -142,7 +142,7 @@ export default function CreateUpdateUsersView({
                     <Input.Password />
                   </Form.Item>
                 </Col>
-                <Col xs={24} sm={12}>
+                <Col xs={12}>
                   <Form.Item
                     name="confirm"
                     label="Confirm Password"

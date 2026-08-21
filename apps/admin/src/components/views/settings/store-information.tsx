@@ -8,6 +8,7 @@ import {
   Space,
   Tag,
   Button,
+  Image,
 } from "antd";
 import {
   ShopOutlined,
@@ -16,6 +17,7 @@ import {
   WhatsAppOutlined,
   GlobalOutlined,
   DollarOutlined,
+  PictureOutlined,
 } from "@ant-design/icons";
 import type { ProjectDetailDto } from "@repo/shared-types";
 import type { StoreDto } from "@/api/store-settings";
@@ -42,6 +44,7 @@ export default function StoreInformation({
   const currency = settings?.currencyCode
     ? `${settings.currencyCode}${settings.currencyCode === "USD" ? " ($)" : ""}`
     : "—";
+  const logo = store?.logoUrl || project.logoUrl || project.logo;
 
   return (
     <Card
@@ -65,6 +68,52 @@ export default function StoreInformation({
       style={{ borderRadius: 12, border: "1px solid #e2e8f0", height: "100%" }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {/* Store Logo block */}
+        <div style={{ padding: 14, background: "#F8FAFC", borderRadius: 10 }}>
+          <Space size={8} style={{ marginBottom: 8 }}>
+            <PictureOutlined style={{ color: "#F7931E" }} />
+            <Text strong style={{ fontSize: 13, color: "#334155" }}>
+              {t("settings.logo") || "شعار المتجر"}
+            </Text>
+          </Space>
+          <div>
+            {logo ? (
+              <Space align="center" size={14}>
+                <Image
+                  src={logo}
+                  alt={project.name}
+                  width={56}
+                  height={56}
+                  style={{
+                    borderRadius: 10,
+                    objectFit: "contain",
+                    border: "1px solid #E2E8F0",
+                    padding: 3,
+                    background: "#FFFFFF",
+                  }}
+                />
+                <Space direction="vertical" size={2}>
+                  <Text strong style={{ fontSize: 13 }}>
+                    {project.name}
+                  </Text>
+                  <Text type="secondary" style={{ fontSize: 12, wordBreak: "break-all" }}>
+                    {logo.startsWith("data:")
+                      ? t("settings.uploadOption") || "صورة مخصصة"
+                      : logo.length > 35
+                        ? `${logo.slice(0, 35)}...`
+                        : logo}
+                  </Text>
+                </Space>
+              </Space>
+            ) : (
+              <Space size={8}>
+                <PictureOutlined style={{ color: "#9CA3AF", fontSize: 18 }} />
+                <Text type="secondary">{t("settings.noLogo") || "لا يوجد شعار محدد"}</Text>
+              </Space>
+            )}
+          </div>
+        </div>
+
         {/* Address block */}
         <div style={{ padding: 14, background: "#F8FAFC", borderRadius: 10 }}>
           <Space size={8} style={{ marginBottom: 8 }}>

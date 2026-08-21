@@ -7,6 +7,7 @@ import {
   ShopOutlined,
   GlobalOutlined,
   DollarOutlined,
+  AppstoreOutlined,
   CheckCircleOutlined,
 } from "@ant-design/icons";
 import { useTranslations } from "@repo/localization";
@@ -40,13 +41,17 @@ export default function OnboardingStepper({ currentStep, onStepClick }: Onboardi
       icon: <DollarOutlined />,
     },
     {
+      title: t("settings.onboarding.steps.marketplace"),
+      icon: <AppstoreOutlined />,
+    },
+    {
       title: t("settings.onboarding.steps.review"),
       icon: <CheckCircleOutlined />,
     },
   ];
 
-  const currentIdx = Math.min(Math.max(currentStep - 1, 0), 4);
-  const percent = Math.round(((currentIdx + 1) / 5) * 100);
+  const currentIdx = Math.min(Math.max(currentStep - 1, 0), 5);
+  const percent = Math.round(((currentIdx + 1) / 6) * 100);
 
   return (
     <div style={{ width: "100%", marginBottom: 28 }}>
@@ -84,7 +89,7 @@ export default function OnboardingStepper({ currentStep, onStepClick }: Onboardi
           <Text type="secondary" style={{ fontSize: 12 }}>
             {t("settings.onboarding.stepCounter", {
               current: currentIdx + 1,
-              total: 5,
+              total: 6,
             })}
           </Text>
         </div>

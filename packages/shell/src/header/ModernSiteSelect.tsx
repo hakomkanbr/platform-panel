@@ -82,17 +82,28 @@ const ModernSiteSelect: React.FC<ModernSiteSelectProps> = ({
 
   useEffect(() => {
     if (variant === 'projects') {
-      const initProject = async () => {
-        const storedId = await getCookie(PROJECT_ID_COOKIE);
-        if (storedId && projects.some(p => p.id === storedId)) {
-          setSelectedProjectId(storedId);
+      if (projects.length === 1) {
+        const singleProject = projects[0];
+        setCookie(PROJECT_ID_COOKIE, singleProject.id);
+        setCookie(PROJECT_NAME_COOKIE, singleProject.name);
+        setSelectedProjectId(singleProject.id);
+        if (onProjectChange) {
+          onProjectChange(singleProject);
         }
-      };
-      initProject();
+      } else {
+        const initProject = async () => {
+          const storedId = await getCookie(PROJECT_ID_COOKIE);
+          if (storedId && projects.some(p => p.id === storedId)) {
+            setSelectedProjectId(storedId);
+          }
+        };
+        initProject();
+      }
     }
-  }, [variant, projects]);
+  }, [variant, projects, onProjectChange]);
 
   if (variant === 'projects') {
+    if (projects.length <= 1) return null;
     return (
       <div className="modern-site-select">
         <Select

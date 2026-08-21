@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Spin, Typography } from "antd";
 import { motion } from "framer-motion";
 import { useTranslations } from "@repo/localization";
@@ -16,10 +16,18 @@ interface OnboardingGateProps {
 export default function OnboardingGate({ children }: OnboardingGateProps) {
   const t = useTranslations();
   const flow = useOnboardingFlow();
-  const [forceShowDashboard, setForceShowDashboard] = useState(false);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const [isOnboardingActive, setIsOnboardingActive] = useState(false);
+
+  useEffect(() => {
+    if (!flow.isLoadingData && !initialCheckDone) {
+      setIsOnboardingActive(!flow.onboardingState.isComplete);
+      setInitialCheckDone(true);
+    }
+  }, [flow.isLoadingData, flow.onboardingState.isComplete, initialCheckDone]);
 
   // While initially loading projects/store state from backend, show clean loading state (no flickering)
-  if (flow.isLoadingData && !forceShowDashboard) {
+  if (!initialCheckDone || (flow.isLoadingData && !isOnboardingActive)) {
     return (
       <div
         style={{
@@ -39,15 +47,18 @@ export default function OnboardingGate({ children }: OnboardingGateProps) {
     );
   }
 
-  // If onboarding is incomplete, gate the dashboard and show the Onboarding flow
-  if (!flow.onboardingState.isComplete && !forceShowDashboard) {
+  // If onboarding is active, render the Onboarding flow until user explicitly finishes
+  if (isOnboardingActive) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        <OnboardingWizard onFinish={() => setForceShowDashboard(true)} />
+        <OnboardingWizard
+          flow={flow}
+          onFinish={() => setIsOnboardingActive(false)}
+        />
       </motion.div>
     );
   }

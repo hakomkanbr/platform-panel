@@ -10,6 +10,7 @@ import Step1ProjectStore from "./step1-project-store";
 import Step2StoreInfo from "./step2-store-info";
 import Step3LanguageSelector from "./step3-language-selector";
 import Step4CurrencySelector from "./step4-currency-selector";
+import Step5Marketplace from "./step5-marketplace";
 import Step5ReviewComplete from "./step5-review-complete";
 import OnboardingSuccess from "./onboarding-success";
 import { useOnboardingFlow } from "./use-onboarding-flow";
@@ -18,12 +19,14 @@ import type { OnboardingStepNumber } from "./types";
 const { Title, Text } = Typography;
 
 interface OnboardingWizardProps {
+  flow?: ReturnType<typeof useOnboardingFlow>;
   onFinish?: () => void;
 }
 
-export default function OnboardingWizard({ onFinish }: OnboardingWizardProps) {
+export default function OnboardingWizard({ flow: externalFlow, onFinish }: OnboardingWizardProps) {
   const t = useTranslations();
-  const flow = useOnboardingFlow();
+  const internalFlow = useOnboardingFlow();
+  const flow = externalFlow || internalFlow;
 
   const handleStepClick = (step: OnboardingStepNumber) => {
     flow.setCurrentStep(step);
@@ -46,7 +49,7 @@ export default function OnboardingWizard({ onFinish }: OnboardingWizardProps) {
       }}
     >
       {/* Header Banner */}
-      {flow.currentStep <= 5 && (
+      {flow.currentStep <= 6 && (
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <Tag
             color="orange"
@@ -82,7 +85,7 @@ export default function OnboardingWizard({ onFinish }: OnboardingWizardProps) {
       )}
 
       {/* Stepper */}
-      {flow.currentStep <= 5 && (
+      {flow.currentStep <= 6 && (
         <OnboardingStepper
           currentStep={flow.currentStep}
           onStepClick={handleStepClick}
@@ -140,6 +143,16 @@ export default function OnboardingWizard({ onFinish }: OnboardingWizardProps) {
           )}
 
           {flow.currentStep === 5 && (
+            <Step5Marketplace
+              initialData={flow.formData}
+              onSubmit={flow.submitStep5}
+              onBack={flow.goToPreviousStep}
+              loading={flow.submitting}
+              error={flow.error}
+            />
+          )}
+
+          {flow.currentStep === 6 && (
             <Step5ReviewComplete
               formData={flow.formData}
               onComplete={flow.completeOnboarding}
@@ -149,7 +162,7 @@ export default function OnboardingWizard({ onFinish }: OnboardingWizardProps) {
             />
           )}
 
-          {flow.currentStep === 6 && (
+          {flow.currentStep === 7 && (
             <OnboardingSuccess
               storeSlug={flow.formData.storeSlug}
               onGoToDashboard={handleGoToDashboard}

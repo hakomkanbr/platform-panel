@@ -96,6 +96,7 @@
       "selectTags": "Select tags",
       "code": "Code",
       "slug": "Slug",
+      "slugRequired": "Slug is required",
       "autoGenerateSlug": "Auto-generate from name",
       "price": "Price",
       "sku": "SKU",
@@ -302,10 +303,15 @@
       "description": "Preview of all potential variant combinations based on your options.",
       "existingCount": "Existing",
       "missingCount": "Missing",
-      "generate": "Generate Missing Variants"
+      "generate": "Generate Missing Variants",
+      "recreateConfirmTitle": "Re-create all variants?",
+      "recreateConfirmDesc": "This will delete all existing variants and generate fresh ones. Are you sure?",
+      "recreateAll": "Re-create All Variants"
     },
     "variants": {
       "generatedSuccess": "Missing variants generated successfully",
+      "bulkDeleted": "Selected variants deleted successfully",
+      "recreated": "Variants re-created successfully",
       "saved": "Variant updated",
       "sku": "SKU",
       "barcode": "Barcode",
@@ -331,6 +337,7 @@
       "lockedDesc": "Media, Variants, and SEO will unlock after you save the basic information.",
       "media": "Media",
       "variantsWorkspace": "Variants Workspace",
+      "attributes": "Product Attributes & Specs",
       "seo": "Search Engine Optimization (SEO)",
       "pricing": "Pricing",
       "organization": "Organization",
@@ -343,7 +350,10 @@
       "publishProduct": "Publish Product",
       "saved": "Saved",
       "unsavedChanges": "Unsaved Changes",
-      "uploading": "Uploading..."
+      "uploading": "Uploading...",
+      "noChanges": "No changes to save.",
+      "saving": "Saving changes...",
+      "error": "Failed to save some changes."
     }
   },
   "categories": {
@@ -397,6 +407,8 @@
     "emptyTitle": "No brands yet",
     "emptyDescription": "Add brands to organize products by manufacturer.",
     "logoUrl": "Logo URL",
+    "selectLogo": "Choose from Media Library",
+    "changeLogo": "Change from Media Library",
     "website": "Website",
     "placeholderName": "e.g. Nike",
     "placeholderSlug": "nike",
@@ -427,6 +439,16 @@
   "attributes": {
     "title": "Attributes",
     "description": "Define reusable attribute groups and fields to enrich product information.",
+    "name": "Attribute",
+    "values": "Values",
+    "visibility": "Storefront Visibility",
+    "add": "Add Attribute",
+    "edit": "Edit Attribute Values",
+    "deleteConfirm": "Are you sure you want to remove this attribute from this product?",
+    "deleted": "Attribute removed from product",
+    "updated": "Attribute values updated successfully",
+    "added": "Attribute added to product successfully",
+    "selectDefinition": "Select Attribute",
     "newGroup": "New attribute group",
     "groupCreated": "Group created",
     "groupUpdated": "Group updated",

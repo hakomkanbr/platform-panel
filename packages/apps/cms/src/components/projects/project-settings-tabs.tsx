@@ -31,7 +31,7 @@ function GeneralSettings({ project }: { project: ProjectDetailDto }) {
         }
         style={{ borderRadius: 8, marginBottom: 16 }}
       >
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
           <div>
             <Text type="secondary" style={{ display: "block", marginBottom: 4 }}>
               Project Name

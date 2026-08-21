@@ -93,6 +93,25 @@ const AdminShellInner: React.FC<{
           name: currentProject.name,
           slug: found?.slug || (currentProject as any).slug || undefined,
         });
+      } else if (propProjects && propProjects.length === 1 && propProjects[0]) {
+        const single = propProjects[0];
+        setCurrentProject({
+          id: String(single.id),
+          name: single.name,
+          slug: single.slug,
+        });
+        Cookies.set("ProjectId", String(single.id));
+        Cookies.set("ProjectName", single.name);
+        if (single.slug) {
+          Cookies.set("ProjectSlug", single.slug);
+        } else {
+          Cookies.remove("ProjectSlug");
+        }
+        if (typeof window !== "undefined") {
+          localStorage.setItem("ProjectId", String(single.id));
+          localStorage.setItem("ProjectName", single.name);
+          if (single.slug) localStorage.setItem("ProjectSlug", single.slug);
+        }
       } else {
         const storedId =
           Cookies.get("ProjectId") ||
@@ -111,11 +130,13 @@ const AdminShellInner: React.FC<{
             : null);
         if (storedId && storedName) {
           const found = propProjects?.find((p) => String(p.id) === String(storedId));
-          setCurrentProject({
-            id: storedId,
-            name: storedName,
-            slug: found?.slug || storedSlug || undefined,
-          });
+          if (found || !propProjects || propProjects.length === 0) {
+            setCurrentProject({
+              id: storedId,
+              name: storedName,
+              slug: found?.slug || storedSlug || undefined,
+            });
+          }
         }
       }
     }, [currentProject, setCurrentProject, propProjects]);
@@ -141,22 +162,22 @@ const AdminShellInner: React.FC<{
           trigger={null}
           collapsible
           collapsed={collapsed}
-          width={isMobile ? `min(${sidebarWidth}px, 85vw)` : sidebarWidth}
+          width={sidebarWidth}
           collapsedWidth={isMobile ? 0 : sidebarCollapsedWidth}
-          className={`s2s-sidebar-floating${isMobile ? " s2s-sidebar-mobile" : ""}`}
+          className="s2s-sidebar-floating"
           style={{
             position: "fixed",
-            top: isMobile ? 0 : 12,
-            bottom: isMobile ? 0 : 12,
-            height: isMobile ? "100vh" : "calc(100vh - 24px)",
+            top: 12,
+            bottom: 12,
+            height: "calc(100vh - 24px)",
             zIndex: 1000,
             background: "#FFFFFF",
-            borderRadius: isMobile ? 0 : 16,
+            borderRadius: 16,
             border: "1px solid #E5E7EB",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.04)",
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             overflow: "hidden",
-            ...(isRTL ? { right: isMobile ? 0 : 12 } : { left: isMobile ? 0 : 12 }),
+            ...(isRTL ? { right: 12 } : { left: 12 }),
           }}
         >
           <GlobalSidebar />
@@ -183,7 +204,7 @@ const AdminShellInner: React.FC<{
               </>
             }
           />
-          <div className="s2s-content-wrap">
+          <div style={{ padding: "24px 32px" }}>
             <ModernContent>{children}</ModernContent>
           </div>
         </Layout>

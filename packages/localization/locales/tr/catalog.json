@@ -83,6 +83,7 @@
       "selectTags": "Etiketleri seçin",
       "code": "Kod",
       "slug": "Slug",
+      "slugRequired": "Slug gereklidir",
       "autoGenerateSlug": "İsimden otomatik oluştur",
       "price": "Fiyat",
       "sku": "SKU",
@@ -219,6 +220,7 @@
       "lockedDesc": "Medya, Varyantlar ve SEO temel bilgileri kaydettikten sonra açılacaktır.",
       "media": "Medya",
       "variantsWorkspace": "Varyantlar Çalışma Alanı",
+      "attributes": "Ürün Özellikleri ve Nitelikleri",
       "seo": "Arama Motoru Optimizasyonu (SEO)",
       "pricing": "Fiyatlandırma",
       "organization": "Organizasyon",
@@ -231,7 +233,10 @@
       "publishProduct": "Ürünü Yayınla",
       "saved": "Kaydedildi",
       "unsavedChanges": "Kaydedilmemiş Değişiklikler",
-      "uploading": "Yükleniyor..."
+      "uploading": "Yükleniyor...",
+      "noChanges": "Kaydedilecek değişiklik yok.",
+      "saving": "Değişiklikler kaydediliyor...",
+      "error": "Bazı değişiklikler kaydedilemedi."
     }
   },
   "categories": {
@@ -285,6 +290,8 @@
     "emptyTitle": "Henüz marka yok",
     "emptyDescription": "Ürünleri üreticiye göre düzenlemek için markalar ekleyin.",
     "logoUrl": "Logo URL'si",
+    "selectLogo": "Medya Kitaplığından Seç",
+    "changeLogo": "Medya Kitaplığından Değiştir",
     "website": "Web sitesi",
     "placeholderName": "Örn. Nike",
     "placeholderSlug": "nike",
@@ -315,6 +322,16 @@
   "attributes": {
     "title": "Özellikler",
     "description": "Ürün bilgilerini zenginleştirmek için yeniden kullanılabilir özellik grupları ve alanları tanımlayın.",
+    "name": "Özellik",
+    "values": "Belirlenen Değerler",
+    "visibility": "Mağaza Görünürlüğü",
+    "add": "Özellik Ekle",
+    "edit": "Özellik Değerlerini Düzenle",
+    "deleteConfirm": "Bu özelliği üründen kaldırmak istediğinize emin misiniz?",
+    "deleted": "Özellik üründen kaldırıldı",
+    "updated": "Özellik değerleri başarıyla güncellendi",
+    "added": "Özellik ürüne başarıyla eklendi",
+    "selectDefinition": "Özellik Seç",
     "newGroup": "Yeni özellik grubu",
     "groupCreated": "Grup oluşturuldu",
     "groupUpdated": "Grup güncellendi",

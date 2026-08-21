@@ -41,7 +41,6 @@ export const DrawerForm: React.FC<DrawerFormProps> = ({
       onClose={onClose}
       width={width}
       destroyOnClose
-      style={{ maxWidth: "100vw" }}
       title={
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>

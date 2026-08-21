@@ -117,6 +117,7 @@ export function CategoriesPage() {
   const openEdit = (category: Category) => {
     setEditing(category);
     setParentId(category.parentId ?? undefined);
+    const existingLangId = category.translations?.[0]?.languageId;
     form.setFieldsValue({
       name: category.name,
       slug: category.slug,
@@ -124,18 +125,22 @@ export function CategoriesPage() {
       sortOrder: category.sortOrder,
       imageUrl: category.imageUrl,
       status: category.status,
-      languageId: treeLanguageId || defaultLanguage?.id,
+      languageId: existingLangId || treeLanguageId || defaultLanguage?.id,
     });
     setIsSlugCustomized(true);
     setDrawerOpen(true);
   };
 
   const onFinish = async (values: Record<string, unknown>) => {
-    const selectedLanguageId = (values.languageId as string) || defaultLanguage?.id;
+    const selectedLanguageId =
+      (values.languageId as string) ||
+      editing?.translations?.[0]?.languageId ||
+      defaultLanguage?.id;
     const selectedCulture =
       languages?.find((l) => l.id === selectedLanguageId)?.code ??
+      editing?.translations?.[0]?.cultureCode ??
       (values.cultureCode as string) ??
-      "en-US";
+      "ar-SA";
     try {
       await save.mutateAsync({
         id: editing?.id,

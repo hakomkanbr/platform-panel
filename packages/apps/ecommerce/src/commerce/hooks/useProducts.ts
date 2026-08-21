@@ -356,3 +356,36 @@ export function useRemoveProductMetadata(productId: string | null) {
     }
   });
 }
+
+export function useAddProductAttribute(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: import("../types/catalog").AddProductAttributeBody) =>
+      productsApi.addAttribute(productId as string, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useSetProductAttributeValues(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ attributeId, body }: { attributeId: string; body: import("../types/catalog").SetAttributeValuesBody }) =>
+      productsApi.setAttributeValues(productId as string, attributeId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}
+
+export function useRemoveProductAttribute(productId: string | null) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (attributeId: string) =>
+      productsApi.removeAttribute(productId as string, attributeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["catalog", "product", undefined, productId] });
+    }
+  });
+}

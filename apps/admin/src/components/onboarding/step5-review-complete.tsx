@@ -173,7 +173,7 @@ export default function Step5ReviewComplete({
         </Col>
 
         {/* Contact & Location Card */}
-        <Col xs={24}>
+        <Col xs={24} md={12}>
           <Card
             type="inner"
             title={
@@ -182,37 +182,64 @@ export default function Step5ReviewComplete({
                 <span>{t("settings.onboarding.review.contactInfo")}</span>
               </Space>
             }
-            style={{ borderRadius: 12 }}
+            style={{ borderRadius: 12, height: "100%" }}
           >
-            <Row gutter={[16, 12]}>
-              <Col xs={24} sm={12}>
-                <Descriptions column={1} size="small">
-                  <Descriptions.Item label={t("settings.onboarding.review.phone")}>
-                    <Text style={{ direction: "ltr", unicodeBidi: "embed" }}>
-                      {formData.phone || t("settings.onboarding.review.missingField")}
-                    </Text>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t("settings.onboarding.review.whatsapp")}>
-                    {formData.whatsAppOrdersEnabled ? (
-                      <Tag color="green" icon={<WhatsAppOutlined />}>
-                        {formData.whatsAppOrderNumber || "—"}
-                      </Tag>
-                    ) : (
-                      <Tag color="default">{t("settings.whatsappDisabled")}</Tag>
-                    )}
-                  </Descriptions.Item>
-                </Descriptions>
-              </Col>
-              <Col xs={24} sm={12}>
-                <Descriptions column={1} size="small">
-                  <Descriptions.Item label={t("settings.onboarding.review.location")}>
-                    <Text>
-                      {fullAddress || t("settings.onboarding.review.missingField")}
-                    </Text>
-                  </Descriptions.Item>
-                </Descriptions>
-              </Col>
-            </Row>
+            <Descriptions column={1} size="small">
+              <Descriptions.Item label={t("settings.onboarding.review.phone")}>
+                <Text style={{ direction: "ltr", unicodeBidi: "embed" }}>
+                  {formData.phone || t("settings.onboarding.review.missingField")}
+                </Text>
+              </Descriptions.Item>
+              <Descriptions.Item label={t("settings.onboarding.review.whatsapp")}>
+                {formData.whatsAppOrdersEnabled ? (
+                  <Tag color="green" icon={<WhatsAppOutlined />}>
+                    {formData.whatsAppOrderNumber || "—"}
+                  </Tag>
+                ) : (
+                  <Tag color="default">{t("settings.whatsappDisabled")}</Tag>
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("settings.onboarding.review.location")}>
+                <Text>
+                  {fullAddress || t("settings.onboarding.review.missingField")}
+                </Text>
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+
+        {/* Marketplace Membership Card */}
+        <Col xs={24} md={12}>
+          <Card
+            type="inner"
+            title={
+              <Space>
+                <ShopOutlined style={{ color: "#F7931E" }} />
+                <span>{t("settings.onboarding.review.marketplaceInfo")}</span>
+              </Space>
+            }
+            style={{ borderRadius: 12, height: "100%" }}
+          >
+            <Descriptions column={1} size="small">
+              <Descriptions.Item label={t("settings.onboarding.review.marketplaceMembership")}>
+                {formData.isMarketplaceMember ? (
+                  <Tag color="purple" style={{ borderRadius: 6, fontWeight: 600 }}>
+                    {t("settings.onboarding.marketplace.statusSubscribed")}
+                  </Tag>
+                ) : (
+                  <Tag color="default" style={{ borderRadius: 6 }}>
+                    {t("settings.onboarding.marketplace.statusNotSubscribed")}
+                  </Tag>
+                )}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("settings.status")}>
+                <Text type="secondary" style={{ fontSize: 13 }}>
+                  {formData.isMarketplaceMember
+                    ? t("settings.onboarding.marketplace.cardDesc")
+                    : t("settings.onboarding.marketplace.enableDesc")}
+                </Text>
+              </Descriptions.Item>
+            </Descriptions>
           </Card>
         </Col>
       </Row>
@@ -261,3 +288,5 @@ export default function Step5ReviewComplete({
     </Card>
   );
 }
+
+export { Step5ReviewComplete as Step6ReviewComplete };

@@ -38,6 +38,7 @@ import {
   useDeleteProductOptionValue,
   useProduct,
 } from "../../../hooks/useProducts";
+import { useStores } from "../../../hooks/useStores";
 import { productsApi } from "../../../api/catalog/products";
 import { getApiErrorMessage } from "../../../api/http";
 
@@ -71,10 +72,13 @@ export function ProductVariantsWorkspace({
   const t = useTranslations();
   const [currentStep, setCurrentStep] = useState(0);
 
+  const stores = useStores();
+  const storeCurrency = stores.data?.data?.[0]?.settings?.currencyCode || "TRY";
+
   const { data: product } = useProduct(productId);
   const currentCurrency = (product?.pricing?.currencyId && !product.pricing.currencyId.includes("-"))
     ? product.pricing.currencyId
-    : (product?.currency ?? "SAR");
+    : (product?.currency && !product.currency.includes("-") ? product.currency : storeCurrency);
   const currencyPrefix = getCurrencyInfo(currentCurrency)?.symbol ?? currentCurrency;
 
   // Options Hooks

@@ -1,12 +1,27 @@
 import * as http from "../http";
 import type { PaginatedResult } from "../../types/common";
 
+export interface StoreSettingsReadModel {
+  id?: string;
+  currencyCode?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  country?: string | null;
+  postalCode?: string | null;
+  whatsAppOrdersEnabled?: boolean;
+  whatsAppOrderNumber?: string | null;
+}
+
 export interface StoreReadModel {
   id: string;
   name: string;
   slug: string;
   description?: string | null;
+  logoMediaId?: string | null;
+  logoUrl?: string | null;
   status: number;
+  settings?: StoreSettingsReadModel | null;
 }
 
 export interface StoreFilters {

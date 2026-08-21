@@ -7,19 +7,22 @@ import { useTenantId, useUpdateProject } from "@repo/hooks";
 import { useTranslations } from "@repo/localization";
 import { PageTransition } from "@repo/ui";
 import { useActiveProject } from "./use-active-project";
-import { useStoreSettings, useCreateStore, useUpdateStoreSettings } from "@/api/use-store-settings";
+import { useStoreSettings, useCreateStore, useUpdateStoreSettings, useUpdateStore } from "@/api/use-store-settings";
 import StoreHeader from "./store-header";
 import ProjectInformation from "./project-information";
 import StoreInformation from "./store-information";
 import StoreSettingsTabs from "./store-settings-tabs";
 import ProjectEditModal from "./project-edit-modal";
-import StoreEditModal from "./store-edit-modal";
+import StoreEditModal, { type StoreInfoFormValues } from "./store-edit-modal";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 const { Text } = Typography;
 
 export default function ProjectOverview() {
   const t = useTranslations();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const tenantId = useTenantId();
   const tid = tenantId || "";
 
@@ -38,6 +41,7 @@ export default function ProjectOverview() {
     isLoading: storeLoading,
   } = useStoreSettings(activeProjectId || undefined);
   const createStore = useCreateStore();
+  const updateStore = useUpdateStore();
   const updateStoreSettings = useUpdateStoreSettings();
 
   const [projectEditVisible, setProjectEditVisible] = useState(false);
@@ -59,6 +63,28 @@ export default function ProjectOverview() {
         },
         tenantId: tid || undefined,
       });
+
+      if (store) {
+        try {
+          await updateStore.mutateAsync({
+            storeId: store.id,
+            projectId: activeProjectId,
+            request: {
+              name: values.name,
+              slug: store.slug,
+              description: values.description,
+              logoUrl: values.logo || "",
+            },
+          });
+        } catch {
+          // non-blocking
+        }
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["projects"] });
+      await queryClient.invalidateQueries({ queryKey: ["project"] });
+      await queryClient.invalidateQueries({ queryKey: ["store-settings"] });
+
       message.success(t("settings.saveSuccess"));
       setProjectEditVisible(false);
     } catch {
@@ -66,15 +92,7 @@ export default function ProjectOverview() {
     }
   };
 
-  const handleStoreSubmit = async (values: {
-    whatsappPhone?: string;
-    phone?: string;
-    address?: string;
-    city?: string;
-    country?: string;
-    postalCode?: string;
-    currency?: string;
-  }) => {
+  const handleStoreSubmit = async (values: StoreInfoFormValues) => {
     if (!activeProjectId || !project) return;
     const whatsappEnabled = !!values.whatsappPhone;
 
@@ -86,27 +104,74 @@ export default function ProjectOverview() {
       city: values.city || null,
       country: values.country || null,
       postalCode: values.postalCode || null,
-      currencyCode: values.currency || "USD",
+      currencyCode: values.currency || store?.settings?.currencyCode || "USD",
     };
 
     try {
-      if (store) {
-        await updateStoreSettings.mutateAsync({
-          storeId: store.id,
-          projectId: activeProjectId,
-          request: payload,
-        });
-      } else {
-        await createStore.mutateAsync({
-          projectId: activeProjectId,
+      // 1. Update Project in Identity (always succeeds and updates logo)
+      try {
+        await updateProject.mutateAsync({
+          id: activeProjectId,
           request: {
             name: project.name,
-            slug: project.slug,
             description: project.description,
-            ...payload,
+            logoUrl: values.logoUrl ?? "",
+            logo: values.logoUrl ?? "",
           },
+          tenantId: tid || undefined,
         });
+      } catch (err) {
+        console.error("Failed to update project logo/details:", err);
       }
+
+      // 2. Update or Create Store in Ecommerce Module
+      if (store) {
+        try {
+          await updateStoreSettings.mutateAsync({
+            storeId: store.id,
+            projectId: activeProjectId,
+            request: payload,
+          });
+        } catch (err) {
+          console.error("Failed to update store settings:", err);
+        }
+
+        try {
+          await updateStore.mutateAsync({
+            storeId: store.id,
+            projectId: activeProjectId,
+            request: {
+              name: store.name || project.name,
+              slug: store.slug || project.slug,
+              description: store.description ?? project.description,
+              logoUrl: values.logoUrl ?? "",
+            },
+          });
+        } catch (err) {
+          console.error("Failed to update store logo:", err);
+        }
+      } else {
+        try {
+          await createStore.mutateAsync({
+            projectId: activeProjectId,
+            request: {
+              name: project.name,
+              slug: project.slug,
+              description: project.description,
+              logoUrl: values.logoUrl ?? project.logoUrl ?? null,
+              ...payload,
+            },
+          });
+        } catch (err) {
+          console.error("Failed to create store:", err);
+        }
+      }
+
+      // 3. Invalidate all query caches for immediate UI refresh
+      await queryClient.invalidateQueries({ queryKey: ["projects"] });
+      await queryClient.invalidateQueries({ queryKey: ["project"] });
+      await queryClient.invalidateQueries({ queryKey: ["store-settings"] });
+
       message.success(t("settings.saveSuccess"));
       setStoreEditVisible(false);
     } catch {

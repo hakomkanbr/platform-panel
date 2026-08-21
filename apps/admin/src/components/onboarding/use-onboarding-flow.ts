@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { message } from "antd";
 import { useTenantId, useProjects, useCreateProject, useCanConsume } from "@repo/hooks";
+import { appsApi } from "@repo/api-client";
 import { storeSettingsApi, type StoreDto } from "@/api/store-settings";
 import { languageService } from "@/components/languages/service";
 import { currenciesService } from "@/components/currencies/service";
@@ -41,15 +42,8 @@ export function detectOnboardingState(
   const hasStore = !!store && !!store.id;
   const settings = store?.settings;
 
-  // Store settings are considered populated if contact phone, address, or whatsApp number is present
-  const hasStoreSettings =
-    hasStore &&
-    !!settings &&
-    (!!settings.phone ||
-      !!settings.address ||
-      !!settings.city ||
-      !!settings.country ||
-      !!settings.whatsAppOrderNumber);
+  // Store settings are considered populated once store and its settings object exist
+  const hasStoreSettings = hasStore && !!settings;
 
   // Default language is configured if defaultLanguageId is set in StoreSettings OR project has an active default language
   const hasDefaultLanguage =
@@ -84,7 +78,7 @@ export function detectOnboardingState(
   } else if (!isComplete) {
     resumeStep = 5;
   } else {
-    resumeStep = 6;
+    resumeStep = 7;
   }
 
   return {
@@ -105,10 +99,11 @@ export function useOnboardingFlow() {
 
   // Queries
   const {
-    data: projects = [],
+    data: projectsData,
     isLoading: isProjectsLoading,
     refetch: refetchProjects,
   } = useProjects(tenantId);
+  const projects = useMemo(() => projectsData ?? [], [projectsData]);
 
   const createProjectMutation = useCreateProject();
   const canConsumeMutation = useCanConsume();
@@ -131,7 +126,7 @@ export function useOnboardingFlow() {
   });
 
   const {
-    data: languages = [],
+    data: languagesData,
     isLoading: isLanguagesLoading,
     refetch: refetchLanguages,
   } = useQuery({
@@ -140,12 +135,17 @@ export function useOnboardingFlow() {
     enabled: !!activeProjectId,
     retry: 1,
   });
+  const languages = useMemo(() => languagesData ?? [], [languagesData]);
 
-  const { data: currencyCatalog = [], isLoading: isCatalogLoading } = useQuery({
+  const { data: currencyCatalogData, isLoading: isCatalogLoading } = useQuery({
     queryKey: ["currency-catalog"],
     queryFn: () => currenciesService.getCatalog(true),
     staleTime: 5 * 60 * 1000,
   });
+  const currencyCatalog = useMemo(
+    () => currencyCatalogData ?? [],
+    [currencyCatalogData],
+  );
 
   const {
     data: currencySettings,
@@ -208,6 +208,7 @@ export function useOnboardingFlow() {
     defaultCurrencyName: "Saudi Riyal",
     defaultCurrencySymbol: "﷼",
     defaultCurrencyFlag: "🇸🇦",
+    isMarketplaceMember: true,
   });
 
   // Initialize and synchronize Form Data with backend state
@@ -216,10 +217,10 @@ export function useOnboardingFlow() {
 
     if (!hasInitializedStep) {
       if (onboardingState.isComplete) {
-        setCurrentStep(6);
+        setCurrentStep(7);
       } else {
         setCurrentStep(
-          onboardingState.resumeStep <= 5 ? onboardingState.resumeStep : 1
+          onboardingState.resumeStep <= 6 ? onboardingState.resumeStep : 1
         );
       }
       setHasInitializedStep(true);
@@ -284,6 +285,10 @@ export function useOnboardingFlow() {
           prev.defaultCurrencySymbol || matchedCurrency?.symbol || "﷼",
         defaultCurrencyFlag:
           prev.defaultCurrencyFlag || matchedCurrency?.flagIcon || "🇸🇦",
+        isMarketplaceMember:
+          prev.isMarketplaceMember !== undefined
+            ? prev.isMarketplaceMember
+            : activeProject?.isMarketplaceMember ?? true,
       };
     });
   }, [
@@ -424,9 +429,9 @@ export function useOnboardingFlow() {
         city: values.city?.trim() || null,
         address: values.address?.trim() || null,
         postalCode: values.postalCode?.trim() || null,
-        defaultLanguageId: formData.defaultLanguageId || null,
-        defaultCurrencyId: formData.defaultCurrencyId || null,
-        currencyCode: formData.defaultCurrencyCode || null,
+        defaultLanguageId: formData.defaultLanguageId || store?.settings?.defaultLanguageId || null,
+        defaultCurrencyId: formData.defaultCurrencyId || store?.settings?.defaultCurrencyId || null,
+        currencyCode: formData.defaultCurrencyCode || store?.settings?.currencyCode || null,
       });
 
       updateFormData(values);
@@ -483,7 +488,18 @@ export function useOnboardingFlow() {
 
         if (sid) {
           await storeSettingsApi.updateSettings(sid, pid, {
+            phone: formData.phone?.trim() || store?.settings?.phone || null,
+            whatsAppOrdersEnabled: formData.whatsAppOrdersEnabled ?? store?.settings?.whatsAppOrdersEnabled ?? false,
+            whatsAppOrderNumber: formData.whatsAppOrdersEnabled
+              ? (formData.whatsAppOrderNumber?.trim() || store?.settings?.whatsAppOrderNumber || null)
+              : null,
+            country: formData.country?.trim() || store?.settings?.country || null,
+            city: formData.city?.trim() || store?.settings?.city || null,
+            address: formData.address?.trim() || store?.settings?.address || null,
+            postalCode: formData.postalCode?.trim() || store?.settings?.postalCode || null,
             defaultLanguageId: projectLang.id,
+            defaultCurrencyId: formData.defaultCurrencyId || store?.settings?.defaultCurrencyId || null,
+            currencyCode: formData.defaultCurrencyCode || store?.settings?.currencyCode || null,
           });
         }
       }
@@ -548,6 +564,16 @@ export function useOnboardingFlow() {
       // Update Store Settings
       if (sid) {
         await storeSettingsApi.updateSettings(sid, pid, {
+          phone: formData.phone?.trim() || store?.settings?.phone || null,
+          whatsAppOrdersEnabled: formData.whatsAppOrdersEnabled ?? store?.settings?.whatsAppOrdersEnabled ?? false,
+          whatsAppOrderNumber: formData.whatsAppOrdersEnabled
+            ? (formData.whatsAppOrderNumber?.trim() || store?.settings?.whatsAppOrderNumber || null)
+            : null,
+          country: formData.country?.trim() || store?.settings?.country || null,
+          city: formData.city?.trim() || store?.settings?.city || null,
+          address: formData.address?.trim() || store?.settings?.address || null,
+          postalCode: formData.postalCode?.trim() || store?.settings?.postalCode || null,
+          defaultLanguageId: formData.defaultLanguageId || store?.settings?.defaultLanguageId || null,
           defaultCurrencyId: currencyData.id || null,
           currencyCode: currencyData.code,
         });
@@ -575,11 +601,76 @@ export function useOnboardingFlow() {
     }
   };
 
-  // Step 5: Final Verification & Complete Setup
+  // Step 5: Configure Marketplace Membership
+  const submitStep5 = async (values: { isMarketplaceMember: boolean }) => {
+    setSubmitting(true);
+    setError(null);
+    try {
+      const pid = formData.projectId || activeProjectId;
+      if (!pid) throw new Error("Missing Project ID.");
+
+      await appsApi.setMarketplaceMember(
+        pid,
+        values.isMarketplaceMember,
+        tenantId || undefined
+      );
+
+      updateFormData({
+        isMarketplaceMember: values.isMarketplaceMember,
+      });
+
+      await refetchProjects();
+      setCurrentStep(6);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("settings.onboarding.errors.setMarketplaceFailed");
+      setError(msg);
+      message.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Step 6: Final Verification & Complete Setup
   const completeOnboarding = async () => {
     setSubmitting(true);
     setError(null);
     try {
+      const pid = formData.projectId || activeProjectId;
+      const sid = formData.storeId || store?.id;
+
+      if (pid && sid) {
+        // Guarantee all form settings are explicitly saved
+        await storeSettingsApi.updateSettings(sid, pid, {
+          phone: formData.phone?.trim() || null,
+          whatsAppOrdersEnabled: !!formData.whatsAppOrdersEnabled,
+          whatsAppOrderNumber: formData.whatsAppOrdersEnabled
+            ? (formData.whatsAppOrderNumber?.trim() || null)
+            : null,
+          country: formData.country?.trim() || null,
+          city: formData.city?.trim() || null,
+          address: formData.address?.trim() || null,
+          postalCode: formData.postalCode?.trim() || null,
+          defaultLanguageId: formData.defaultLanguageId || null,
+          defaultCurrencyId: formData.defaultCurrencyId || null,
+          currencyCode: formData.defaultCurrencyCode || null,
+        });
+
+        if (formData.isMarketplaceMember !== undefined) {
+          try {
+            await appsApi.setMarketplaceMember(
+              pid,
+              formData.isMarketplaceMember,
+              tenantId || undefined
+            );
+          } catch {
+            // non-fatal if already set
+          }
+        }
+      }
+
       const [
         freshProjectsRes,
         freshStoreRes,
@@ -609,7 +700,7 @@ export function useOnboardingFlow() {
       );
 
       if (!state.isComplete) {
-        setCurrentStep(state.resumeStep <= 5 ? state.resumeStep : 1);
+        setCurrentStep(state.resumeStep <= 6 ? state.resumeStep : 1);
         throw new Error(t("settings.onboarding.errors.verificationFailed"));
       }
 
@@ -617,7 +708,7 @@ export function useOnboardingFlow() {
       await queryClient.invalidateQueries();
 
       // Move to success screen
-      setCurrentStep(6);
+      setCurrentStep(7);
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
@@ -632,7 +723,7 @@ export function useOnboardingFlow() {
 
   const goToPreviousStep = () => {
     setError(null);
-    if (currentStep > 1 && currentStep <= 5) {
+    if (currentStep > 1 && currentStep <= 6) {
       setCurrentStep((prev) => (prev - 1) as OnboardingStepNumber);
     }
   };
@@ -654,6 +745,7 @@ export function useOnboardingFlow() {
     submitStep2,
     submitStep3,
     submitStep4,
+    submitStep5,
     completeOnboarding,
     goToPreviousStep,
   };

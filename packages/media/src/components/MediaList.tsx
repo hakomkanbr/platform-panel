@@ -44,7 +44,6 @@ export const MediaList: React.FC<MediaListProps> = ({
       size="middle"
       loading={loading}
       dataSource={files}
-      scroll={{ x: true }}
       pagination={{
         current: page,
         pageSize,

@@ -29,6 +29,7 @@ export interface StoreDto {
   slug: string;
   description: string | null;
   logoMediaId: string | null;
+  logoUrl?: string | null;
   status: number;
   settings: StoreSettingsDto | null;
 }
@@ -38,6 +39,7 @@ export interface CreateStoreRequest {
   slug: string;
   description?: string | null;
   logoMediaId?: string | null;
+  logoUrl?: string | null;
   projectId?: string | null;
   whatsAppOrdersEnabled?: boolean;
   whatsAppOrderNumber?: string | null;
@@ -49,6 +51,14 @@ export interface CreateStoreRequest {
   country?: string | null;
   postalCode?: string | null;
   currencyCode?: string | null;
+}
+
+export interface UpdateStoreRequest {
+  name: string;
+  slug: string;
+  description?: string | null;
+  logoMediaId?: string | null;
+  logoUrl?: string | null;
 }
 
 export interface UpdateStoreSettingsRequest {
@@ -100,6 +110,18 @@ export const storeSettingsApi = {
     return post<StoreDto>(
       "/Admin/v1/Stores",
       { ...request, projectId },
+      { headers: headersFor(projectId) },
+    );
+  },
+
+  async updateStore(
+    storeId: string,
+    projectId: string,
+    request: UpdateStoreRequest,
+  ): Promise<StoreDto> {
+    return put<StoreDto>(
+      `/Admin/v1/Stores/${storeId}`,
+      request,
       { headers: headersFor(projectId) },
     );
   },

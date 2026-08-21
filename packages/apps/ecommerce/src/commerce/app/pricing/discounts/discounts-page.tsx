@@ -49,6 +49,8 @@ import {
   useSaveDiscount,
   useToggleDiscountStatus,
 } from "../../../hooks/useDiscounts";
+import { useProducts } from "../../../hooks/useProducts";
+import { useCategories } from "../../../hooks/useCategories";
 import {
   DiscountPriority,
   DiscountTargetType,
@@ -73,6 +75,7 @@ export function DiscountsPage() {
   const [discForm] = Form.useForm();
   const selectedTargetType = Form.useWatch("targetType", discForm);
   const selectedType = Form.useWatch("type", discForm);
+  const appliesToAll = Form.useWatch("appliesToAll", discForm);
 
   // Coupons State
   const [couponPage, setCouponPage] = useState(1);
@@ -89,6 +92,8 @@ export function DiscountsPage() {
     search: discSearch || undefined,
     type: discTypeFilter,
   });
+  const productsQuery = useProducts({ pageSize: 100 });
+  const categoriesQuery = useCategories({ pageSize: 100 });
   const saveDiscount = useSaveDiscount();
   const toggleDiscountStatus = useToggleDiscountStatus();
   const deleteDiscount = useDeleteDiscount();
@@ -114,6 +119,8 @@ export function DiscountsPage() {
       isActive: true,
       appliesToAll: true,
       oncePerCustomer: false,
+      productIds: [],
+      categoryIds: [],
       dateRange: [dayjs(), dayjs().add(30, "day")],
       buyXQty: 2,
       getYQty: 1,
@@ -139,6 +146,8 @@ export function DiscountsPage() {
       maxDiscountAmount: record.maxDiscountAmount,
       oncePerCustomer: record.oncePerCustomer,
       appliesToAll: record.appliesToAll,
+      productIds: record.productIds || [],
+      categoryIds: record.categoryIds || [],
       buyXQty: record.buyXQty,
       getYQty: record.getYQty,
       getYDiscountPercent: record.getYDiscountPercent,
@@ -156,11 +165,19 @@ export function DiscountsPage() {
       const startDate = dates?.[0] ? dates[0].toISOString() : new Date().toISOString();
       const endDate = dates?.[1] ? dates[1].toISOString() : new Date(Date.now() + 30 * 86400000).toISOString();
 
+      const targetTypeNum = Number(values.targetType ?? DiscountTargetType.Cart);
+      const productIds = targetTypeNum === DiscountTargetType.Product
+        ? (values.productIds as string[] | undefined) ?? []
+        : [];
+      const categoryIds = targetTypeNum === DiscountTargetType.Category
+        ? (values.categoryIds as string[] | undefined) ?? []
+        : [];
+
       const payload: any = {
         name: values.name as string,
         code: values.code as string,
         type: Number(values.type ?? DiscountType.Percentage),
-        targetType: Number(values.targetType ?? DiscountTargetType.Cart),
+        targetType: targetTypeNum,
         value: Number(values.value ?? 0),
         priority: Number(values.priority ?? DiscountPriority.Normal),
         startDate,
@@ -173,6 +190,8 @@ export function DiscountsPage() {
         maxDiscountAmount: values.maxDiscountAmount ? Number(values.maxDiscountAmount) : null,
         oncePerCustomer: !!values.oncePerCustomer,
         appliesToAll: !!values.appliesToAll,
+        productIds,
+        categoryIds,
         buyXQty: Number(values.buyXQty ?? 0),
         getYQty: Number(values.getYQty ?? 0),
         getYDiscountPercent: Number(values.getYDiscountPercent ?? 100),
@@ -276,14 +295,32 @@ export function DiscountsPage() {
     }
   };
 
-  const renderTargetTypeTag = (target: DiscountTargetType) => {
+  const renderTargetTypeTag = (target: DiscountTargetType, record?: DiscountDto) => {
     switch (target) {
       case DiscountTargetType.Cart:
         return <Tag color="geekblue">{t("pricing.discounts.targetCart")}</Tag>;
       case DiscountTargetType.Product:
-        return <Tag color="orange">{t("pricing.discounts.targetProduct")}</Tag>;
+        return (
+          <Space size={4}>
+            <Tag color="orange">{t("pricing.discounts.targetProduct")}</Tag>
+            {record?.productIds && record.productIds.length > 0 ? (
+              <Tag color="default" style={{ fontSize: 11 }}>
+                {record.productIds.length}
+              </Tag>
+            ) : null}
+          </Space>
+        );
       case DiscountTargetType.Category:
-        return <Tag color="gold">{t("pricing.discounts.targetCategory")}</Tag>;
+        return (
+          <Space size={4}>
+            <Tag color="gold">{t("pricing.discounts.targetCategory")}</Tag>
+            {record?.categoryIds && record.categoryIds.length > 0 ? (
+              <Tag color="default" style={{ fontSize: 11 }}>
+                {record.categoryIds.length}
+              </Tag>
+            ) : null}
+          </Space>
+        );
       case DiscountTargetType.Shipping:
         return <Tag color="cyan">{t("pricing.discounts.targetShipping")}</Tag>;
       case DiscountTargetType.BuyXGetY:
@@ -330,8 +367,8 @@ export function DiscountsPage() {
     {
       title: t("pricing.discounts.targetColumn"),
       dataIndex: "targetType",
-      width: 140,
-      render: (v) => renderTargetTypeTag(v),
+      width: 160,
+      render: (v, record) => renderTargetTypeTag(v, record),
     },
     {
       title: t("pricing.discounts.valueColumn"),
@@ -687,7 +724,7 @@ export function DiscountsPage() {
                 label={t("pricing.discounts.discountName")}
                 rules={[{ required: true, message: t("common.fields.nameRequired") }]}
               >
-                <Input placeholder={t("pricing.discounts.namePlaceholder")} />
+                <Input placeholder={t("pricing.discounts.namePlaceholder") || "مثال: تخفيضات الصيف 2026"} />
               </Form.Item>
             </Col>
             <Col span={10}>
@@ -709,6 +746,7 @@ export function DiscountsPage() {
                 rules={[{ required: true }]}
               >
                 <Select
+                  placeholder={t("pricing.discounts.typeColumn") || "اختر نوع الخصم"}
                   options={[
                     { value: DiscountType.Percentage, label: t("pricing.discounts.typePercentage") },
                     { value: DiscountType.FixedAmount, label: t("pricing.discounts.typeFixed") },
@@ -724,6 +762,7 @@ export function DiscountsPage() {
                 rules={[{ required: true }]}
               >
                 <Select
+                  placeholder={t("pricing.discounts.targetColumn") || "اختر نطاق الهدف"}
                   options={[
                     { value: DiscountTargetType.Cart, label: t("pricing.discounts.targetCart") },
                     { value: DiscountTargetType.Product, label: t("pricing.discounts.targetProduct") },
@@ -736,6 +775,112 @@ export function DiscountsPage() {
             </Col>
           </Row>
 
+          {/* Conditional Product Scope & Selection */}
+          {selectedTargetType === DiscountTargetType.Product && (
+            <Card
+              size="small"
+              style={{
+                backgroundColor: "var(--bg-subtle, #fafafa)",
+                borderRadius: 10,
+                marginBottom: 16,
+                border: "1px solid var(--border-light, #f0f0f0)",
+              }}
+            >
+              <Row gutter={16} align="middle" style={{ marginBottom: appliesToAll ? 0 : 12 }}>
+                <Col span={18}>
+                  <Text strong style={{ fontSize: 13 }}>
+                    {t("pricing.discounts.appliesToAllProducts") || "تطبيق على جميع المنتجات"}
+                  </Text>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                    {appliesToAll
+                      ? (t("pricing.discounts.allProductsNotice") || "الخصم سيسري على كل منتجات المتجر")
+                      : (t("pricing.discounts.specificProductsNotice") || "قم بتحديد المنتجات المشمولة بالخصم أدناه")}
+                  </div>
+                </Col>
+                <Col span={6} style={{ textAlign: "end" }}>
+                  <Form.Item name="appliesToAll" valuePropName="checked" noStyle>
+                    <Switch />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              {!appliesToAll && (
+                <Form.Item
+                  name="productIds"
+                  label={t("pricing.discounts.selectProducts") || "المنتجات المشمولة"}
+                  rules={[{ required: true, message: t("pricing.discounts.productsRequired") || "يرجى تحديد منتج واحد على الأقل" }]}
+                  extra={t("pricing.discounts.selectProductsHelp") || "اختر المنتجات التي ينطبق عليها هذا الخصم"}
+                  style={{ marginBottom: 0 }}
+                >
+                  <Select
+                    mode="multiple"
+                    showSearch
+                    optionFilterProp="label"
+                    placeholder={t("pricing.discounts.selectProductsPlaceholder") || "اختر أو ابحث عن المنتجات لتطبيق الخصم عليها..."}
+                    loading={productsQuery.isLoading}
+                    options={(productsQuery.data?.data ?? []).map((p) => ({
+                      value: p.id,
+                      label: `${p.name} (${p.code || p.sku || p.id})`,
+                    }))}
+                  />
+                </Form.Item>
+              )}
+            </Card>
+          )}
+
+          {/* Conditional Category Scope & Selection */}
+          {selectedTargetType === DiscountTargetType.Category && (
+            <Card
+              size="small"
+              style={{
+                backgroundColor: "var(--bg-subtle, #fafafa)",
+                borderRadius: 10,
+                marginBottom: 16,
+                border: "1px solid var(--border-light, #f0f0f0)",
+              }}
+            >
+              <Row gutter={16} align="middle" style={{ marginBottom: appliesToAll ? 0 : 12 }}>
+                <Col span={18}>
+                  <Text strong style={{ fontSize: 13 }}>
+                    {t("pricing.discounts.appliesToAllCategories") || "تطبيق على جميع التصنيفات"}
+                  </Text>
+                  <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>
+                    {appliesToAll
+                      ? (t("pricing.discounts.allCategoriesNotice") || "الخصم سيسري على كل التصنيفات في المتجر")
+                      : (t("pricing.discounts.specificCategoriesNotice") || "قم بتحديد التصنيفات المشمولة بالخصم أدناه")}
+                  </div>
+                </Col>
+                <Col span={6} style={{ textAlign: "end" }}>
+                  <Form.Item name="appliesToAll" valuePropName="checked" noStyle>
+                    <Switch />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              {!appliesToAll && (
+                <Form.Item
+                  name="categoryIds"
+                  label={t("pricing.discounts.selectCategories") || "التصنيفات المشمولة"}
+                  rules={[{ required: true, message: t("pricing.discounts.categoriesRequired") || "يرجى تحديد تصنيف واحد على الأقل" }]}
+                  extra={t("pricing.discounts.selectCategoriesHelp") || "اختر التصنيفات التي ينطبق عليها هذا الخصم"}
+                  style={{ marginBottom: 0 }}
+                >
+                  <Select
+                    mode="multiple"
+                    showSearch
+                    optionFilterProp="label"
+                    placeholder={t("pricing.discounts.selectCategoriesPlaceholder") || "اختر أو ابحث عن التصنيفات لتطبيق الخصم عليها..."}
+                    loading={categoriesQuery.isLoading}
+                    options={(categoriesQuery.data?.data ?? []).map((c) => ({
+                      value: c.id,
+                      label: c.name,
+                    }))}
+                  />
+                </Form.Item>
+              )}
+            </Card>
+          )}
+
           {selectedType !== DiscountType.FreeShipping && (
             <Row gutter={16}>
               <Col span={12}>
@@ -746,6 +891,7 @@ export function DiscountsPage() {
                 >
                   <InputNumber
                     min={0}
+                    placeholder="0.00"
                     style={{ width: "100%" }}
                     addonAfter={selectedType === DiscountType.Percentage ? "%" : "SAR"}
                   />
@@ -754,6 +900,7 @@ export function DiscountsPage() {
               <Col span={12}>
                 <Form.Item name="priority" label={t("pricing.discounts.priorityColumn")}>
                   <Select
+                    placeholder={t("pricing.discounts.priorityColumn") || "اختر الأولوية"}
                     options={[
                       { value: DiscountPriority.Low, label: t("pricing.discounts.priorityLow") },
                       { value: DiscountPriority.Normal, label: t("pricing.discounts.priorityNormal") },
@@ -775,17 +922,17 @@ export function DiscountsPage() {
               <Row gutter={16}>
                 <Col span={8}>
                   <Form.Item name="buyXQty" label={t("pricing.discounts.buyXQty")}>
-                    <InputNumber min={1} style={{ width: "100%" }} />
+                    <InputNumber min={1} placeholder="2" style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item name="getYQty" label={t("pricing.discounts.getYQty")}>
-                    <InputNumber min={1} style={{ width: "100%" }} />
+                    <InputNumber min={1} placeholder="1" style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item name="getYDiscountPercent" label={t("pricing.discounts.getYDiscountPercent")}>
-                    <InputNumber min={1} max={100} addonAfter="%" style={{ width: "100%" }} />
+                    <InputNumber min={1} max={100} placeholder="100" addonAfter="%" style={{ width: "100%" }} />
                   </Form.Item>
                 </Col>
               </Row>
@@ -803,12 +950,12 @@ export function DiscountsPage() {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="usageLimit" label={t("pricing.discounts.usageLimit")}>
-                <InputNumber min={0} placeholder="0 = unlimited" style={{ width: "100%" }} />
+                <InputNumber min={0} placeholder={t("pricing.discounts.unlimitedPlaceholder") || "0 = غير محدود"} style={{ width: "100%" }} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="minCartAmount" label={t("pricing.discounts.minCartAmount")}>
-                <InputNumber min={0} step={0.01} addonAfter="SAR" style={{ width: "100%" }} />
+                <InputNumber min={0} step={0.01} placeholder="0.00" addonAfter="SAR" style={{ width: "100%" }} />
               </Form.Item>
             </Col>
           </Row>
@@ -816,12 +963,12 @@ export function DiscountsPage() {
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="maxDiscountAmount" label={t("pricing.discounts.maxDiscountCap")}>
-                <InputNumber min={0} step={0.01} addonAfter="SAR" style={{ width: "100%" }} />
+                <InputNumber min={0} step={0.01} placeholder="0.00" addonAfter="SAR" style={{ width: "100%" }} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="minQuantity" label={t("pricing.discounts.minQuantity")}>
-                <InputNumber min={0} style={{ width: "100%" }} />
+                <InputNumber min={0} placeholder="1" style={{ width: "100%" }} />
               </Form.Item>
             </Col>
           </Row>
@@ -829,7 +976,7 @@ export function DiscountsPage() {
           <Divider style={{ margin: "12px 0" }} />
 
           <Row gutter={16}>
-            <Col span={8}>
+            <Col span={12}>
               <Form.Item
                 name="isActive"
                 label={t("pricing.discounts.active")}
@@ -838,19 +985,10 @@ export function DiscountsPage() {
                 <Switch />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={12}>
               <Form.Item
                 name="oncePerCustomer"
                 label={t("pricing.discounts.oncePerCustomer")}
-                valuePropName="checked"
-              >
-                <Switch />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name="appliesToAll"
-                label={t("pricing.discounts.appliesToAll")}
                 valuePropName="checked"
               >
                 <Switch />
@@ -880,12 +1018,13 @@ export function DiscountsPage() {
             <Input placeholder="PROMO2026, WELCOME10..." />
           </Form.Item>
           <Form.Item name="description" label={t("common.fields.description")}>
-            <Input.TextArea rows={2} />
+            <Input.TextArea rows={2} placeholder="وصف تفصيلي للكوبون والشروط (اختياري)..." />
           </Form.Item>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="type" label={t("pricing.discounts.typeColumn")} rules={[{ required: true }]}>
                 <Select
+                  placeholder={t("pricing.discounts.typeColumn") || "اختر نوع الكوبون"}
                   options={[
                     { value: "Percentage", label: t("pricing.discounts.typePercentage") },
                     { value: "FixedAmount", label: t("pricing.discounts.typeFixed") },
@@ -895,19 +1034,19 @@ export function DiscountsPage() {
             </Col>
             <Col span={12}>
               <Form.Item name="value" label={t("pricing.discounts.valueColumn")} rules={[{ required: true }]}>
-                <InputNumber min={0} style={{ width: "100%" }} />
+                <InputNumber min={0} placeholder="0.00" style={{ width: "100%" }} />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="minPurchaseAmount" label={t("pricing.discounts.minCartAmount")}>
-                <InputNumber min={0} addonAfter="SAR" style={{ width: "100%" }} />
+                <InputNumber min={0} step={0.01} placeholder="0.00" addonAfter="SAR" style={{ width: "100%" }} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item name="usageLimit" label={t("pricing.discounts.usageLimit")}>
-                <InputNumber min={0} placeholder="0 = unlimited" style={{ width: "100%" }} />
+                <InputNumber min={0} placeholder="0 = غير محدود" style={{ width: "100%" }} />
               </Form.Item>
             </Col>
           </Row>

@@ -39,7 +39,8 @@
   "logoPlaceholder": "https://example.com/logo.png",
   "noLogo": "Yapılandırılmış logo yok",
   "noPhone": "Henüz WhatsApp telefon numarası yapılandırılmadı",
-  "changeLogo": "Logoyu Değiştir",
+  "selectLogo": "Medya Kitaplığından Seç",
+  "changeLogo": "Medya Kitaplığından Değiştir",
   "removeLogo": "Logoyu Kaldır",
   "projectsCount": "{count} mağaza",
   "actions": "İşlemler",
@@ -249,6 +250,7 @@
       "store": "Mağaza Bilgileri",
       "language": "Varsayılan Dil",
       "currency": "Varsayılan Para Birimi",
+      "marketplace": "Pazaryeri",
       "review": "İnceleme ve Onay"
     },
     "stepCounter": "Adım {current} / {total}",
@@ -321,6 +323,24 @@
       "noCurrencies": "Para birimi bulunamadı",
       "selectPrompt": "Devam etmek için varsayılan bir para birimi seçin"
     },
+    "marketplace": {
+      "title": "Platform Pazaryerine Katılın",
+      "desc": "Erişiminizi ve satışlarınızı artırmak için mağazanızı ve ürünlerinizi platform pazar yerinde sergilemek ister misiniz?",
+      "cardTitle": "Merkezi Pazaryeri Ağı",
+      "cardDesc": "Platform pazar yerine katılmak mağazanızın dizinde görünmesini sağlar ve üçüncü taraf uygulama entegrasyonlarını kolaylaştırır.",
+      "enableLabel": "Pazaryeri Ağına Katılın",
+      "enableDesc": "Ürünlerinizi sergilemek ve platform ortaklarına erişmek için katılımı etkinleştirin.",
+      "benefit1Title": "Satış ve Görünürlük Artışı",
+      "benefit1Desc": "Mağazanızı ve ürünlerinizi merkezi pazar yerinde tüm ziyaretçilere sergileyin.",
+      "benefit2Title": "Ortak ve Uygulama Entegrasyonu",
+      "benefit2Desc": "Harici uygulamalar ve ortak hizmetlerle kolayca bağlantı kurun.",
+      "benefit3Title": "Tam Kontrol ve Esneklik",
+      "benefit3Desc": "Bu seçeneği mağaza ayarlarından istediğiniz zaman etkinleştirebilir veya devre dışı bırakabilirsiniz.",
+      "joinOption": "Evet, platform pazaryerine katılmak istiyorum (Önerilen)",
+      "skipOption": "Şimdi değil, daha sonra ayarlardan yapılandıracağım",
+      "statusSubscribed": "Pazaryerine Abone",
+      "statusNotSubscribed": "Abone Değil"
+    },
     "review": {
       "title": "Mağazanız Neredeyse Hazır 🎉",
       "desc": "Kontrol paneline geçmeden önce temel mağaza yapılandırmanızı inceleyin.",
@@ -335,6 +355,10 @@
       "localizationInfo": "Dil ve Para Birimi",
       "defaultLanguage": "Varsayılan Dil",
       "defaultCurrency": "Varsayılan Para Birimi",
+      "marketplaceInfo": "Pazaryeri",
+      "marketplaceMembership": "Pazaryeri Üyeliği",
+      "marketplaceActive": "Pazaryerine Abone",
+      "marketplaceDisabled": "Devre Dışı",
       "readyBadge": "Başlatılmaya Hazır",
       "missingField": "Belirtilmemiş"
     },
@@ -350,6 +374,7 @@
       "saveSettingsFailed": "Mağaza ayarları kaydedilemedi. Lütfen tekrar deneyin.",
       "setLanguageFailed": "Bu proje için varsayılan dil ayarlanamadı.",
       "setCurrencyFailed": "Bu mağaza için varsayılan para birimi yapılandırılamadı.",
+      "setMarketplaceFailed": "Pazaryeri üyeliği güncellenemedi. Lütfen tekrar deneyin.",
       "verificationFailed": "Bazı gerekli adımlar tamamlanmadı. Eksik adıma yönlendiriliyorsunuz.",
       "generic": "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin."
     }

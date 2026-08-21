@@ -37,7 +37,6 @@ export function WorkspaceSelector({
       value={activeWorkspaceId}
       placeholder="Workspace"
       onChange={handleChange}
-      className="s2s-header-select s2s-workspace-select"
       style={{ minWidth: 160, maxWidth: 240 }}
       size="middle"
       optionLabelProp="label"

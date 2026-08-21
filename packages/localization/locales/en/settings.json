@@ -39,7 +39,8 @@
   "phonePlaceholder": "e.g., +966501234567 or 0501234567",
   "logoPlaceholder": "https://example.com/logo.png",
   "noLogo": "No logo configured",
-  "changeLogo": "Change Logo",
+  "selectLogo": "Choose from Media Library",
+  "changeLogo": "Change from Media Library",
   "removeLogo": "Remove Logo",
   "storeUrl": "Store URL",
   "visitStore": "Visit Store",
@@ -295,6 +296,7 @@
       "store": "Store Information",
       "language": "Default Language",
       "currency": "Default Currency",
+      "marketplace": "Marketplace",
       "review": "Review & Confirm"
     },
     "stepCounter": "Step {current} of {total}",
@@ -367,6 +369,24 @@
       "noCurrencies": "No currencies found",
       "selectPrompt": "Select a default store currency to proceed"
     },
+    "marketplace": {
+      "title": "Join Platform Marketplace",
+      "desc": "Would you like to showcase your store and products in the platform marketplace to increase reach and sales?",
+      "cardTitle": "Central Marketplace Network",
+      "cardDesc": "Joining the platform marketplace makes your catalog accessible in the store directory and facilitates integration with partner applications.",
+      "enableLabel": "Join Marketplace Network",
+      "enableDesc": "Enable participation to feature your products and connect with platform partners.",
+      "benefit1Title": "Increase Sales & Visibility",
+      "benefit1Desc": "Feature your store and catalog across the central platform marketplace.",
+      "benefit2Title": "Partner & App Integration",
+      "benefit2Desc": "Easily connect with third-party apps and ecosystem partner services.",
+      "benefit3Title": "Full Control & Flexibility",
+      "benefit3Desc": "You can enable or disable this option at any time from your store settings.",
+      "joinOption": "Yes, join platform marketplace (Recommended)",
+      "skipOption": "Not now, I will configure it later in settings",
+      "statusSubscribed": "Subscribed to Marketplace",
+      "statusNotSubscribed": "Not Subscribed"
+    },
     "review": {
       "title": "Your Store is Almost Ready 🎉",
       "desc": "Review your essential store configuration before launching to the dashboard.",
@@ -381,6 +401,10 @@
       "localizationInfo": "Language & Currency",
       "defaultLanguage": "Default Language",
       "defaultCurrency": "Default Currency",
+      "marketplaceInfo": "Marketplace",
+      "marketplaceMembership": "Marketplace Membership",
+      "marketplaceActive": "Subscribed to Marketplace",
+      "marketplaceDisabled": "Disabled",
       "readyBadge": "Ready to Launch",
       "missingField": "Not set"
     },
@@ -396,6 +420,7 @@
       "saveSettingsFailed": "Failed to save store settings. Please try again.",
       "setLanguageFailed": "Failed to set default language for this project.",
       "setCurrencyFailed": "Failed to configure default currency for this store.",
+      "setMarketplaceFailed": "Failed to update marketplace membership. Please try again.",
       "verificationFailed": "Some required steps are incomplete. Redirecting you to the missing step.",
       "generic": "An unexpected error occurred. Please try again."
     }

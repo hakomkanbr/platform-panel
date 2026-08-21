@@ -3,7 +3,7 @@ import type { StoreDto } from "@/api/store-settings";
 import type { ProjectLanguageDto } from "@/components/languages/types";
 import type { CurrencyItem, TenantCurrencySettings } from "@/components/currencies/types";
 
-export type OnboardingStepNumber = 1 | 2 | 3 | 4 | 5 | 6;
+export type OnboardingStepNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export interface OnboardingState {
   hasProject: boolean;
@@ -47,6 +47,9 @@ export interface OnboardingFormData {
   defaultCurrencyName?: string;
   defaultCurrencySymbol?: string;
   defaultCurrencyFlag?: string;
+
+  // Step 5
+  isMarketplaceMember: boolean;
 }
 
 export interface OnboardingContextData {

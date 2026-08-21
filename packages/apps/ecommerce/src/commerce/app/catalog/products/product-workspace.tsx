@@ -37,6 +37,7 @@ import {
 import { BasicInfoSection } from "./sections/BasicInfoSection";
 import { PricingSection } from "./sections/PricingSection";
 import { OrganizationSection } from "./sections/OrganizationSection";
+import { AttributesSection } from "./sections/AttributesSection";
 import { FulfillmentSection } from "./sections/FulfillmentSection";
 import { SeoSection } from "./sections/SeoSection";
 import { ProductMediaTab, ProductVariantsTab } from "./product-tabs"; // Media and Variants will be updated by subagent or us
@@ -238,6 +239,20 @@ function WorkspaceContent() {
                 >
                   <ProductVariantsTab productId={productId} />
                 </Card>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text strong style={{ fontSize: 18 }}>
+                    {t("catalog.products.workspace.attributes") || "خصائص ومواصفات المنتج"}
+                  </Text>
+                  {getSectionStatusIndicator("attributes")}
+                </div>
+                <AttributesSection product={product} />
 
                 <div
                   style={{

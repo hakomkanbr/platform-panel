@@ -1,13 +1,11 @@
 "use client";
 
 import React from "react";
-import { Card, Descriptions, Space, Switch, Tag, Typography, Alert, message } from "antd";
+import { Card, Descriptions, Space, Switch, Tag, Typography, Alert } from "antd";
 import { ShopOutlined, DollarOutlined, WhatsAppOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { useSetMarketplaceMember, useTenantId } from "@repo/hooks";
 import type { ProjectDetailDto } from "@repo/shared-types";
 import type { StoreDto } from "@/api/store-settings";
-import { storeSettingsApi } from "@/api/store-settings";
-import { getApiErrorMessage } from "@repo/apps-ecommerce/commerce/api/http";
 import { useTranslations } from "@repo/localization";
 
 const { Text } = Typography;
@@ -26,24 +24,6 @@ export default function EcommerceTab({ project, store }: EcommerceTabProps) {
     settings?.whatsAppOrdersEnabled && !!settings?.whatsAppOrderNumber;
 
   const handleToggleMarketplace = async (enabled: boolean) => {
-    if (enabled && !store) {
-      // The marketplace storefront lists stores from the ecommerce/Store
-      // service. Make sure the store is registered there first, otherwise
-      // this project would never show up in the marketplace.
-      try {
-        await storeSettingsApi.createStore(project.id, {
-          name: project.name,
-          slug: project.slug,
-          description: project.description || "",
-        });
-      } catch (error) {
-        message.error(
-          `Failed to register "${project.name}" in the marketplace store: ${getApiErrorMessage(error)}`,
-        );
-        return;
-      }
-    }
-
     try {
       await setMarketplaceMember.mutateAsync({
         projectId: project.id,

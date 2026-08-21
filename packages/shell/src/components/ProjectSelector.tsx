@@ -71,9 +71,31 @@ export function ProjectSelector({
     }, 1000);
   };
 
+  React.useEffect(() => {
+    if (!isLoading && projects.length === 1) {
+      const singleProject = projects[0];
+      if (singleProject && currentProject?.id !== singleProject.id) {
+        setCurrentProject(singleProject);
+        onProjectChange?.(singleProject);
+        Cookies.set("ProjectId", singleProject.id);
+        Cookies.set("ProjectName", singleProject.name);
+        if (singleProject.slug) {
+          Cookies.set("ProjectSlug", singleProject.slug);
+        } else {
+          Cookies.remove("ProjectSlug");
+        }
+        if (typeof window !== "undefined") {
+          localStorage.setItem("ProjectId", singleProject.id);
+          localStorage.setItem("ProjectName", singleProject.name);
+          if (singleProject.slug) localStorage.setItem("ProjectSlug", singleProject.slug);
+        }
+      }
+    }
+  }, [isLoading, projects, currentProject, setCurrentProject, onProjectChange]);
+
   console.info("current project : ", currentProject);
 
-  if (isLoading || projects.length === 0) return null;
+  if (isLoading || projects.length <= 1) return null;
 
   return (
     <Select
@@ -81,7 +103,6 @@ export function ProjectSelector({
       placeholder="Select project..."
       onChange={handleChange}
       allowClear
-      className="s2s-header-select s2s-project-select"
       style={{ minWidth: 200, maxWidth: 300 }}
       size="middle"
       optionLabelProp="label"

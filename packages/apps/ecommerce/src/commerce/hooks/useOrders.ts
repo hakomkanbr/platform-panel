@@ -199,63 +199,13 @@ export function useOrders(params: OrderFilters) {
   return useQuery({
     queryKey: ["orders", "list", projectId, params],
     queryFn: async (): Promise<PaginatedResult<OrderSummaryDto>> => {
-      try {
-        const res = await ordersApi.list(params);
-        if (res) {
-          return res;
-        }
-      } catch (err) {
-        // Fallback to local storage persistence
+      const res = await ordersApi.list(params);
+      if (res && res.data) {
+        return res;
       }
-
-      const all = getStoredOrders(projectId || "default");
-      let filtered = [...all];
-
-      if (params.search) {
-        const q = params.search.toLowerCase();
-        filtered = filtered.filter(
-          (o) =>
-            o.code.toLowerCase().includes(q) ||
-            (o.customerName && o.customerName.toLowerCase().includes(q)) ||
-            (o.customerPhone && o.customerPhone.includes(q)),
-        );
-      }
-
-      if (params.status !== undefined && params.status !== null) {
-        filtered = filtered.filter((o) => o.status === params.status);
-      }
-
-      const summaryList: OrderSummaryDto[] = filtered.map((o) => {
-        const customer =
-          o.customerName ||
-          (o.orderAddress?.recipientInformation
-            ? `${o.orderAddress.recipientInformation.firstName || ""} ${o.orderAddress.recipientInformation.lastName || ""}`.trim()
-            : o.orderAddress?.fullName) ||
-          "عميل";
-
-        const phoneNumber =
-          o.customerPhone ||
-          o.orderAddress?.recipientInformation?.phoneNumber ||
-          o.orderAddress?.phoneNumber ||
-          "";
-
-        return {
-          id: o.id,
-          code: o.code,
-          status: o.status,
-          grandTotal: o.grandTotal,
-          currency: o.currency || "TRY",
-          dateTime: o.dateTime,
-          customer,
-          phoneNumber,
-          itemsCount: o.items?.reduce((sum, item) => sum + item.quantity, 0) || 0,
-          paymentMethod: o.paymentMethod,
-        };
-      });
-
       return {
-        count: summaryList.length,
-        data: summaryList,
+        count: 0,
+        data: [],
       };
     },
     enabled: !!projectId,
@@ -269,14 +219,7 @@ export function useOrderDetail(id: string | null) {
     queryKey: ["orders", "detail", projectId, id],
     queryFn: async (): Promise<OrderDetailDto | null> => {
       if (!id) return null;
-      try {
-        const res = await ordersApi.getById(id);
-        if (res) return res;
-      } catch (err) {}
-
-      const all = getStoredOrders(projectId || "default");
-      const found = all.find((o) => o.id === id || o.code === id);
-      return found || null;
+      return await ordersApi.getById(id);
     },
     enabled: !!projectId && !!id,
   });
@@ -284,7 +227,6 @@ export function useOrderDetail(id: string | null) {
 
 export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
-  const { projectId } = useCommerce();
 
   return useMutation({
     mutationFn: async ({
@@ -294,17 +236,7 @@ export function useUpdateOrderStatus() {
       id: string;
       status: EnumOrderStatus;
     }) => {
-      try {
-        await ordersApi.setStatus(id, status);
-      } catch (err) {
-        // Fallback: update in localStorage
-        const all = getStoredOrders(projectId || "default");
-        const idx = all.findIndex((o) => o.id === id || o.code === id);
-        if (idx !== -1) {
-          all[idx] = { ...all[idx], status };
-          saveStoredOrders(projectId || "default", all);
-        }
-      }
+      await ordersApi.setStatus(id, status);
       return { id, status };
     },
     onSuccess: () => {
