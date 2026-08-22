@@ -314,7 +314,6 @@ export default function StoreEditModal({
         onChange={(files: CdnFile[]) => {
           if (files[0]?.url) {
             form.setFieldValue("logoUrl", files[0].url);
-            setLogoPreview(files[0].url);
           }
           setLogoPickerOpen(false);
         }}

@@ -10,7 +10,7 @@ export interface InDesignCustum {
 // Define the initial state using that type
 const initialState: InDesignCustum = DesignVaribles;
 
-export const designSlice = createSlice({
+const designSlice = createSlice({
   name: 'design',
   initialState,
   reducers: {

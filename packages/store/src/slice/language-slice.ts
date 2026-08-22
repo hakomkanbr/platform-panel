@@ -7,7 +7,7 @@ const initialState: { list: ILanguage[] , selectedLang:ILanguage | null } = {
   selectedLang : null
 };
 
-export const languageSlice = createSlice({
+const languageSlice = createSlice({
   name: 'languages',
   initialState,
   reducers: {

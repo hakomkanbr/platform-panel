@@ -22,7 +22,7 @@ const initialState: SiteState = {
   list: []
 };
 
-export const siteSlice = createSlice({
+const siteSlice = createSlice({
   name: 'site',
   initialState,
   reducers: {

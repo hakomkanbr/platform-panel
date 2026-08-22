@@ -144,7 +144,7 @@ export function AttributesSection({ product }: { product?: ProductDetail }) {
       dataIndex: "name",
       key: "name",
       render: (name: string, record: ProductAttributeReadModel) => (
-        <Space orientation="vertical" size={2}>
+        <Space direction="vertical" size={2}>
           <Text strong>{name || record.key}</Text>
           <Text type="secondary" style={{ fontSize: 11 }}>
             {record.key}

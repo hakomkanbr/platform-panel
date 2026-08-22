@@ -10,7 +10,7 @@ const initialState: DtState = {
   reload: 0,
 }
 
-export const datatableSlice = createSlice({
+const datatableSlice = createSlice({
   name: 'datatable',
   initialState,
   reducers: {

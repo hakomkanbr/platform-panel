@@ -45,7 +45,7 @@ export interface DiscountDto {
   getYDiscountPercent: number;
   productIds?: Id[];
   categoryIds?: Id[];
-  combinationRowIds?: unknown[];
+  combinationRowIds?: Id[];
 }
 
 export interface CreateDiscountCommand {

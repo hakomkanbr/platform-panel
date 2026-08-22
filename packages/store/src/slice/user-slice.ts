@@ -13,7 +13,7 @@ const initialState: IUserProps = {
   image: "",
 };
 
-export const userSlice = createSlice({
+const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
